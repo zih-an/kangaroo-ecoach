@@ -1,0 +1,17 @@
+## frontend
+ecoach-frontend/node_modules/
+ecoach-frontend/.expo/
+ecoach-frontend/dist/
+ecoach-frontend/npm-debug.*
+ecoach-frontend/*.jks
+ecoach-frontend/*.p8
+ecoach-frontend/*.p12
+ecoach-frontend/*.key
+ecoach-frontend/*.mobileprovision
+ecoach-frontend/*.orig.*
+ecoach-frontend/web-build/
+
+## backend
+
+# macOS
+.DS_Store
