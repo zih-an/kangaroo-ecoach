@@ -1,4 +1,4 @@
-## frontend
+# frontend
 ecoach-frontend/node_modules/
 ecoach-frontend/.expo/
 ecoach-frontend/dist/
@@ -10,8 +10,8 @@ ecoach-frontend/*.key
 ecoach-frontend/*.mobileprovision
 ecoach-frontend/*.orig.*
 ecoach-frontend/web-build/
+## macOS
+ecoach-frontend/.DS_Store
 
-## backend
+# backend
 
-# macOS
-.DS_Store
