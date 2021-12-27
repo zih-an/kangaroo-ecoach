@@ -26,18 +26,16 @@ ecoach-backend/
 
 ```
 
-`manage.py`：用各种方式管理 Django 项目的命令行工具。
-
-`demo/`：一个纯 Python 包，它的名字就是引用它内部任何东西时需要用到的 Python 包名。
-
-`demo/__init__.py`：一个空文件，告诉 Python 这个目录应该被认为是一个 Python 包。
-
-`demo/settings.py`：Django 项目的配置文件。
-
-`demo/urls.py`：Django 项目的 URL 声明，就像网站的“目录”。
-
-`demo/wsgi.py`：作为项目的运行在 WSGI 兼容的 Web 服务器上的入口。
-
-`polls/`：一个应用或功能对应的全部内容。
+- `manage.py`：用各种方式管理 Django 项目的命令行工具。
+- `demo/`：一个纯 Python 包，它的名字就是引用它内部任何东西时需要用到的 Python 包名。
+- `demo/__init__.py`：一个空文件，告诉 Python 这个目录应该被认为是一个 Python 包。
+- `demo/settings.py`：Django 项目的配置文件。
+- `demo/urls.py`：Django 项目的 URL 声明，就像网站的“目录”。
+- `demo/wsgi.py`：作为项目的运行在 WSGI 兼容的 Web 服务器上的入口。
+- `polls/`：一个应用或功能对应的全部内容。
 
 ### 前端：react-native
+
+运行界面，Hello World：
+
+<img src="assets/helloworld.jpg" width="400px" />
