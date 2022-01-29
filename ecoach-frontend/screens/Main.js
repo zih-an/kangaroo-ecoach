@@ -7,6 +7,8 @@ import AppNavigator from "../components/AppNavigator";
 import HeaderFlag from "../components/HeaderFlag";
 
 import Home from "./Home";
+import Mine from "./Mine";
+import Shopping from "./Shopping";
 
 const { Navigator, Screen } = createNativeStackNavigator();
 const navexp = () => (
@@ -33,16 +35,6 @@ const navexp = () => (
 );
 
 export default class HomeScreen extends React.Component {
-  state = { selectedIndex: 0 };
-  showTab = (index) => {
-    switch (index) {
-      case 0:
-        return <HomeSportTab />;
-      case 1:
-        return <HomeNewsTab />;
-    }
-  };
-
   render() {
     return (
       <Layout
@@ -51,7 +43,9 @@ export default class HomeScreen extends React.Component {
         }}
       >
         <HeaderFlag />
-        <Home style={styles.layout} />
+        {/* <Home style={styles.layout} /> */}
+        {/* <Mine style={styles.layout} /> */}
+        <Shopping style={styles.layout} />
         <AppNavigator />
       </Layout>
     );

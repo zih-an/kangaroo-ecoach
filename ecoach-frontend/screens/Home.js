@@ -1,5 +1,5 @@
 import React from "react";
-import { Layout, Tab, TabBar, Text, Button } from "@ui-kitten/components";
+import { Layout, Tab, TabBar } from "@ui-kitten/components";
 import HomeSportTab from "../components/HomeSportTab";
 import HomeNewsTab from "../components/HomeNewsTab";
 
