@@ -9,6 +9,7 @@ import HeaderFlag from "../components/HeaderFlag";
 import Home from "./Home";
 import Mine from "./Mine";
 import Shopping from "./Shopping";
+import Plan from "./Plan";
 
 const { Navigator, Screen } = createNativeStackNavigator();
 const navexp = () => (
@@ -45,7 +46,8 @@ export default class HomeScreen extends React.Component {
         <HeaderFlag />
         {/* <Home style={styles.layout} /> */}
         {/* <Mine style={styles.layout} /> */}
-        <Shopping style={styles.layout} />
+        {/* <Shopping style={styles.layout} /> */}
+        <Plan style={styles.layout}></Plan>
         <AppNavigator />
       </Layout>
     );

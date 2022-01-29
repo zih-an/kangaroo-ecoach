@@ -35,7 +35,6 @@ const HistoryTrainCard = () => {
 export default function HomeSportTab() {
   return (
     <Layout style={styles.tabContainer}>
-      <Text category="h5">xx年xx月xx日</Text>
       <TodayTrainPlanCard />
       <ArrorDownIcon
         style={{ width: 100, height: 50 }}
