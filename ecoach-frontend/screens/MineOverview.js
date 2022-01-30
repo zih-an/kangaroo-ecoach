@@ -55,6 +55,10 @@ export default class Mine extends React.Component {
       },
     ],
   };
+  navigateTrainHistoryRec = () => {
+    this.props.navigation.navigate("TrainHistoryRec");
+  };
+
   renderItem = ({ item, index }) => {
     if (index === this.state.msg.length - 2) {
       // 查看历史训练记录
@@ -69,6 +73,7 @@ export default class Mine extends React.Component {
             </Text>
           )}
           description={item.description}
+          onPress={this.navigateTrainHistoryRec}
         />
       );
     } else if (index === this.state.msg.length - 1) {
@@ -105,9 +110,8 @@ export default class Mine extends React.Component {
 
   render() {
     return (
-      <Layout style={this.props.style}>
+      <Layout style={styles.container}>
         <List
-          style={styles.container}
           data={this.state.msg}
           ItemSeparatorComponent={Divider}
           renderItem={this.renderItem}
@@ -118,6 +122,6 @@ export default class Mine extends React.Component {
 }
 const styles = StyleSheet.create({
   container: {
-    maxHeight: "100%",
+    height: "100%",
   },
 });

@@ -18,7 +18,7 @@ export default class Shopping extends React.Component {
   };
   render() {
     return (
-      <Layout style={this.props.style}>
+      <Layout style={{ height: "100%" }}>
         <Layout>
           <TabBar
             selectedIndex={this.state.selectedIndex}

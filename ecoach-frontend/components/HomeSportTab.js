@@ -51,10 +51,9 @@ export default function HomeSportTab() {
 
 const styles = StyleSheet.create({
   tabContainer: {
-    height: "90%",
+    height: "93%",
     alignItems: "center",
-    justifyContent: "space-between",
-    paddingTop: 10,
+    justifyContent: "space-evenly",
   },
   btnContainer: {
     width: "100%",

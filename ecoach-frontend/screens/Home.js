@@ -15,15 +15,17 @@ export default class Home extends React.Component {
   };
   render() {
     return (
-      <Layout style={this.props.style}>
-        <TabBar
-          selectedIndex={this.state.selectedIndex}
-          onSelect={(selectedIndex) => this.setState({ selectedIndex })}
-        >
-          <Tab title="运动" />
-          <Tab title="资讯" />
-        </TabBar>
-        {this.showTab(this.state.selectedIndex)}
+      <Layout style={{ height: "100%" }}>
+        <Layout>
+          <TabBar
+            selectedIndex={this.state.selectedIndex}
+            onSelect={(selectedIndex) => this.setState({ selectedIndex })}
+          >
+            <Tab title="运动" />
+            <Tab title="资讯" />
+          </TabBar>
+          {this.showTab(this.state.selectedIndex)}
+        </Layout>
       </Layout>
     );
   }

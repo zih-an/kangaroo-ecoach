@@ -1,8 +1,14 @@
 import React from "react";
 import { StyleSheet } from "react-native";
-import { Layout, Text, Button, Card } from "@ui-kitten/components";
+import {
+  Layout,
+  Text,
+  Button,
+  Card,
+  Divider,
+  TopNavigation,
+} from "@ui-kitten/components";
 import { default as theme } from "../custom-theme.json";
-
 import TodayTrainPlanCard from "../components/TodayTrainPlanCard";
 
 const PlanScore = (props) => {
@@ -24,26 +30,29 @@ const PlanScore = (props) => {
   );
 };
 
-export default function Plan(props) {
+export default function PlanOverview({ navigation }) {
+  const navigateAddItem = () => {
+    navigation.navigate("AddItem");
+  };
+
   return (
-    <Layout style={props.style}>
-      <Layout style={styles.container}>
-        <Layout style={styles.planContainer}>
-          <TodayTrainPlanCard />
-          <Button
-            style={btnStyle.btnAddItem}
-            size="medium"
-            status="primary"
-            appearance="outline"
-          >
-            自定义添加项目
-          </Button>
-        </Layout>
-        <PlanScore />
-        <Layout style={styles.btnContainer}>
-          <Button style={btnStyle.btn}>评估身体</Button>
-          <Button style={btnStyle.btn}>制定完整计划</Button>
-        </Layout>
+    <Layout style={styles.container}>
+      <Layout style={styles.planContainer}>
+        <TodayTrainPlanCard />
+        <Button
+          style={btnStyle.btnAddItem}
+          size="medium"
+          status="primary"
+          appearance="outline"
+          onPress={navigateAddItem}
+        >
+          自定义添加项目
+        </Button>
+      </Layout>
+      <PlanScore />
+      <Layout style={styles.btnContainer}>
+        <Button style={btnStyle.btn}>评估身体</Button>
+        <Button style={btnStyle.btn}>制定完整计划</Button>
       </Layout>
     </Layout>
   );
@@ -51,9 +60,9 @@ export default function Plan(props) {
 
 const styles = StyleSheet.create({
   container: {
-    height: "95%",
+    height: "100%",
     alignItems: "center",
-    justifyContent: "space-between",
+    justifyContent: "space-evenly",
     paddingTop: 10,
   },
   btnContainer: {
@@ -108,3 +117,27 @@ const btnStyle = StyleSheet.create({
     borderRadius: 30,
   },
 });
+
+// import React from "react";
+// import { SafeAreaView } from "react-native";
+// import { Button, Divider, Layout, TopNavigation } from "@ui-kitten/components";
+
+// const HomeScreen = ({ navigation }) => {
+//   const navigateDetails = () => {
+//     navigation.navigate("AddItem");
+//   };
+
+//   return (
+//     <SafeAreaView style={{ flex: 1 }}>
+//       <TopNavigation title="MyApp" alignment="center" />
+//       <Divider />
+//       <Layout
+//         style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+//       >
+//         <Button onPress={navigateDetails}>OPEN DETAILS</Button>
+//       </Layout>
+//     </SafeAreaView>
+//   );
+// };
+
+// export default HomeScreen;

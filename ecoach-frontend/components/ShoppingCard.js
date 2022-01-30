@@ -51,7 +51,6 @@ const styles = StyleSheet.create({
     margin: 10,
   },
   imgStyle: {
-    borderStyle: "solid",
     borderWidth: 1,
     borderRadius: 20,
     borderColor: "black",

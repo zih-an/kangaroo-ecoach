@@ -4,7 +4,7 @@ import { ApplicationProvider, IconRegistry } from "@ui-kitten/components";
 import { EvaIconsPack } from "@ui-kitten/eva-icons";
 import { default as theme } from "./custom-theme.json";
 import SplashScreen from "./screens/WelcomePage";
-import Main from "./screens/Main";
+import AppNavigator from "./navigations/AppNavigator";
 
 export default function App() {
   const [splash, setSplash] = useState(true);
@@ -20,7 +20,7 @@ export default function App() {
     <>
       <IconRegistry icons={EvaIconsPack} />
       <ApplicationProvider {...eva} theme={{ ...eva.light, ...theme }}>
-        <Main />
+        <AppNavigator></AppNavigator>
       </ApplicationProvider>
     </>
   );
