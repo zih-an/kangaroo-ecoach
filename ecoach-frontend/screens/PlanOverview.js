@@ -41,12 +41,12 @@ export default function PlanOverview({ navigation }) {
         <TodayTrainPlanCard />
         <Button
           style={btnStyle.btnAddItem}
-          size="medium"
+          size="small"
           status="primary"
           appearance="outline"
           onPress={navigateAddItem}
         >
-          自定义添加项目
+          修改计划
         </Button>
       </Layout>
       <PlanScore />
@@ -110,34 +110,12 @@ const btnStyle = StyleSheet.create({
     borderRadius: 30,
   },
   btnAddItem: {
-    width: "70%",
+    // width: "70%",
     borderWidth: 0,
     // backgroundColor: theme["color-info-800"],
     margin: 5,
+    marginRight: 20,
     borderRadius: 30,
+    alignSelf: "flex-end",
   },
 });
-
-// import React from "react";
-// import { SafeAreaView } from "react-native";
-// import { Button, Divider, Layout, TopNavigation } from "@ui-kitten/components";
-
-// const HomeScreen = ({ navigation }) => {
-//   const navigateDetails = () => {
-//     navigation.navigate("AddItem");
-//   };
-
-//   return (
-//     <SafeAreaView style={{ flex: 1 }}>
-//       <TopNavigation title="MyApp" alignment="center" />
-//       <Divider />
-//       <Layout
-//         style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
-//       >
-//         <Button onPress={navigateDetails}>OPEN DETAILS</Button>
-//       </Layout>
-//     </SafeAreaView>
-//   );
-// };
-
-// export default HomeScreen;

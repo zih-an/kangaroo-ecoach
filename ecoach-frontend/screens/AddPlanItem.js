@@ -30,7 +30,7 @@ export default function AddItem({ navigation }) {
       />
       <Divider />
       <Layout
-        style={{ flex: 1, justifyContent: "flex-start", alignItems: "center" }}
+        style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
       >
         <VideoCard></VideoCard>
         <VideoCard></VideoCard>
