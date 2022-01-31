@@ -1,22 +1,8 @@
 import React from "react";
-import { Icon, Layout, Text } from "@ui-kitten/components";
+import { Layout, Text } from "@ui-kitten/components";
+import StarGroup from "./StarGroup";
 import { default as theme } from "../custom-theme.json";
-import { TouchableHighlight, TouchableOpacity } from "react-native";
-
-const StarIcon = (props) => (
-  <Icon {...props} style={{ width: 15, height: 15 }} name="star" />
-);
-const StarGroup = (props) => {
-  return (
-    <Layout style={{ flexDirection: "row" }}>
-      <StarIcon fill={theme["color-primary-500"]} />
-      <StarIcon fill={theme["color-primary-500"]} />
-      <StarIcon fill="gray" />
-      <StarIcon fill="gray" />
-      <StarIcon fill="gray" />
-    </Layout>
-  );
-};
+import { TouchableOpacity } from "react-native";
 
 export default function ExeHistoryCard(props) {
   return (
@@ -44,7 +30,7 @@ export default function ExeHistoryCard(props) {
             alignItems: "flex-start",
           }}
         >
-          <StarGroup />
+          <StarGroup rate={props.rate} />
           <Text category="p1">
             Lorem, ipsum dolor sit amet consectetur adipisicing elit. Ducimus
             maxime similique.

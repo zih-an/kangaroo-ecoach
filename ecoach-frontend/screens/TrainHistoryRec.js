@@ -41,15 +41,7 @@ export default function TrainHistoryRec({ navigation }) {
           alignItems: "center",
         }}
       >
-        <Layout
-          style={{
-            justifyContent: "flex-start",
-            alignItems: "center",
-          }}
-        >
-          <Text category="h5">Selected date: {date.toLocaleDateString()}</Text>
-          <Calendar date={date} onSelect={(nextDate) => setDate(nextDate)} />
-        </Layout>
+        <Calendar date={date} onSelect={(nextDate) => setDate(nextDate)} />
         <ScrollView
           style={{
             flexGrow: 1,
@@ -62,13 +54,41 @@ export default function TrainHistoryRec({ navigation }) {
           }}
         >
           <Text category="h5">运动情况</Text>
-          <ExeHistoryCard date="1" onPress={viewReport}></ExeHistoryCard>
-          <ExeHistoryCard date="2" onPress={viewReport}></ExeHistoryCard>
-          <ExeHistoryCard date="3" onPress={viewReport}></ExeHistoryCard>
-          <ExeHistoryCard date="4" onPress={viewReport}></ExeHistoryCard>
-          <ExeHistoryCard date="5" onPress={viewReport}></ExeHistoryCard>
-          <ExeHistoryCard date="6" onPress={viewReport}></ExeHistoryCard>
-          <ExeHistoryCard date="7" onPress={viewReport}></ExeHistoryCard>
+          <ExeHistoryCard
+            date="1"
+            onPress={viewReport}
+            rate={1}
+          ></ExeHistoryCard>
+          <ExeHistoryCard
+            date="2"
+            onPress={viewReport}
+            rate={2}
+          ></ExeHistoryCard>
+          <ExeHistoryCard
+            date="3"
+            onPress={viewReport}
+            rate={5}
+          ></ExeHistoryCard>
+          <ExeHistoryCard
+            date="4"
+            onPress={viewReport}
+            rate={3}
+          ></ExeHistoryCard>
+          <ExeHistoryCard
+            date="5"
+            onPress={viewReport}
+            rate={3}
+          ></ExeHistoryCard>
+          <ExeHistoryCard
+            date="6"
+            onPress={viewReport}
+            rate={4}
+          ></ExeHistoryCard>
+          <ExeHistoryCard
+            date="7"
+            onPress={viewReport}
+            rate={2}
+          ></ExeHistoryCard>
         </ScrollView>
       </Layout>
     </Layout>
