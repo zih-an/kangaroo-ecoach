@@ -8,7 +8,7 @@ export default class Home extends React.Component {
   showTab = (index) => {
     switch (index) {
       case 0:
-        return <HomeSportTab />;
+        return <HomeSportTab navigation={this.props.navigation} />;
       case 1:
         return <HomeNewsTab />;
     }

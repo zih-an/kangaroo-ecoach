@@ -32,7 +32,8 @@ const HistoryTrainCard = () => {
   );
 };
 
-export default function HomeSportTab() {
+export default function HomeSportTab({ navigation }) {
+  const toExercising = () => navigation.navigate("Exercising");
   return (
     <Layout style={styles.tabContainer}>
       <TodayTrainPlanCard />
@@ -42,7 +43,9 @@ export default function HomeSportTab() {
       />
       <Layout style={styles.btnContainer}>
         <Button style={btnStyle.btn}>连接你的设备</Button>
-        <Button style={btnStyle.btn}>开始运动</Button>
+        <Button style={btnStyle.btn} onPress={toExercising}>
+          开始运动
+        </Button>
       </Layout>
       <HistoryTrainCard />
     </Layout>

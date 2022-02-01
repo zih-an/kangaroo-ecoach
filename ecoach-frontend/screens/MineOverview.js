@@ -7,6 +7,9 @@ import {
   Divider,
   Text,
   Icon,
+  Modal,
+  Card,
+  Button,
 } from "@ui-kitten/components";
 import { default as theme } from "../custom-theme.json";
 
@@ -18,6 +21,28 @@ const HomeIcon = (props) => (
     style={{ width: 20, height: 20 }}
   />
 );
+
+const ModalContainer = (props) => {
+  return (
+    <Modal
+      style={styles.modalContainer}
+      visible={props.visible}
+      backdropStyle={styles.backdrop}
+      onBackdropPress={() => props.setVisible(false)}
+    >
+      <Card disabled={true}>
+        <Text>Welcome to UI Kitten 😻</Text>
+        <Text>
+          Lorem ipsum dolor sit amet consectetur adipisicing elit. Facilis,
+          voluptatum magnam. Dolores tempora veniam, quae quod, debitis quos ex
+          rem suscipit dolorum repudiandae laudantium cupiditate commodi eos
+          asperiores facilis! Labore?
+        </Text>
+        <Button onPress={() => props.setVisible(false)}>DISMISS</Button>
+      </Card>
+    </Modal>
+  );
+};
 
 export default class Mine extends React.Component {
   state = {
@@ -54,6 +79,10 @@ export default class Mine extends React.Component {
         title: "清空所有数据",
       },
     ],
+    visible: false,
+  };
+  setVisible = (shown) => {
+    this.setState({ visible: shown });
   };
   navigateTrainHistoryRec = () => {
     this.props.navigation.navigate("TrainHistoryRec");
@@ -103,6 +132,7 @@ export default class Mine extends React.Component {
           title={item.title}
           description={item.description}
           accessoryRight={<HomeIcon />}
+          onPress={() => this.setVisible(true)}
         />
       );
     }
@@ -116,6 +146,10 @@ export default class Mine extends React.Component {
           ItemSeparatorComponent={Divider}
           renderItem={this.renderItem}
         />
+        <ModalContainer
+          visible={this.state.visible}
+          setVisible={this.setVisible}
+        />
       </Layout>
     );
   }
@@ -123,5 +157,12 @@ export default class Mine extends React.Component {
 const styles = StyleSheet.create({
   container: {
     height: "100%",
+  },
+  modalContainer: {
+    position: "absolute",
+    width: "80%",
+  },
+  backdrop: {
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
   },
 });
