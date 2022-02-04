@@ -15,17 +15,16 @@ import os
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = '$^w84pc!i-$v3#t)0o5_@_xi-jdw6oln1gbuug138k)v8@dvxh'
-
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
+
 
 
 # Application definition
@@ -37,6 +36,10 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'account',
+    'standardV',
+    'exercise',
+    'report'
 ]
 
 MIDDLEWARE = [
@@ -75,8 +78,12 @@ WSGI_APPLICATION = 'demo.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'ecoach',
+        'USER': 'ecoach',
+        'PASSWORD': 'Dongpusen0821',
+        'HOST': '',
+        'PORT': 3306,
     }
 }
 
@@ -103,9 +110,9 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/3.0/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'zh-hans'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/Shanghai'
 
 USE_I18N = True
 
@@ -113,7 +120,12 @@ USE_L10N = True
 
 USE_TZ = True
 
-
+EMAIL_HOST = "smtp.163.com"     # 服务器
+EMAIL_PORT = 25                 # 一般情况下都为25
+EMAIL_HOST_USER = "dpusen@163.com"     # 账号
+EMAIL_HOST_PASSWORD = "NPLREYJKRVPZQZOJ"          # 密码 (注意：这里的密码指的是授权码)
+EMAIL_USE_TLS = False       # 一般都为False
+EMAIL_FROM = "dpusen@163.com"      # 邮箱来自
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 
