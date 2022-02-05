@@ -6,8 +6,15 @@ from plan.models import plan
 # Create your views here.
 
 def query(request,email):
+    """
+    查询所有就
+    :param request:
+    :param email: 用户的email
+    :return:
+    """
     if request.method == 'GET':
-        record_list=ex_record.objects.filter(user_id=email)
+        record_list=ex_record.objects.filter(user_id=email).values('report_id','start_time','A_length')
+
         return record_list
 
 

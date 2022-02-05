@@ -20,4 +20,4 @@ class ex_record(models.Model):
         db_table = "ex_record"
         verbose_name = "运动记录"
         verbose_name_plural = verbose_name
-        ordering = ['-finish_time']
+        ordering = ['-start_time']

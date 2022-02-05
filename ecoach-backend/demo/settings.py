@@ -39,10 +39,13 @@ INSTALLED_APPS = [
     'account',
     'standardV',
     'exercise',
-    'report'
+    'report',
+    'plan',
+    'shop'
 ]
 
 MIDDLEWARE = [
+    # 'django.middleware.cache.UpdateCacheMiddleware',  # 放在第一
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -50,6 +53,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    # 'django.middleware.cache.FetchFromCacheMiddleware',  # 放在最后
 ]
 
 ROOT_URLCONF = 'demo.urls'
@@ -126,6 +130,22 @@ EMAIL_HOST_USER = "dpusen@163.com"     # 账号
 EMAIL_HOST_PASSWORD = "NPLREYJKRVPZQZOJ"          # 密码 (注意：这里的密码指的是授权码)
 EMAIL_USE_TLS = False       # 一般都为False
 EMAIL_FROM = "dpusen@163.com"      # 邮箱来自
+
+
+CACHES = {
+    "default": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": "redis://127.0.0.1:6379",
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+            "CONNECTION_POOL_KWARGS": {"max_connections": 100}
+            # "PASSWORD": "密码",
+        }
+    }
+}
+# CACHE_MIDDLEWARE_ALIAS = ""          # 用于存储的缓存别名
+# CACHE_MIDDLEWARE_SECONDS = 600       # 每个页面应缓存的秒数
+# CACHE_MIDDLEWARE_KEY_PREFIX = ""     # 如果使用相同的Django安装在多个站点之间共享缓存，请将其设置为站点名称或此Django实例特有的其他字符串，以防止发生密钥冲突。如果你不在乎，请使用空字符串。
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 
