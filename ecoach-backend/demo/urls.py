@@ -19,4 +19,8 @@ from django.urls import path,include
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('polls/', include('polls.urls')),
+    # path('account/',include('account.urls')),
+    # path('standardV/',include('standardV.urls')),
+    path('exercise/',include('exercise.urls')),
+    path('shop/',include('shop.urls')),
 ]
