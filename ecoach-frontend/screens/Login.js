@@ -4,7 +4,6 @@ import {
   Button,
   Layout,
   Text,
-  Divider,
   Modal,
   Card,
 } from "@ui-kitten/components";
@@ -47,7 +46,7 @@ export default class Login extends React.Component {
   pressCallback = () => {
     // 1. 发送请求验证密码正确
     // let correct = ... (请求结果)
-    let correct = false; // for test
+    let correct = true; // for test
     if (correct === true) {
       this.props.navigation.navigate("MainPage");
     } else {
@@ -77,7 +76,6 @@ export default class Login extends React.Component {
           <Layout style={styles.inputsContainer}>
             <Input style={styles.input} placeholder="请输入邮箱" />
             <Input style={styles.input} placeholder="请输入密码" />
-            <Divider></Divider>
             <Button style={styles.btn} onPress={this.pressCallback}>
               登录
             </Button>
