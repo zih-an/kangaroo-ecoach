@@ -2,6 +2,7 @@ import React from "react";
 import { StyleSheet, View } from "react-native";
 import { Layout, Card, Text, CheckBox } from "@ui-kitten/components";
 import { default as theme } from "../custom-theme.json";
+// import VideoPlayer from "react-native-video-player";
 
 export default function VideoCard() {
   const Header = (props) => (
@@ -26,6 +27,14 @@ export default function VideoCard() {
   return (
     <React.Fragment>
       <Card style={styles.card} header={Header} footer={Footer}>
+        {/* <VideoPlayer
+          video={{
+            uri: "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+          }}
+          videoWidth={1600}
+          videoHeight={900}
+          thumbnail={{ uri: "https://i.picsum.photos/id/866/1600/900.jpg" }}
+        /> */}
         <Text>
           The Maldives, officially the Republic of Maldives, is a small country
           in South Asia, located in the Arabian Sea of the Indian Ocean. It lies
@@ -51,5 +60,12 @@ const styles = StyleSheet.create({
   },
   footerControl: {
     marginHorizontal: 2,
+  },
+  backgroundVideo: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    bottom: 0,
+    right: 0,
   },
 });

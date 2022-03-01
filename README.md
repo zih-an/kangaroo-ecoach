@@ -36,6 +36,5 @@ ecoach-backend/
 
 ### 前端：react-native
 
-运行界面，Hello World：
-
-<img src="assets/helloworld.jpg" width="400px" />
+- `ecoach-frontend`文件夹内为 expo 版本
+- `awsomeproject`文件夹内为 react native cli 版本
