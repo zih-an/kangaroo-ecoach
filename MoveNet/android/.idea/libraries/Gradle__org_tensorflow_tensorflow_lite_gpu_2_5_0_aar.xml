@@ -1,0 +1,17 @@
+<component name="libraryTable">
+  <library name="Gradle: org.tensorflow:tensorflow-lite-gpu:2.5.0@aar">
+    <CLASSES>
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/c542fe15441a7d779e67cc916e7a41f1/tensorflow-lite-gpu-2.5.0/res" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-3/d69003410e2547d75519810c048b7a3e/transformed/tensorflow-lite-gpu-2.5.0/res" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-3/522bf9cbf5177532ff65228cc18677fc/transformed/jetified-tensorflow-lite-gpu-2.5.0/res" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-3/4d6ddaec70765c77e059bb87e461343f/transformed/jetified-tensorflow-lite-gpu-2.5.0/res" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-3/625ab17e64b75d9807f5774a94f26665/transformed/jetified-tensorflow-lite-gpu-2.5.0/res" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-3/86ca4c5ca1e15f9c1b5bff896ae1306d/transformed/jetified-tensorflow-lite-gpu-2.5.0/res" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-3/4df54fa118ae64490efc7aad6fed307b/transformed/jetified-tensorflow-lite-gpu-2.5.0/res" />
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-3/4d6ddaec70765c77e059bb87e461343f/transformed/jetified-tensorflow-lite-gpu-2.5.0/jars/classes.jar!/" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-3/4d6ddaec70765c77e059bb87e461343f/transformed/jetified-tensorflow-lite-gpu-2.5.0/AndroidManifest.xml" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
