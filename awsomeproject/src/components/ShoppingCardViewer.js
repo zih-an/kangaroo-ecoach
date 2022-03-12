@@ -3,6 +3,7 @@ import { StyleSheet } from "react-native";
 import { Layout, Text, ViewPager, Icon } from "@ui-kitten/components";
 import ShoppingCard from "./ShoppingCard";
 import { default as theme } from "../custom-theme.json";
+import { connect } from "react-redux";
 
 const ForwardIcon = (props) => (
   <Icon
@@ -20,31 +21,44 @@ const BackIcon = (props) => (
     style={styles.iconStyle}
   />
 );
-
-export const ShoppingCardViewer = () => {
-  const [selectedIndex, setSelectedIndex] = React.useState(0);
-
+class ShoppingCardViewer extends React.Component {
+  constructor(props){
+    super(props);
+  }
+  state={
+    selectedIndex:0,
+    theData:[{name:"admin",price:399,pic_path:"http://playerz.plus/images/fun-emotion.jpg"}]
+  };
+  setSelectedIndex(text){
+    this.setState(selectedIndex,text);
+  }
+  render(){
   return (
     <Layout>
       <Layout style={styles.headerContainer}>
         <BackIcon />
-        <Text category="h6">{String(selectedIndex + 1)} / 5</Text>
+        <Text category="h6">{String(this.state.selectedIndex + 1)} / {this.props.shop.length}</Text>
         <ForwardIcon />
       </Layout>
       <ViewPager
-        selectedIndex={selectedIndex}
-        onSelect={(index) => setSelectedIndex(index)}
+        selectedIndex={this.state.selectedIndex}
+        onSelect={(index) => this.setState({selectedIndex:index})}
       >
-        <ShoppingCard />
-        <ShoppingCard />
-        <ShoppingCard />
-        <Layout style={styles.tab} level="2">
-          <Text category="h5">TRANSACTIONS</Text>
-        </Layout>
+        {/* 这里直接读取全局state中商品信息生成购物卡片 */}
+        {this.props.shop.map((myData,index)=>{
+          return <ShoppingCard
+          imageUrl={myData.pic_path}
+          key={index}
+          name={myData.name}
+          price={myData.price}
+          data={myData.introduction}
+          /> 
+        })}
       </ViewPager>
     </Layout>
   );
 };
+}
 
 const styles = StyleSheet.create({
   headerContainer: {
@@ -63,3 +77,12 @@ const styles = StyleSheet.create({
     height: 50,
   },
 });
+
+const mapStateToProps = state =>{
+  return {
+      login:state.login,
+      shop:state.shop
+  };
+};
+
+export default connect(mapStateToProps)(ShoppingCardViewer);

@@ -20,7 +20,7 @@ export default function ExeHistoryCard(props) {
             alignSelf: "flex-start",
           }}
         >
-          {props.date}
+        {props.date}
         </Text>
         <Layout
           style={{
@@ -32,8 +32,7 @@ export default function ExeHistoryCard(props) {
         >
           <StarGroup rate={props.rate} />
           <Text category="p1">
-            Lorem, ipsum dolor sit amet consectetur adipisicing elit. Ducimus
-            maxime similique.
+            {props.content}
           </Text>
         </Layout>
       </Layout>

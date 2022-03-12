@@ -2,6 +2,15 @@ import React from 'react';
 import {Input, Button, Layout, Text, Modal, Card} from '@ui-kitten/components';
 import {View, Image, StyleSheet, Dimensions} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
+import {postData, getData} from '../components/FetchData';
+import { connect } from "react-redux";
+import * as actions from "./store/actions";
+
+const urlAll =  "http://81.68.226.132:80/standardV/index";
+const urlChoosen = "http://81.68.226.132:80/plan/index";
+const urlShop="http://81.68.226.132:80/shop/";
+
+let theToken;
 
 const ModalContainer = props => {
   return (
@@ -22,25 +31,69 @@ const ModalContainer = props => {
   );
 };
 
-export default class Login extends React.Component {
-  infos = ['账号未注册或密码错误！', '注册成功！'];
+class Login extends React.Component {
+  constructor(props){
+    super(props);
+  }
+  infos = ["无网络！请检查您的网络设置", "注册成功！","注册失败！","登录成功！"];
   state = {
     modalVisible: false,
     modalInfo: '',
   };
-  setModalVisible = shown => {
-    this.setState({modalVisible: shown});
+  handleEmail=(text)=>{
+    this.props.addEmail(text);
+  }
+  handlePassword=(text)=>{
+    this.props.addPwd(text);
+  }
+  setModalVisible = (shown) => {
+    this.setState({ modalVisible: shown });
   };
-  setModalInfo = index => {
-    this.setState({modalInfo: this.infos[index]});
+  setModalInfo = (index) => {
+    this.setState({ modalInfo: this.infos[index] });
   };
 
-  pressCallback = () => {
+  pressCallback = async () => {
     // 1. 发送请求验证密码正确
-    // let correct = ... (请求结果)
-    let correct = true; // for test
-    if (correct === true) {
-      this.props.navigation.navigate('MainPage');
+    let url = "http://81.68.226.132:80/account/login/";    
+    let res = await postData(url,{email:this.props.login.email,password:this.props.login.pwd});
+    let correct = res["code"]; 
+    this.infos[0] =res["message"]
+    theToken=res["token"];
+    this.props.addToken(theToken);
+    if (correct==="1") {
+      //成功登录跳转页面前，一次请求今日计划、所有计划、商城商品信息并加入全局state
+      let resAll = await getData(urlAll,this.props.login.token);
+      let resToday = await getData(urlChoosen,this.props.login.token);
+      let resShop= await getData(urlShop,this.props.login.token);
+      let flagAll = true;
+      let flagShop = true;
+      let flagToday = true;
+      if(resAll["code"]!=="1") {
+        this.infos[1] = resAll["message"];
+        flagAll = false;
+        this.setModalInfo(1);
+        this.setModalVisible(true);
+      } 
+      if(resShop["code"]!=="1") {
+        this.infos[2] = resShop["message"];
+        flagShop = false;
+        this.setModalInfo(2);
+        this.setModalVisible(true);
+      } 
+      if(resToday["code"]!==1) {
+        this.infos[3] = resToday["message"];
+        flagToday = false;
+        this.setModalInfo(3);
+        this.setModalVisible(true);
+      }
+      if(flagAll&&flagShop&&flagToday){
+        this.props.addPlan(resAll["data"]);
+        this.props.addTodayDetail(resToday["data"]);
+        this.props.addToday(resToday["data"].map(item => item.id));
+        this.props.addShop(resShop["data"]);
+        this.props.navigation.navigate("MainPage");
+      } 
     } else {
       // 账号密码不正确，提示
       this.setModalInfo(0);
@@ -48,10 +101,10 @@ export default class Login extends React.Component {
     }
   };
 
-  RegisterCallback = () => {
+  RegisterCallback =  () => {
     // 注册
-    this.setModalInfo(1);
-    this.setModalVisible(true);
+    console.log("aaaaaaaaa");
+    this.props.navigation.navigate("Register");
   };
 
   render() {
@@ -66,8 +119,8 @@ export default class Login extends React.Component {
             <Text category="h4">袋鼠教练</Text>
           </Layout>
           <Layout style={styles.inputsContainer}>
-            <Input style={styles.input} placeholder="请输入邮箱" />
-            <Input style={styles.input} placeholder="请输入密码" />
+            <Input style={styles.input} placeholder="请输入邮箱" onChangeText={this.handleEmail} />
+            <Input style={styles.input} placeholder="请输入密码" onChangeText={this.handlePassword} />
             <Button style={styles.btn} onPress={this.pressCallback}>
               登录
             </Button>
@@ -132,3 +185,14 @@ const styles = StyleSheet.create({
     borderRadius: 30,
   },
 });
+const mapStateToProps = state =>{
+  return {
+      login:state.login,
+      todayPlan:state.todayPlans,
+      plan:state.allPlans,
+  };
+
+};
+
+export default connect(mapStateToProps,actions)(Login);
+export {theToken}
