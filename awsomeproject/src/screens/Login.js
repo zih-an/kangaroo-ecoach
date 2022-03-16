@@ -1,6 +1,6 @@
 import React from 'react';
 import {Input, Button, Layout, Text, Modal, Card} from '@ui-kitten/components';
-import {View, Image, StyleSheet, Dimensions} from 'react-native';
+import {View, Image, StyleSheet, Dimensions,ActivityIndicator} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {postData, getData} from '../components/FetchData';
 import { connect } from "react-redux";
@@ -37,6 +37,7 @@ class Login extends React.Component {
   }
   infos = ["无网络！请检查您的网络设置", "注册成功！","注册失败！","登录成功！"];
   state = {
+    loginProgress:false,
     modalVisible: false,
     modalInfo: '',
   };
@@ -52,8 +53,12 @@ class Login extends React.Component {
   setModalInfo = (index) => {
     this.setState({ modalInfo: this.infos[index] });
   };
+  setLoading = (value) => {
+    this.setState({loginProgress:value});
+  }
 
   pressCallback = async () => {
+    this.setLoading(true);
     // 1. 发送请求验证密码正确
     let url = "http://81.68.226.132:80/account/login/";    
     let res = await postData(url,{email:this.props.login.email,password:this.props.login.pwd});
@@ -92,10 +97,12 @@ class Login extends React.Component {
         this.props.addTodayDetail(resToday["data"]);
         this.props.addToday(resToday["data"].map(item => item.id));
         this.props.addShop(resShop["data"]);
+        this.setLoading(false);
         this.props.navigation.navigate("MainPage");
       } 
     } else {
       // 账号密码不正确，提示
+      this.setLoading(false);
       this.setModalInfo(0);
       this.setModalVisible(true);
     }
@@ -103,7 +110,6 @@ class Login extends React.Component {
 
   RegisterCallback =  () => {
     // 注册
-    console.log("aaaaaaaaa");
     this.props.navigation.navigate("Register");
   };
 
@@ -122,7 +128,9 @@ class Login extends React.Component {
             <Input style={styles.input} placeholder="请输入邮箱" onChangeText={this.handleEmail} />
             <Input style={styles.input} placeholder="请输入密码" onChangeText={this.handlePassword} />
             <Button style={styles.btn} onPress={this.pressCallback}>
-              登录
+                    {this.state.loginProgress
+                    ? <ActivityIndicator color="white"/>
+                    : <Text>登录</Text>}
             </Button>
             <Button
               style={styles.btn}

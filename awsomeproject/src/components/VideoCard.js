@@ -7,6 +7,8 @@ import StarGroup from "./StarGroup";
 import * as actions from "../screens/store/actions";
 import { connect } from "react-redux";
 
+const url = "http://81.68.226.132:80/";
+
 const ModalContainerForVd = (props) => {
   return (
     <Modal
@@ -16,18 +18,33 @@ const ModalContainerForVd = (props) => {
       onBackdropPress={() => props.setVisible(false)}
     >
       <View>
-        <Text category="h6" style={{ margin: 20 ,height:"50%"}}>
-          这里是演示视频,视频地址：
-          {props.uri}
-        </Text>
-        <ScrollView style={{ margin: 20 ,height:"30%"}}>
+        <Video
+              // source={{ uri:"http://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4", type: 'mpd' }} 
+              source={{uri: props.uri}}//设置视频源  
+              // source={require('../assets/videos/手臂/跪姿释手俯卧撑.mp4')}
+              style={{marginRight: 30 ,marginLeft: 30,height:"55%", width:"80%"}}//组件样式
+              // rate={1}//播放速率
+              // paused={true}//暂停
+              // volume={1}//调节音量
+              // muted={false}//控制音频是否静音
+              resizeMode='contain'//缩放模式
+              // onLoad={this.onLoad}//加载媒体并准备播放时调用的回调函数。
+              // onProgress={this.onProgress}//视频播放过程中每个间隔进度单位调用的回调函数
+              // onEnd={this.onEnd}//视频播放结束时的回调函数
+              // onAudioBecomingNoisy={this.onAudioBecomingNoisy}//音频变得嘈杂时的回调 - 应暂停视频
+              // onAudioFocusChanged={this.onAudioFocusChanged}//音频焦点丢失时的回调 - 如果焦点丢失则暂停
+              repeat={true}//确定在到达结尾时是否重复播放视频。
+        />
+        <ScrollView style={{ marginRight: 20 ,marginLeft: 20 ,height:"30%"}}>
           <Text category="h6" >
             {props.modalInfo}
           </Text>
         </ScrollView>
-        <Button size="medium" onPress={() => props.setVisible(false)}>
-          确定
-        </Button>
+        <View style={{height:"10%",width:"30%",alignItems:"center",marginLeft:125,marginTop:15}}>
+            <Button size="medium" onPress={() => props.setVisible(false)}>
+             确定
+            </Button>
+        </View>
       </View>
     </Modal>
   );
@@ -45,6 +62,7 @@ function VideoCard(props) {
         {/* 这里Text用来撑开父元素 */}
         <Text category="h6" style={styles.fontHidden}>lallalalaasl</Text>
         <CheckBox
+          style={{marginRight:15}}
           checked={activeChecked}
           onChange={(nextChecked) => {
             setActiveChecked(nextChecked);
@@ -81,7 +99,7 @@ function VideoCard(props) {
             visible={modalVisibleForVd}
             setVisible={setModalVisibleFV}
             modalInfo={props.introduction}
-            uri={props.sv_path}
+            uri={url+props.sv_path}
       />
     </Layout>
   );
@@ -113,7 +131,7 @@ const styles = StyleSheet.create({
     marginBottom:10,
     marginLeft:0,
     borderTopWidth:1,
-    borderColor:"gray"
+    borderColor:"gray",
   },
   font:{
     marginTop:10,

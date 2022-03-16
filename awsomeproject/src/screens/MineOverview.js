@@ -1,5 +1,5 @@
-import React from "react";
-import { StyleSheet } from "react-native";
+import React,{useState} from "react";
+import { StyleSheet, TouchableOpacity } from "react-native";
 import {
   Layout,
   List,
@@ -10,6 +10,7 @@ import {
   Modal,
   Card,
   Button,
+  Input,
 } from "@ui-kitten/components";
 import { default as theme } from "../custom-theme.json";
 
@@ -23,6 +24,7 @@ const HomeIcon = (props) => (
 );
 
 const ModalContainer = (props) => {
+  const [value, setValue] = React.useState('');
   return (
     <Modal
       style={styles.modalContainer}
@@ -31,14 +33,44 @@ const ModalContainer = (props) => {
       onBackdropPress={() => props.setVisible(false)}
     >
       <Card disabled={true}>
-        <Text>Welcome to UI Kitten 😻</Text>
-        <Text>
-          Lorem ipsum dolor sit amet consectetur adipisicing elit. Facilis,
-          voluptatum magnam. Dolores tempora veniam, quae quod, debitis quos ex
-          rem suscipit dolorum repudiandae laudantium cupiditate commodi eos
-          asperiores facilis! Labore?
-        </Text>
-        <Button onPress={() => props.setVisible(false)}>DISMISS</Button>
+        <Text style={{height:20}}>设置您的{props.title}</Text>
+        {(props.title==="生日")&&
+        (<Input
+          style={{height:50,width:250,marginTop:20}}
+          placeholder='2020.1.29'
+          value={value}
+          onChangeText={nextValue => setValue(nextValue)}
+        />)}
+        {(props.title==="身高")&&
+        (<Input
+          style={{height:50,width:250,marginTop:20}}
+          placeholder='177cm'
+          value={value}
+          onChangeText={nextValue => setValue(nextValue)}
+        />)}
+        {(props.title==="体重")&&
+        (<Input
+          style={{height:50,width:250,marginTop:20}}
+          placeholder='60kg'
+          value={value}
+          onChangeText={nextValue => setValue(nextValue)}
+        />)}
+        {(props.title==="级别")&&
+        (<Input
+          style={{height:50,width:250,marginTop:20}}
+          placeholder='鼠崽/鼠王'
+          value={value}
+          onChangeText={nextValue => setValue(nextValue)}
+        />)}
+        {(props.title==="性别")&&
+        (<Input
+          style={{height:50,width:250,marginTop:20}}
+          placeholder='男鼠/女鼠'
+          value={value}
+          onChangeText={nextValue => setValue(nextValue)}
+        />)}
+        
+        <Button onPress={() => {props.setVisible(false);props.setMessage(value,props.index);setValue('')}}>确定</Button>
       </Card>
     </Modal>
   );
@@ -49,7 +81,7 @@ export default class Mine extends React.Component {
     msg: [
       {
         title: "生日",
-        description: "2022年1月29日",
+        description: "2022.1.29",
       },
       {
         title: "身高",
@@ -61,11 +93,11 @@ export default class Mine extends React.Component {
       },
       {
         title: "性别",
-        description: "male",
+        description: "女鼠",
       },
       {
-        title: "我的级别",
-        description: "初学者",
+        title: "级别",
+        description: "鼠崽",
       },
       {
         title: "身高",
@@ -80,14 +112,40 @@ export default class Mine extends React.Component {
       },
     ],
     visible: false,
+    currentIndex: 0,
+    currentTitle:"身高",
   };
   setVisible = (shown) => {
     this.setState({ visible: shown });
   };
+  setCurrentIndex = (index) => {
+    this.setState({ currentIndex: index });
+  }
+  setCurrentTitle = (title) => {
+    this.setState({ currentTitle: title });
+  }
+  setMessage = (message,i) =>{
+    let arr = this.state.msg.map((item,index)=>{
+      if(index===i) return {
+        title:item.title,
+        description:message
+      }
+      else return item;
+    });
+    this.setState({msg:arr});
+  }
   navigateTrainHistoryRec = () => {
     this.props.navigation.navigate("TrainHistoryRec");
   };
-
+  clickBtn = () =>{
+    let arr = this.state.msg.map((item,index)=>{
+      return {
+        title:item.title,
+        description:''
+      }
+    });
+    this.setState({msg:arr});
+  }
   renderItem = ({ item, index }) => {
     if (index === this.state.msg.length - 2) {
       // 查看历史训练记录
@@ -111,7 +169,8 @@ export default class Mine extends React.Component {
         <ListItem
           style={{ backgroundColor: "transparent" }}
           title={(evaProps) => (
-            <Text
+            <TouchableOpacity onPress={this.clickBtn}>
+              <Text
               {...evaProps}
               style={[
                 evaProps.style,
@@ -123,16 +182,18 @@ export default class Mine extends React.Component {
             >
               {item.title}
             </Text>
+            </TouchableOpacity>
           )}
         />
       );
     } else {
       return (
         <ListItem
+          style={{height:65}}
           title={item.title}
           description={item.description}
           accessoryRight={<HomeIcon />}
-          onPress={() => this.setVisible(true)}
+          onPress={() => {this.setVisible(true);this.setCurrentIndex(index);this.setCurrentTitle(item.title)}}
         />
       );
     }
@@ -149,6 +210,9 @@ export default class Mine extends React.Component {
         <ModalContainer
           visible={this.state.visible}
           setVisible={this.setVisible}
+          index={this.state.currentIndex}
+          setMessage={this.setMessage}
+          title={this.state.currentTitle}
         />
       </Layout>
     );
