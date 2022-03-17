@@ -1,15 +1,16 @@
-import React from 'react';
-import {StyleSheet, View} from 'react-native';
+import React,{useState} from 'react';
+import {StyleSheet, View, Alert, ActivityIndicator} from 'react-native';
 import {Layout, Card, Text, Button} from '@ui-kitten/components';
 import {Icon} from '@ui-kitten/components';
 import {default as theme} from '../custom-theme.json';
 import TodayTrainPlanCard from './TodayTrainPlanCard';
-
+import {getData} from './FetchData';
+import {connect} from 'react-redux';
 const BulbIcon = props => <Icon {...props} name="bulb-outline" />;
 const ArrorDownIcon = props => (
   <Icon {...props} name="arrowhead-down-outline" />
 );
-
+const url = "http://81.68.226.132:80/exercise/begin";
 const HistoryTrainCard = () => {
   return (
     <Card style={styles.historyTrainCard}>
@@ -31,21 +32,33 @@ const HistoryTrainCard = () => {
   );
 };
 
-export default function HomeSportTab({nav2exercising}) {
-  const toExercising = () => {
-    nav2exercising.navigate('Exercising');
+function HomeSportTab(props) {
+  let [loginProgress,setLoading] = useState(false);
+  const toExercising = async () => {
+    // props.nav2exercising.navigate('Exercising');
+    setLoading(true);
+    let res = await getData(url,props.login.token);
+    setLoading(false);
+    if(res["code"]===0) {
+      Alert.alert(res["message"]);
+    }
+    else {
+      Alert.alert('请求成功');
+    }
   };
   return (
     <Layout style={styles.tabContainer}>
       <TodayTrainPlanCard />
-      <ArrorDownIcon
+      {/* <ArrorDownIcon
         style={{width: 100, height: 50}}
         fill={theme['color-primary-600']}
-      />
+      /> */}
       <Layout style={styles.btnContainer}>
         <Button style={btnStyle.btn}>连接你的设备</Button>
         <Button style={btnStyle.btn} onPress={toExercising}>
-          开始运动
+          {loginProgress
+          ? <ActivityIndicator color="white"/>
+          : <Text>开始运动</Text>}
         </Button>
       </Layout>
       <HistoryTrainCard />
@@ -85,3 +98,11 @@ const btnStyle = StyleSheet.create({
     borderRadius: 30,
   },
 });
+
+const mapStateToProps = state =>{
+  return {
+      login:state.login,
+  };
+};
+
+export default connect(mapStateToProps)(HomeSportTab);
