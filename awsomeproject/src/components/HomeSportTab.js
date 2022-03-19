@@ -4,7 +4,8 @@ import {Layout, Card, Text, Button} from '@ui-kitten/components';
 import {Icon} from '@ui-kitten/components';
 import {default as theme} from '../custom-theme.json';
 import TodayTrainPlanCard from './TodayTrainPlanCard';
-
+import MyNativeModule from './KotlinCameraStream';
+import {getData} from './FetchData'
 const BulbIcon = props => <Icon {...props} name="bulb-outline" />;
 const ArrorDownIcon = props => (
   <Icon {...props} name="arrowhead-down-outline" />
@@ -32,8 +33,18 @@ const HistoryTrainCard = () => {
 };
 
 export default function HomeSportTab({nav2exercising}) {
-  const toExercising = () => {
-    nav2exercising.navigate('Exercising');
+  
+  const toExercising = async () => {
+    console.log('222222222222222222');
+    // props.nav2exercising.navigate('Exercising');
+    url="http://81.68.226.132:80/exercise/begin"
+    let res = await getData(url,props.login.token);
+    console.log("&&&&&&&&",res)
+    if(res["code"]===0) Alert.alert(res["message"]);
+    else {
+      //调用安卓原生界面
+      MyNativeModule.startcameraActivity(res)
+    }
   };
   return (
     <Layout style={styles.tabContainer}>

@@ -2,6 +2,7 @@
 
 buildscript {
     ext {
+        kotlin_version="1.5.21"
         buildToolsVersion = "30.0.2"
         minSdkVersion = 21
         compileSdkVersion = 30
@@ -11,9 +12,12 @@ buildscript {
     repositories {
         google()
         mavenCentral()
+        jcenter()
     }
     dependencies {
         classpath("com.android.tools.build:gradle:4.2.2")
+//        classpath('androidx.localbroadcastmanager：localbroadcastmanager：1.0.0')
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
     }
@@ -37,11 +41,15 @@ allprojects {
             }
         }
         google()
+        mavenCentral()
+        jcenter()
         maven { url 'https://www.jitpack.io' }
-        jcenter() {
-            content {
-                includeModule("com.yqritc", "android-scalablevideoview")
-            }
+        maven {
+            name 'ossrh-snapshot'
+            url 'https://oss.sonatype.org/content/repositories/snapshots'
         }
     }
+}
+task clean(type: Delete) {
+    delete rootProject.buildDir
 }

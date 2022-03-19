@@ -36,10 +36,17 @@ class ShowMovies extends React.Component{
 
 function handleClick(){
   let urlf = "http://81.68.226.132:80/exercise/begin"
-  let formData = new FormData();
-      formData.append("email", useremail);
-  let {id,url}=postData(urlf,formData);
-  theUrl=url;
+  toExercising = async () => {
+    // props.nav2exercising.navigate('Exercising');
+    let res = await getData(urlf,props.login.token);
+    if(res["code"]===0) Alert.alert(res["message"]);
+    else {
+      //调用安卓原生界面
+      MyNativeModule.startcameraActivity()
+    }
+  };
+
+  
 }
 
 
