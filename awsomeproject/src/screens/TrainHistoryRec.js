@@ -27,7 +27,7 @@ function TrainHistoryRec(props) {
   );
 
   const viewReport = () => {
-    navigation.navigate("ReportOverview");
+    props.navigation.navigate("ReportOverview");
   };
    //这里我直接先获取了今日时间用以设置日历时间的初值
   // 切换日期后重新设置theUrl更新数据
