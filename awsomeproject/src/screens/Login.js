@@ -1,7 +1,7 @@
 import React from 'react';
 import {Input, Button, Layout, Text, Modal, Card} from '@ui-kitten/components';
 import {View, Image, StyleSheet, Dimensions,ActivityIndicator} from 'react-native';
-import {SafeAreaView} from 'react-native-safe-area-context';
+import CookieManager from '@react-native-cookies/cookies';
 import {postData, getData} from '../components/FetchData';
 import { connect } from "react-redux";
 import * as actions from "./store/actions";
@@ -66,6 +66,14 @@ class Login extends React.Component {
     this.infos[0] =res["message"]
     theToken=res["token"];
     this.props.addToken(theToken);
+    CookieManager.set(url, {
+      name: 'myCookie',
+      value: theToken,
+      domain: '',
+      path: '/',
+      version: '1',
+      expires: ''
+    });
     if (correct==="1") {
       //成功登录跳转页面前，一次请求今日计划、所有计划、商城商品信息并加入全局state
       let resAll = await getData(urlAll,this.props.login.token);

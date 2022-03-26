@@ -1,5 +1,5 @@
 import React,{useState} from "react";
-import { StyleSheet, TouchableOpacity } from "react-native";
+import { StyleSheet, TouchableOpacity, Alert } from "react-native";
 import {
   Layout,
   List,
@@ -13,6 +13,8 @@ import {
   Input,
 } from "@ui-kitten/components";
 import { default as theme } from "../custom-theme.json";
+import CookieManager from '@react-native-cookies/cookies';
+import RNRestart from 'react-native-restart'; 
 
 const HomeIcon = (props) => (
   <Icon
@@ -110,6 +112,9 @@ export default class Mine extends React.Component {
       {
         title: "清空所有数据",
       },
+      {
+        title: "退出登录",
+      },
     ],
     visible: false,
     currentIndex: 0,
@@ -146,8 +151,13 @@ export default class Mine extends React.Component {
     });
     this.setState({msg:arr});
   }
+  clickBtnQuit = () =>{
+    CookieManager.clearAll().then((success) => {
+      if(success) RNRestart.Restart();
+    });
+  }
   renderItem = ({ item, index }) => {
-    if (index === this.state.msg.length - 2) {
+    if (index === this.state.msg.length - 3) {
       // 查看历史训练记录
       return (
         <ListItem
@@ -163,7 +173,7 @@ export default class Mine extends React.Component {
           onPress={this.navigateTrainHistoryRec}
         />
       );
-    } else if (index === this.state.msg.length - 1) {
+    } else if (index === this.state.msg.length - 2) {
       // 清空数据
       return (
         <ListItem
@@ -186,7 +196,31 @@ export default class Mine extends React.Component {
           )}
         />
       );
-    } else {
+    }else if (index === this.state.msg.length - 1) {
+      // 清空数据
+      return (
+        <ListItem
+          style={{ backgroundColor: "transparent" }}
+          title={(evaProps) => (
+            <TouchableOpacity onPress={this.clickBtnQuit}>
+              <Text
+              {...evaProps}
+              style={[
+                evaProps.style,
+                {
+                  color: theme["color-primary-500"],
+                  alignSelf: "flex-end",
+                },
+              ]}
+            >
+              {item.title}
+            </Text>
+            </TouchableOpacity>
+          )}
+        />
+      );
+    } 
+    else {
       return (
         <ListItem
           style={{height:65}}
