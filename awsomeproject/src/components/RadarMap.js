@@ -116,7 +116,7 @@ export default (props) => {
     .close();
 
   return (
-    <View style={{ flex: 1, marginVertical: 20 }}>
+    <View style={{ marginVertical: 20 }}>
       <Surface width={baseWid * Math.cos(angle1) * 2} height={baseWid * Math.cos(angle1) + baseWid}>
         <Group>
           <Shape d={leiDaTu_path} stroke="#FEBF5C" fill="#FEBF5C" strokeWidth={1} />

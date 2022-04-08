@@ -22,31 +22,21 @@ class WelcomePage extends Component {
             if(myCookie){
               this.props.addToken(myCookie.value);
               let resAll = await getData(urlAll,this.props.login.token);
+              // let resAll = await getData(urlAll,'1');
               let resToday = await getData(urlChoosen,this.props.login.token);
               let resShop= await getData(urlShop,this.props.login.token);
               let flagAll = true;
               let flagShop = true;
               let flagToday = true;
-              if(resAll["code"]!=="1") {
-                // this.infos[1] = resAll["message"];
+
+              if(resAll===403||resAll==='403'||resAll['code']!=='1') {
                 flagAll = false;
-                console.log(4444);
-                // this.setModalInfo(1);
-                // this.setModalVisible(true);
               } 
               if(resShop["code"]!=="1") {
-                // this.infos[2] = resShop["message"];
                 flagShop = false;
-                console.log(5555);
-                // this.setModalInfo(2);
-                // this.setModalVisible(true);
               } 
               if(resToday["code"]!==1) {
-                // this.infos[3] = resToday["message"];
                 flagToday = false;
-                console.log(6666);
-                // this.setModalInfo(3);
-                // this.setModalVisible(true);
               }
               if(flagAll&&flagShop&&flagToday){
                 this.props.addPlan(resAll["data"]);

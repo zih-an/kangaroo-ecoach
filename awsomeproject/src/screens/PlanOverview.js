@@ -1,5 +1,5 @@
 import React,{useState} from "react";
-import { StyleSheet } from "react-native";
+import { StyleSheet,ActivityIndicator } from "react-native";
 import {
   Layout,
   Text,
@@ -13,7 +13,7 @@ import { default as theme } from "../custom-theme.json";
 import TodayTrainPlanCard from "../components/TodayTrainPlanCard";
 import { connect } from "react-redux";
 import * as actions from "./store/actions";
-
+import {getData} from "../components/FetchData"
 const ModalContainer1 = (props) => {
   return (
     <Modal
@@ -24,7 +24,6 @@ const ModalContainer1 = (props) => {
     >
       <Card disabled={true}>
         <Text category="h6" style={{ margin: 20 }}>
-          计划为
           {props.code}
           {props.message}
         </Text>
@@ -56,16 +55,47 @@ const PlanScore = (props) => {
   );
 };
 
-function PlanOverview({ navigation }) {
-  const navigateAddItem = () => {
-    navigation.navigate("AddItem");
-  };
+function PlanOverview(props) {
   const [modalVisible1,setModalVisible1]=useState(false);
   const [theCode,setTheCode]=useState('0');
-  const generalPlan=()=>{
-    let correct = "1";
-    if(correct==="1"){
-      setTheCode("生成完毕，请查看计划");
+  const [generalProgress,setGeneral] =useState(false);
+  const [progress,setProgress] =useState(false);
+
+  const navigateAddItem = () => {
+    setProgress(true);
+    setTimeout(()=>{
+      props.navigation.navigate("AddItem");
+      setTimeout(() => {
+        setProgress(false);
+      }, 500);
+    },500)
+  };
+  const generalPlan= async ()=>{
+    setGeneral(true);
+    const urlUpdate ="http://81.68.226.132/plan/general";
+    const urlChoosen = "http://81.68.226.132:80/plan/index";
+    let res = await getData(urlUpdate,props.login.token);
+    if(res["code"]==="1"||res["code"]===1){
+      let resToday = await getData(urlChoosen,props.login.token);
+      if(resToday["code"]===1) {
+        setTimeout(()=>
+        {
+          props.addTodayDetail(resToday["data"]);
+          props.changeToday(resToday["data"].map(item => item.id));
+          setTheCode("生成完毕");
+          setGeneral(false);
+          setModalVisible1(true);
+        },1500)   
+      }
+      else{
+        setTheCode(resToday["message"]);
+        setGeneral(false);
+        setModalVisible1(true);
+      }
+    }
+    else{
+      setTheCode(res["message"]);
+      setGeneral(false);
       setModalVisible1(true);
     }
     
@@ -79,15 +109,19 @@ function PlanOverview({ navigation }) {
           size="small"
           status="primary"
           appearance="outline"
-          onPress={navigateAddItem}
+          onPress={()=>navigateAddItem()}
         >
-          修改计划
+          {progress?<ActivityIndicator color="orange"/>:<Text>修改计划</Text>}
         </Button>
       </Layout>
       <PlanScore />
       <Layout style={styles.btnContainer}>
         <Button style={btnStyle.btn}>评估身体</Button>
-        <Button style={btnStyle.btn} onPress={generalPlan}>生成科学计划</Button>
+        <Button style={btnStyle.btn} onPress={()=>generalPlan()}>
+        {generalProgress? 
+        <ActivityIndicator color="white"/>
+                    : <Text>生成科学计划</Text>}
+          </Button>
       </Layout>
       <ModalContainer1
         visible={modalVisible1}
@@ -153,7 +187,7 @@ const btnStyle = StyleSheet.create({
     borderRadius: 30,
   },
   btnAddItem: {
-    // width: "70%",
+    width: "25%",
     borderWidth: 0,
     // backgroundColor: theme["color-info-800"],
     margin: 5,
@@ -166,7 +200,8 @@ const btnStyle = StyleSheet.create({
 const mapStateToProps = (state) =>{
   return {
     plan:state.allPlans,
-    todayPlan:state.todayPlans
+    todayPlan:state.todayPlans,
+    login:state.login
   };
 }
 

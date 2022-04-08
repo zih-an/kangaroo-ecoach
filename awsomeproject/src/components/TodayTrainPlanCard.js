@@ -26,7 +26,7 @@ function TodayTrainPlanCard(props) {
       // 这里如果把renderItemIcon单独写的话参数传递会有问题，所以直接整合在属性accessoryLeft里面
       accessoryLeft={() => 
         <Image
-          style={{ width: 67,height: 67}}
+          style={{ width: 70,height: 70}}
           source={{uri: `${item.sketch_sv_path}`}}
           resizeMode='stretch'
           />}
@@ -47,7 +47,7 @@ function TodayTrainPlanCard(props) {
           今日训练计划
         </Text>
         <List
-          style={{ maxHeight: 240, marginTop: 8 }}
+          style={{ maxHeight: "100%", marginBottom: 8 }}
           data={props.todayPlanDetail}
           ItemSeparatorComponent={Divider}
           renderItem={renderItem}
@@ -63,14 +63,7 @@ const styles = StyleSheet.create({
   },
   dateStyle: {
     alignSelf: "center",
-  },
-  imgStyle: {
-    borderWidth: 1,
-    borderRadius: 20,
-    borderColor: "orange",
-    width: 67,
-    height: 67,
-    
+    marginBottom:10
   },
 });
 

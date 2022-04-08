@@ -1,11 +1,13 @@
 import React,{useState} from 'react';
-import {StyleSheet, View, Alert, ActivityIndicator} from 'react-native';
-import {Layout, Card, Text, Button} from '@ui-kitten/components';
+import {StyleSheet, View, Alert, ActivityIndicator, ScrollView} from 'react-native';
+import {Layout, Card, Text, Button,Modal} from '@ui-kitten/components';
 import {Icon} from '@ui-kitten/components';
 import {default as theme} from '../custom-theme.json';
 import TodayTrainPlanCard from './TodayTrainPlanCard';
 import {getData} from './FetchData';
 import {connect} from 'react-redux';
+import ScatterChartScreen from './ScatterChartScreen';
+
 const BulbIcon = props => <Icon {...props} name="bulb-outline" />;
 const ArrorDownIcon = props => (
   <Icon {...props} name="arrowhead-down-outline" />
@@ -32,8 +34,36 @@ const HistoryTrainCard = () => {
   );
 };
 
+const ModalContainer = props => {
+  return (
+    <Modal
+      style={styles.modalContainer}
+      visible={props.visible}
+      backdropStyle={styles.backdrop}
+      onBackdropPress={() => props.setVisible(false)}>
+      <Card disabled={true}>
+      <Button style={btnStyle.btnEx} onPress={() => {}}>
+       接口1
+      </Button>
+      <Button style={btnStyle.btnEx} onPress={() => {}}>
+       接口2
+      </Button>
+      <Button style={btnStyle.btnEx} onPress={() => {}}>
+       接口3
+      </Button>
+      <Button style={btnStyle.btnAc} onPress={() => props.setVisible(false)}>
+        确定
+      </Button>
+      </Card>
+    </Modal>
+  );
+};
+
+
 function HomeSportTab(props) {
   let [loginProgress,setLoading] = useState(false);
+  let [modalVisible,setModalVisible] = useState(false);
+
   const toExercising = async () => {
     // props.nav2exercising.navigate('Exercising');
     setLoading(true);
@@ -43,16 +73,13 @@ function HomeSportTab(props) {
       Alert.alert(res["message"]);
     }
     else {
-      Alert.alert('请求成功');
+      setModalVisible(true);
+      // Alert.alert('请求成功');
     }
   };
   return (
     <Layout style={styles.tabContainer}>
       <TodayTrainPlanCard />
-      {/* <ArrorDownIcon
-        style={{width: 100, height: 50}}
-        fill={theme['color-primary-600']}
-      /> */}
       <Layout style={styles.btnContainer}>
         <Button style={btnStyle.btn}>连接你的设备</Button>
         <Button style={btnStyle.btn} onPress={toExercising}>
@@ -62,6 +89,10 @@ function HomeSportTab(props) {
         </Button>
       </Layout>
       <HistoryTrainCard />
+      <ModalContainer
+            visible={modalVisible}
+            setVisible={setModalVisible}
+      />
     </Layout>
   );
 }
@@ -96,6 +127,27 @@ const btnStyle = StyleSheet.create({
     width: '80%',
     margin: 5,
     borderRadius: 30,
+  },
+  btnEx: {
+    width: '100%',
+    margin: 5,
+    borderRadius: 30,
+  },
+  btnAc: {
+    marginTop:"50%",
+    marginLeft:"25%",
+
+    width: '50%',
+    margin: 5,
+    borderRadius: 30,
+  },
+  modalContainer: {
+    position: 'absolute',
+    height:"80%",
+    width: '80%',
+  },
+  backdrop: {
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
   },
 });
 

@@ -13,7 +13,7 @@ const StarGroup = props => {
         return (
           <StarIcon
             key={index}
-            fill={index < props.rate ? theme['color-primary-500'] : 'gray'}
+            fill={index < props.rate ? theme['color-primary-500'] : 'lightgrey'}
           />
         );
       })}

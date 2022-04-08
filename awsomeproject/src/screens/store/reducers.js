@@ -47,6 +47,13 @@ function todayPlans (state=defaultTodayPlan,action){
     else if(action.type==='DELETE_TODAY'){
         return state.filter((plan)=>{return plan !== action.id});
     }
+    else if(action.type==='CHANGE_TODAY'){
+        let arr=action.content;
+        let newState = state.filter((plan)=>{return arr.includes(plan)});
+        arr=newState.concat(action.content);
+        let arrSort=arr.sort(function(a, b){return a - b});
+        return Array.from(new Set(arrSort));
+    }
     return state;
 }
 

@@ -1,5 +1,5 @@
 import React,{useState,useEffect} from 'react';
-import {ScrollView, Alert} from 'react-native';
+import {ScrollView, Alert,ActivityIndicator} from 'react-native';
 import {
   Divider,
   Icon,
@@ -18,23 +18,27 @@ const urlChoosen = "http://81.68.226.132:80/plan/index";
 const BackIcon = props => <Icon {...props} name="arrow-back" />;
 
 function AddItem(props) {
+  const [progress,setProgress] = useState(false);
   const navigateBack = async () => {
+    setProgress(true);
     //这里的回调函数修改了下，用于在修改计划后，跳转页面前，根据最终的今日计划id数组向服务器请求并更新今日计划
     let update = await postData(urlChange,{"id":props.todayPlan},props.login.token);
     let message = update["message"];
     if(update["code"]==="1"){
       let resToday = await getData(urlChoosen,props.login.token);
       props.addTodayDetail(resToday["data"]);
+      setProgress(false);
       props.navigation.goBack();
     }
     else {
+      setProgress(false);
       Alert.alert(message);
     }
   };
 
-  const BackAction = () => (
-    <TopNavigationAction icon={BackIcon} onPress={navigateBack} />
-  );
+  const BackAction = () => {
+    return (progress? <ActivityIndicator color="orange"/>:<TopNavigationAction icon={BackIcon} onPress={navigateBack} />);
+  }
 
   return (
     <ScrollView style={{maxHeight: '100%'}}>
