@@ -1,5 +1,5 @@
 import React,{useState} from "react";
-import { StyleSheet, TouchableOpacity, Alert } from "react-native";
+import { StyleSheet, TouchableOpacity, Alert,View } from "react-native";
 import {
   Layout,
   List,
@@ -12,6 +12,7 @@ import {
   Button,
   Input,
 } from "@ui-kitten/components";
+import Svg from "../components/Svg";
 import { default as theme } from "../custom-theme.json";
 import CookieManager from '@react-native-cookies/cookies';
 import RNRestart from 'react-native-restart'; 
@@ -102,12 +103,8 @@ export default class Mine extends React.Component {
         description: "鼠崽",
       },
       {
-        title: "身高",
-        description: "177cm",
-      },
-      {
-        title: "查看历史训练记录",
-        description: "运动情况",
+        title: "历史记录",
+        description: "",
       },
       {
         title: "清空所有数据",
@@ -162,12 +159,16 @@ export default class Mine extends React.Component {
       return (
         <ListItem
           title={(evaProps) => (
-            <Text
+            <View style={{flexDirection:"row",alignItems: 'center',justifyContent: 'flex-end',}}>
+              <Svg icon={item.title} size="15" color={theme["color-primary-500"]}/>
+              <Text
               {...evaProps}
-              style={[evaProps.style, { color: theme["color-primary-500"] }]}
+              style={[evaProps.style, { color: theme["color-primary-500"],
+              alignSelf: "flex-end", }]}
             >
               {item.title}
             </Text>
+            </View>
           )}
           description={item.description}
           onPress={this.navigateTrainHistoryRec}
@@ -223,10 +224,10 @@ export default class Mine extends React.Component {
     else {
       return (
         <ListItem
-          style={{height:65}}
+          style={{height:75}}
           title={item.title}
           description={item.description}
-          accessoryRight={<HomeIcon />}
+          accessoryLeft={<Svg icon={item.title} size="25" color={theme["color-primary-500"]} />}
           onPress={() => {this.setVisible(true);this.setCurrentIndex(index);this.setCurrentTitle(item.title)}}
         />
       );

@@ -5,6 +5,7 @@ export const ADD_TOKEN = 'ADD_TOKEN';//登录时加入token验证数据
 export const ADD_EMAIL = 'ADD_EMAIL';
 export const ADD_PWD = 'ADD_PWD';
 export const ADD_PLAN = 'ADD_PLAN';//加入所有计划
+export const ADD_PLAN_INDEX = 'ADD_PLAN_INDEX';//加入所有计划
 export const ADD_TODAY = 'ADD_TODAY';//加入今日计划id
 export const CHANGE_TODAY = 'CHANGE_TODAY';//加入今日计划id
 export const DELETE_TODAY = 'DELETE_TODAY';//删除今日计划id
@@ -31,7 +32,9 @@ export function addPwd(pwdText) {
 export function addPlan(plan){
     return { type: ADD_PLAN, content:plan}
 }
-
+export function addPlanIndex(plan){
+    return { type: ADD_PLAN_INDEX, content:plan}
+}
 export function addToday(plan){
     return { type: ADD_TODAY, content:plan}
 }

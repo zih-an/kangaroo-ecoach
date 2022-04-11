@@ -1,17 +1,17 @@
 import React from "react";
 import { ScrollView, View, StyleSheet,Dimensions} from "react-native";
 import { Layout, Text, ViewPager, Icon,IndexPath,Select,SelectItem,TopNavigationAction,  } from "@ui-kitten/components";
-import ScatterChartScreen from "./ScatterChartScreen";
-import PieChartScreen from "./PieChartScreen";
-import RadarChartScreen from "./RadarChartScreen";
-import LineChartScreen from "./LineChartScreen";
-import TimeSeriesLineChartScreen from "./TimeSeriesLineChartScreen"
-import Svg from "./Svg"
+import ScatterChartScreen from "../components/ScatterChartScreen";
+import PieChartScreen from "../components/PieChartScreen";
+import RadarChartScreen from "../components/RadarChartScreen";
+import LineChartScreen from "../components/LineChartScreen";
+import TimeSeriesLineChartScreen from "../components/TimeSeriesLineChartScreen"
+import Svg from "../components/Svg"
 
 import dataSets from "../assets/dataSets"
 import newest from "../assets/newest"
 import { connect } from "react-redux";
-import * as actions from "../screens/store/actions";
+import * as actions from "./store/actions";
 
 
 let dataAll = newest["data"];
@@ -25,7 +25,7 @@ let DTWdata = SplitData.map((item,index)=>{return item["DTW"]});
 
 const BackIcon = props => <Icon {...props} name="arrow-back" />;
 
-function HLMomentTab(props) {
+function SportOverview(props) {
   const [selectedIndex, setSelectedIndex] = React.useState(new IndexPath(0));
   const [loaded,setLoaded] = React.useState(false);
   const typesName = props.plansIndex.filter((item,index)=>typesId.includes(index+1));
@@ -89,7 +89,6 @@ function HLMomentTab(props) {
           {typesName.map((item,index)=><SelectItem key={index} title={item}/>)}
       </Select>
     </Layout>
-     
       {typesId.map((item,index)=>
         {
           let averageScore = calculateAver(ScatterData[index]);
@@ -105,6 +104,22 @@ function HLMomentTab(props) {
               contentContainerStyle={styles.scrollContent}
               onMomentumScrollEnd = {(e)=>_contentViewScroll(e)}
               >
+              <View style={styles.card}>
+                <View style={styles.sportTime}>
+                        <View style={styles.timeView}>
+                            <Text style={styles.time}>09:13:35</Text>
+                            <Text style={styles.timeType}>开始时间</Text>
+                        </View>
+                        <View style={styles.timeView}>
+                            <Text style={styles.time}>00:22:03</Text>
+                            <Text style={styles.timeType}>用时</Text>
+                        </View>
+                        <View style={styles.timeView}>
+                            <Text style={styles.time}>167</Text>
+                            <Text style={styles.timeType}>千卡</Text>
+                        </View>
+                    </View>
+              </View>
               <View style={styles.card}>
                 <View style={styles.title}>
                   <Svg icon="雷达图" size="20"/>
@@ -155,7 +170,7 @@ function HLMomentTab(props) {
 }
 const styles = StyleSheet.create({
   tab: {
-    height: "93%",
+    height: "100%",
     alignItems: "center",
     justifyContent:'flex-start',
   },
@@ -198,6 +213,25 @@ const styles = StyleSheet.create({
     textAlignVertical: 'center',   
     color:"rgba(0, 0, 0, 0.8)"
   },
+  sportTime:{
+      width:"100%",
+      flexDirection:"row",
+      justifyContent:"center",
+      alignItems:"center",
+  },
+  timeView:{
+      width:"30%",
+      flexDirection:"column",
+      alignItems:"center"
+  },
+  time:{
+      color:"grey",
+      fontSize:15,
+  },
+  timeType:{
+      color:'black',
+      fontSize:12
+  },
   scrollContent: {
     width: "100%",
     justifyContent: "flex-start",
@@ -213,4 +247,4 @@ const mapStateToProps = state =>{
 
 };
 
-export default connect(mapStateToProps,actions)(HLMomentTab);
+export default connect(mapStateToProps,actions)(SportOverview);

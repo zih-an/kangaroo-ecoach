@@ -1,5 +1,5 @@
 import React,{useState} from "react";
-import { StyleSheet,ActivityIndicator } from "react-native";
+import { StyleSheet,ActivityIndicator,View,TouchableOpacity } from "react-native";
 import {
   Layout,
   Text,
@@ -13,7 +13,8 @@ import { default as theme } from "../custom-theme.json";
 import TodayTrainPlanCard from "../components/TodayTrainPlanCard";
 import { connect } from "react-redux";
 import * as actions from "./store/actions";
-import {getData} from "../components/FetchData"
+import {getData} from "../components/FetchData";
+import Svg from "../components/Svg";
 const ModalContainer1 = (props) => {
   return (
     <Modal
@@ -103,25 +104,32 @@ function PlanOverview(props) {
   return (
     <Layout style={styles.container}>
       <Layout style={styles.planContainer}>
-        <TodayTrainPlanCard />
-        <Button
-          style={btnStyle.btnAddItem}
-          size="small"
-          status="primary"
-          appearance="outline"
-          onPress={()=>navigateAddItem()}
-        >
-          {progress?<ActivityIndicator color="orange"/>:<Text>修改计划</Text>}
-        </Button>
+        <TodayTrainPlanCard height={220}/>
+        <TouchableOpacity onPress={()=>navigateAddItem()}  style={btnStyle.btnAddItem}>
+          {progress?<View style={{height:24}}>
+          <ActivityIndicator color={theme["color-primary-500"]}/>
+          </View>: <View style={{height:24}}>
+            <Svg icon="修改计划" size="24"/>
+          </View>}
+          <Text style={{color:"grey",fontSize:10}}>修改计划</Text>
+        </TouchableOpacity >
+
       </Layout>
       <PlanScore />
       <Layout style={styles.btnContainer}>
-        <Button style={btnStyle.btn}>评估身体</Button>
-        <Button style={btnStyle.btn} onPress={()=>generalPlan()}>
-        {generalProgress? 
-        <ActivityIndicator color="white"/>
-                    : <Text>生成科学计划</Text>}
-          </Button>
+        <TouchableOpacity style={styles.touchContainer}>
+          <Svg icon="评估身体" size="35" color={theme["color-primary-500"]}/>
+          <Text style={{color:"grey",fontSize:10}}>评估身体</Text>
+        </TouchableOpacity >
+
+        <TouchableOpacity onPress={()=>generalPlan()}  style={styles.touchContainer}>
+          {generalProgress
+          ? <View style={{width:35,height:35,alignItems:"center",justifyContent:"center"}}><ActivityIndicator color="orange"/></View>
+          : <Svg icon="生成计划" size="35" color={theme["color-primary-500"]}/>
+          }
+          <Text style={{color:"grey",fontSize:10}}>生成科学计划</Text>
+        </TouchableOpacity >
+
       </Layout>
       <ModalContainer1
         visible={modalVisible1}
@@ -140,6 +148,7 @@ const styles = StyleSheet.create({
     paddingTop: 10,
   },
   btnContainer: {
+    flexDirection:"row",
     width: "100%",
     alignItems: "center",
     justifyContent: "center",
@@ -151,6 +160,10 @@ const styles = StyleSheet.create({
   },
   backdrop: {
     backgroundColor: "rgba(0, 0, 0, 0.5)",
+  },
+  touchContainer:{
+    alignItems:"center",
+    width:"40%"
   },
 });
 
@@ -181,19 +194,13 @@ const scoreStyles = StyleSheet.create({
 });
 
 const btnStyle = StyleSheet.create({
-  btn: {
-    width: "80%",
-    margin: 5,
-    borderRadius: 30,
-  },
   btnAddItem: {
-    width: "25%",
-    borderWidth: 0,
-    // backgroundColor: theme["color-info-800"],
-    margin: 5,
+    height:16,
+    width: "15%",
+    marginTop: 5,
     marginRight: 20,
-    borderRadius: 30,
     alignSelf: "flex-end",
+    alignItems:"center"
   },
 });
 

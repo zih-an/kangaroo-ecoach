@@ -10,7 +10,7 @@ import {
 
 import {PieChart} from 'react-native-charts-wrapper';
 
-const completeness = [
+let completeness = [
     true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,
     true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,
     true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,
@@ -38,11 +38,12 @@ const completeness = [
 
 class PieChartScreen extends React.Component {
 
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
     let counts=[];
-    counts.push(3);
+    counts.push(2);
     let myCount = 1;
+    let completeness = this.props.completeness;
     for(let i = 1; i<completeness.length;i++){
         if(completeness[i]===completeness[i-1]){
             myCount++;
@@ -57,11 +58,19 @@ class PieChartScreen extends React.Component {
         }
     }
     let theValue = counts.map((item,index)=>{return {value:item};});
+    let begin = completeness[0];
     let theColor = counts.map((item,index)=>{
-                if(index===0) return processColor('darkgreen');
-                else if(index%2===1) return processColor('lightgreen');
-                // else return processColor('#F5FCFF')}
-                else return processColor('rgba(0, 0, 0, 0.05)')}
+                if(index===0) return processColor('green');
+                if(begin){
+                  if(index%2!==0) return processColor('#C0FF8C');
+                  // else return processColor('#F5FCFF')}
+                  else return processColor('rgba(0, 0, 0, 0.05)')}
+                else{
+                  if(index%2===0) return processColor('#C0FF8C');
+                  // else return processColor('#F5FCFF')}
+                  else return processColor('rgba(0, 0, 0, 0.05)')
+                }
+              }
               );
     this.state = {
       animation:{
@@ -109,24 +118,11 @@ class PieChartScreen extends React.Component {
     return (
       <View style={{width: "100%",height:200,margin:10}}>
         <View style={styles.container}>
-          {/* <View style={{
-            // backgroundColor:"rgba(178,178,178,0.5)",
-            height:300,width:300,
-            borderWidth: 0,borderRadius: 125,
-            position:'absolute',zIndex:99,
-            left:-13,top:-50,
-            }}>
-              <Image
-                style  = {{width:280,height:280}}
-                source = {require('../assets/圆环.png')} 
-                resizeMode = {"contain"}
-              />
-          </View> */}
           <PieChart
-            touchEnabled={false}
+            touchEnabled={true}
             style={styles.chart}
             logEnabled={false}
-            chartBackgroundColor={processColor('#F5FCFF')}
+            chartBackgroundColor={processColor('white')}
             chartDescription={this.state.description}
             data={this.state.data}
             legend={this.state.legend}
@@ -134,7 +130,7 @@ class PieChartScreen extends React.Component {
             animation={this.state.animation}
             // extraOffsets={{left: 5, top: 5, right: 5, bottom: 5}}
             drawEntryLabels={false}
-            rotationEnabled={false}
+            rotationEnabled={true}
             rotationAngle={-90}
             usePercentValues={true}
             // styledCenterText={{text:'Pie center text!', color: processColor('pink'), fontFamily: 'HelveticaNeue-Medium', size: 20}}
@@ -154,9 +150,10 @@ const styles = StyleSheet.create({
         width: "100%",
         backgroundColor: '#F5FCFF',
         alignItems: 'center',
+        overflow: 'hidden',
       },
       chart: {
-        width: 400,
+        width: "100%",
         height: 180,
         
       }

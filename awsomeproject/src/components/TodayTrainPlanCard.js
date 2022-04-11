@@ -42,7 +42,7 @@ function TodayTrainPlanCard(props) {
       <Text category="h5" style={styles.dateStyle}>
         {date}
       </Text>
-      <Card style={{height:250}}>
+      <Card style={{height:props.height}}>
         <Text category="s1" style={{ color: theme["color-primary-800"] }}>
           今日训练计划
         </Text>

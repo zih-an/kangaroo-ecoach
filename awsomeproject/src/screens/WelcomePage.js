@@ -20,7 +20,7 @@ class WelcomePage extends Component {
           .then( async (cookies) => {
             let myCookie = cookies["myCookie"];
             if(myCookie){
-              this.props.addToken(myCookie.value);
+              this.props.addToken(myCookie.value);console.log(myCookie.value);
               let resAll = await getData(urlAll,this.props.login.token);
               // let resAll = await getData(urlAll,'1');
               let resToday = await getData(urlChoosen,this.props.login.token);
@@ -40,6 +40,7 @@ class WelcomePage extends Component {
               }
               if(flagAll&&flagShop&&flagToday){
                 this.props.addPlan(resAll["data"]);
+                this.props.addPlanIndex(resAll["data"]);
                 this.props.addTodayDetail(resToday["data"]);
                 this.props.addToday(resToday["data"].map(item => item.id));
                 this.props.addShop(resShop["data"]);
@@ -47,6 +48,7 @@ class WelcomePage extends Component {
               } 
             }
             this.timer = setTimeout(() => {
+              // this.props.navigation.navigate('MainPage');
               if(this.state.cookieCurrent===true) {
                 this.props.navigation.navigate('MainPage');
               }
@@ -142,6 +144,7 @@ const mapStateToProps = state =>{
       login:state.login,
       todayPlan:state.todayPlans,
       plan:state.allPlans,
+      planIndex:state.allPlansIndex
   };
 
 };

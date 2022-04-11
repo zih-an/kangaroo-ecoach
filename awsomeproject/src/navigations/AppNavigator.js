@@ -15,6 +15,7 @@ import Shopping from '../screens/Shopping';
 import Mine from './Mine';
 import Login from '../screens/Login';
 import Register from "../screens/Register";
+import SportOverview from "../screens/SportOverview";
 
 const HomeIcon = props => <Icon {...props} name="home-outline" />;
 const PlanIcon = props => <Icon {...props} name="book-open-outline" />;
@@ -53,6 +54,7 @@ const AppStack = () => (
     <Stack.Screen name="Login" component={Login} />
     <Stack.Screen name="Register" component={Register} />
     <Stack.Screen name="MainPage" component={TabNavigator}></Stack.Screen>
+    <Stack.Screen name="SportOverviewPage" component={SportOverview}/>
   </Stack.Navigator>
 );
 

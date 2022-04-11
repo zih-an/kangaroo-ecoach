@@ -6,6 +6,7 @@ const defaultState={
     pwd:''
 };
 const defaultPlan=[];
+const defaultPlanIndex=[];
 const defaultTodayPlan=[];
 const defaultTodayPlanDetail=[];
 const defaultShop=[];
@@ -33,6 +34,13 @@ function allPlans (state=defaultPlan,action){
     //所有计划的state：含一次加入所有计划
     if(action.type==='ADD_PLAN'){
         return action.content
+    }
+    return state;
+}
+function allPlansIndex (state=defaultPlanIndex,action){
+    //所有计划的state：含一次加入所有计划
+    if(action.type==='ADD_PLAN_INDEX'){
+        return action.content.map((item,index)=>item.title)
     }
     return state;
 }
@@ -74,5 +82,5 @@ function  shop (state=defaultShop,action){
 }
 //组合所有reducer（state），外部通过theApp一次引用，只需在根目录App.js引入一次即可，其余使用state的组件
 //只需额外单独引入actions用于改变组件状态，并用connect(react-redux特性)函数来关联组件与state、action即可
-const theApp = combineReducers({login,allPlans,todayPlans,todayPlansDetail,shop});
+const theApp = combineReducers({login,allPlans,todayPlans,todayPlansDetail,shop,allPlansIndex});
 export default theApp;

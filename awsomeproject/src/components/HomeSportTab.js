@@ -1,12 +1,13 @@
 import React,{useState} from 'react';
-import {StyleSheet, View, Alert, ActivityIndicator, ScrollView} from 'react-native';
+import {StyleSheet, View, Alert, ActivityIndicator, ScrollView,TouchableOpacity} from 'react-native';
 import {Layout, Card, Text, Button,Modal} from '@ui-kitten/components';
 import {Icon} from '@ui-kitten/components';
 import {default as theme} from '../custom-theme.json';
 import TodayTrainPlanCard from './TodayTrainPlanCard';
 import {getData} from './FetchData';
 import {connect} from 'react-redux';
-import ScatterChartScreen from './ScatterChartScreen';
+import ActionSheetComp from "./ActionSheetComp"
+import Svg from './Svg';
 
 const BulbIcon = props => <Icon {...props} name="bulb-outline" />;
 const ArrorDownIcon = props => (
@@ -34,38 +35,30 @@ const HistoryTrainCard = () => {
   );
 };
 
-const ModalContainer = props => {
-  return (
-    <Modal
-      style={styles.modalContainer}
-      visible={props.visible}
-      backdropStyle={styles.backdrop}
-      onBackdropPress={() => props.setVisible(false)}>
-      <Card disabled={true}>
-      <Button style={btnStyle.btnEx} onPress={() => {}}>
-       接口1
-      </Button>
-      <Button style={btnStyle.btnEx} onPress={() => {}}>
-       接口2
-      </Button>
-      <Button style={btnStyle.btnEx} onPress={() => {}}>
-       接口3
-      </Button>
-      <Button style={btnStyle.btnAc} onPress={() => props.setVisible(false)}>
-        确定
-      </Button>
-      </Card>
-    </Modal>
-  );
-};
-
-
+const itemsForCnSe= [
+  {
+      title: '我是摄像头',
+  },
+  {
+      title: '我是电视',
+  },
+];
+const itemsForCnRe= [
+  {
+      title: '查找附近摄像头',
+  },
+  {
+      title: '查找附近电视',
+  },
+];
 function HomeSportTab(props) {
   let [loginProgress,setLoading] = useState(false);
-  let [modalVisible,setModalVisible] = useState(false);
+  let [modalVisibleCnRe,setModalViseibleCnRe] = useState(false);
+  let [modalVisibleCnSe,setModalViseibleCnSe] = useState(false);
+  let [deviceOpen,setDeviceOpen] = useState(false);
+  let [connect,setConnect] = useState(false);
 
   const toExercising = async () => {
-    // props.nav2exercising.navigate('Exercising');
     setLoading(true);
     let res = await getData(url,props.login.token);
     setLoading(false);
@@ -73,26 +66,54 @@ function HomeSportTab(props) {
       Alert.alert(res["message"]);
     }
     else {
-      setModalVisible(true);
-      // Alert.alert('请求成功');
+      Alert.alert("开始运动！");
+      props.nav2exercising.navigate("SportOverviewPage");
     }
+  };
+  const toConnectSend = () => {
+    // setConnect(false);
+    setModalViseibleCnSe(true);
+  };
+  const toConnectReceive = async () => {
+    setModalViseibleCnRe(true);
+    // else  Alert.alert("设备未开启！");
   };
   return (
     <Layout style={styles.tabContainer}>
-      <TodayTrainPlanCard />
+      <TodayTrainPlanCard height={350}/>
       <Layout style={styles.btnContainer}>
-        <Button style={btnStyle.btn}>连接你的设备</Button>
-        <Button style={btnStyle.btn} onPress={toExercising}>
+
+        <TouchableOpacity onPress={()=>toConnectSend()} style={styles.touchContainer}>
+          <Svg icon="开始监听" size="40" color={theme["color-primary-500"]}/>
+          {/* <Svg icon="开始监听" size="50"/> */}
+          <Text style={{color:"grey",fontSize:10}}>开启设备</Text>
+        </TouchableOpacity >
+
+        <TouchableOpacity onPress={()=>toExercising()}  style={styles.touchContainer}>
           {loginProgress
-          ? <ActivityIndicator color="white"/>
-          : <Text>开始运动</Text>}
-        </Button>
+          ? <View style={{width:110,height:100,alignItems:"center",justifyContent:"center"}}><ActivityIndicator color="orange"/></View>
+          : <Svg icon="开始" size="80" />}
+          <Text style={{color:"grey",fontSize:15}}>开始运动</Text>
+        </TouchableOpacity >
+
+        <TouchableOpacity onPress={()=>toConnectReceive()} style={styles.touchContainer}>
+          <Svg icon="搜索设备" size="40" color={theme["color-primary-500"]}/>
+          {/* <Svg icon="搜索设备" size="50"/> */}
+          <Text style={{color:"grey",fontSize:10}}>附近设备</Text>
+        </TouchableOpacity >
+        
       </Layout>
-      <HistoryTrainCard />
-      <ModalContainer
-            visible={modalVisible}
-            setVisible={setModalVisible}
-      />
+      {/* <HistoryTrainCard /> */}
+      <ActionSheetComp 
+        visible={modalVisibleCnRe} 
+        setVisible={setModalViseibleCnRe} 
+        items={itemsForCnRe} 
+        setStatus={setConnect} 
+        modalTitle="查找附近设备" 
+        token={props.login.token} 
+        nav={props.nav2exercising}/>
+      <ActionSheetComp visible={modalVisibleCnSe} setVisible={setModalViseibleCnSe} items={itemsForCnSe} setStatus={setDeviceOpen} modalTitle="设置设备" token={props.login.token}/>
+
     </Layout>
   );
 }
@@ -101,12 +122,14 @@ const styles = StyleSheet.create({
   tabContainer: {
     height: '93%',
     alignItems: 'center',
-    justifyContent: 'space-evenly',
+    justifyContent: 'flex-start',
   },
   btnContainer: {
+    marginTop:"10%",
     width: '100%',
+    flexDirection:"row",
     alignItems: 'center',
-    justifyContent: 'center',
+    justifyContent: 'space-evenly',
   },
   historyTrainCard: {
     width: '90%',
@@ -120,34 +143,9 @@ const styles = StyleSheet.create({
     justifyContent: 'space-evenly',
     marginTop: 8,
   },
-});
-
-const btnStyle = StyleSheet.create({
-  btn: {
-    width: '80%',
-    margin: 5,
-    borderRadius: 30,
-  },
-  btnEx: {
-    width: '100%',
-    margin: 5,
-    borderRadius: 30,
-  },
-  btnAc: {
-    marginTop:"50%",
-    marginLeft:"25%",
-
-    width: '50%',
-    margin: 5,
-    borderRadius: 30,
-  },
-  modalContainer: {
-    position: 'absolute',
-    height:"80%",
-    width: '80%',
-  },
-  backdrop: {
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  touchContainer:{
+    alignItems:"center",
+    width:"30%"
   },
 });
 
