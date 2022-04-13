@@ -8,9 +8,10 @@ import {
   Text,
   Icon,
   Modal,
-  Card,
   Button,
   Input,
+  TabBar,
+  Tab
 } from "@ui-kitten/components";
 import Svg from "../components/Svg";
 import { default as theme } from "../custom-theme.json";
@@ -18,6 +19,8 @@ import CookieManager from '@react-native-cookies/cookies';
 import RNRestart from 'react-native-restart'; 
 import LinearGradinet from 'react-native-linear-gradient';
 import { color } from "react-native-tcharts/theme/theme";
+import { Card } from "react-native-shadow-cards";
+
 
 const HomeIcon = (props) => (
   <Icon
@@ -105,20 +108,11 @@ export default class Mine extends React.Component {
         title: "级别",
         description: "鼠崽",
       },
-      {
-        title: "历史记录",
-        description: "",
-      },
-      {
-        title: "清空所有数据",
-      },
-      {
-        title: "退出登录",
-      },
     ],
     visible: false,
     currentIndex: 0,
     currentTitle:"身高",
+    selectedIndex: 0
   };
   setScroll = (value) =>{
     this.setState({enableScrollViewScroll:value});
@@ -145,7 +139,7 @@ export default class Mine extends React.Component {
   navigateTrainHistoryRec = () => {
     this.props.navigation.navigate("TrainHistoryRec");
   };
-  clickBtn = () =>{
+  clickBtnClear = () =>{
     let arr = this.state.msg.map((item,index)=>{
       return {
         title:item.title,
@@ -159,86 +153,30 @@ export default class Mine extends React.Component {
       if(success) RNRestart.Restart();
     });
   }
+  // state = { selectedIndex: 0 };
+  showTab = (index) => {
+    switch (index) {
+      case 0:
+        return <Card style={{margin:10,width:200}}><Text>1</Text></Card>;
+      case 1:
+        // return <PostTab navigation={this.props.navigation}/>;
+        return <Card style={{margin:10,width:200}}><Text>2</Text></Card>;
+      case 2:
+        // return <HLMomentTab navigation={this.props.navigation}/>;
+        return <Card style={{margin:10,width:200}}><Text>3</Text></Card>;
+    }
+  };
   renderItem = ({ item, index }) => {
-    if (index === this.state.msg.length - 3) {
-      // 查看历史训练记录
       return (
         <ListItem
-          title={(evaProps) => (
-            <View style={{flexDirection:"row",alignItems: 'center',justifyContent: 'flex-end',}}>
-              <Svg icon={item.title} size="15" color={theme["color-primary-500"]}/>
-              <Text
-              {...evaProps}
-              style={[evaProps.style, { color: theme["color-primary-500"],
-              alignSelf: "flex-end", }]}
-            >
-              {item.title}
-            </Text>
-            </View>
-          )}
-          description={item.description}
-          onPress={this.navigateTrainHistoryRec}
-        />
-      );
-    } else if (index === this.state.msg.length - 2) {
-      // 清空数据
-      return (
-        <ListItem
-          style={{ backgroundColor: "transparent" }}
-          title={(evaProps) => (
-            <TouchableOpacity onPress={this.clickBtn}>
-              <Text
-              {...evaProps}
-              style={[
-                evaProps.style,
-                {
-                  color: theme["color-primary-500"],
-                  alignSelf: "flex-end",
-                },
-              ]}
-            >
-              {item.title}
-            </Text>
-            </TouchableOpacity>
-          )}
-        />
-      );
-    }else if (index === this.state.msg.length - 1) {
-      // 清空数据
-      return (
-        <ListItem
-          style={{ backgroundColor: "transparent" }}
-          title={(evaProps) => (
-            <TouchableOpacity onPress={this.clickBtnQuit}>
-              <Text
-              {...evaProps}
-              style={[
-                evaProps.style,
-                {
-                  color: theme["color-primary-500"],
-                  alignSelf: "flex-end",
-                },
-              ]}
-            >
-              {item.title}
-            </Text>
-            </TouchableOpacity>
-          )}
-        />
-      );
-    } 
-    else {
-      return (
-        <ListItem
-          style={{height:75}}
+          style={{height:75,backgroundColor:"rgb(0,0,0,0)",marginTop:10}}
           title={item.title}
           description={item.description}
           accessoryLeft={<Svg icon={item.title} size="25" color={theme["color-primary-500"]} />}
           onPress={() => {this.setVisible(true);this.setCurrentIndex(index);this.setCurrentTitle(item.title)}}
         />
       );
-    }
-  };
+    };
 
   render() {
     return (
@@ -250,8 +188,8 @@ export default class Mine extends React.Component {
         <View style={{height:180,width:"100%", borderBottomRadius: 20,}}>
           <LinearGradinet
             start={{x: 0, y: 0}}
-            end={{x: 1, y: 0}}
-            colors={[theme["color-primary-500"], 'pink','white']}
+            end={{x: 1, y: 1}}
+            colors={['#FB8C6F' ,'#FF826C','pink','#F8D49B']}
             style={{width: "100%", height: "100%",borderRadius: 20}}
           >
             <View style={{flexDirection:"row"}}>
@@ -259,25 +197,72 @@ export default class Mine extends React.Component {
               </View>
               <View style={{height:80,width:200,backgroundColor: "white",borderRadius: 40,marginTop:20,marginLeft:20,
               justifyContent:"center",alignItems:"center"}}>
-                <Text>运动总时长</Text>
+                <Text style={{color:"pink"}}>运动总时长</Text>
               </View>
             </View>
             <View style={{flexDirection: 'row',alignItems: 'center',justifyContent:"space-between",marginTop:35}}>
               <View  style={{width:"30%",justifyContent: 'center',alignItems:"center",}}>
               <Svg icon="历史记录" size="15" color={theme["color-primary-100"]}/>
-              <Text style={{fontSize:12, color:"white"}}>历史记录</Text></View>
-              <View><Text style={{fontSize:12, color:"salmon"}}>清空所有数据</Text></View>
-              <View><Text style={{fontSize:12, color:"salmon"}}>退出登录</Text></View>
+              <Text style={{fontSize:12, color:"white"}} onPress={this.navigateTrainHistoryRec}>历史记录</Text></View>
+              <View
+                style={{width:"33%",paddingLeft:20}}
+              ><Text style={{fontSize:12, color:"salmon"}} onPress={this.clickBtnClear}>清空所有数据</Text></View>
+              <View
+                style={{width:"30%",paddingLeft:20}}
+              ><Text style={{fontSize:12, color:"salmon"}} onPress={this.clickBtnQuit}>退出登录</Text></View>
             </View>
           </LinearGradinet>
         </View>
-        <List
-          data={this.state.msg}
-          ItemSeparatorComponent={Divider}
-          renderItem={this.renderItem}
-          horizontal={true}
-          showsHorizontalScrollIndicator={false}
-        />
+        <Card style={{width:"100%",height:100,borderRadius:30,marginTop:30,justifyContent: 'center',alignItems: 'center',}}>
+          <View style={{alignItems: 'flex-start',
+          width:"100%",
+          paddingLeft:30,
+          paddingBottom:5,
+          borderBottomWidth:1,
+          borderColor:"#BDFCC9",
+          borderRadius: 50,}}>
+          <Text style={{fontSize:12,color:"gray",paddingTop:5,}}>身体数据</Text>
+          </View>
+          <List
+            style={{width:"95%" ,backgroundColor: "rgb(0,0,0,0)",marginTop: -10,}}
+            data={this.state.msg}
+            ItemSeparatorComponent={Divider}
+            renderItem={this.renderItem}
+            horizontal={true}
+            showsHorizontalScrollIndicator={false}
+          />
+        </Card>
+        <View style={{width:"100%",alignItems: 'flex-start',}}>
+          <View style={{width:"100%",alignItems: 'center',
+          justifyContent: 'center',marginTop:20,
+          borderRadius:40,borderBottomWidth:1,
+          borderColor:"salmon"}}>
+            <Text style={{color:"gray",fontSize:12}}>成就勋章</Text>
+          </View>
+          <View style={{marginTop:10,width:"95%",flexDirection:"row",alignItems: 'center',marginLeft:10}}>
+            <Svg icon="首次运动" size="45" color="salmon"/>
+            <Svg icon="首次运动" size="45"/>
+            <Svg icon="首次运动" size="45"/>
+            <Svg icon="首次运动" size="45"/>
+            <Svg icon="首次运动" size="45"/>
+            <Svg icon="首次运动" size="45"/>
+            <Svg icon="首次运动" size="45"/>
+          </View>
+        </View>
+        <View style={{ height: 300, width:"100%",marginTop:20,marginBottom:20,backgroundColor: "rgb(0,0,0,0)",}}>
+          <Layout style={{backgroundColor: "rgb(0,0,0,0)",}}>
+            <TabBar
+              selectedIndex={this.state.selectedIndex}
+              onSelect={(selectedIndex) => this.setState({ selectedIndex })}
+              style={{backgroundColor: "rgb(0,0,0,0)",}}
+            >
+              <Tab title="我的收藏" />
+              <Tab title="最近常练" />
+              <Tab title="身体评估" />
+            </TabBar>
+            {this.showTab(this.state.selectedIndex)}
+          </Layout>
+      </View>
         <ModalContainer
           visible={this.state.visible}
           setVisible={this.setVisible}
@@ -292,12 +277,13 @@ export default class Mine extends React.Component {
 const styles = StyleSheet.create({
   container: {
     height: "100%",
+    padding:10
   },
   scrollContainer: {
     flexGrow: 1,
     width: "100%",
-    maxHeight: "93%",
-    padding: 5,
+    maxHeight: "98%",
+    padding: 12,
   },
   scrollContent: {
     width: "100%",
