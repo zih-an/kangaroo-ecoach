@@ -1,11 +1,62 @@
 import React, {Component} from 'react';
 import {StyleSheet, Text, View, Image} from 'react-native';
-
-export default class WelcomePage extends Component {
+import CookieManager from '@react-native-cookies/cookies';
+import {postData, getData} from '../components/FetchData';
+import { connect } from "react-redux";
+import * as actions from "./store/actions";
+const urlAll =  "http://81.68.226.132:80/standardV/index";
+const urlChoosen = "http://81.68.226.132:80/plan/index";
+const urlShop="http://81.68.226.132:80/shop/";
+class WelcomePage extends Component {
+  state ={
+    cookieCurrent:false
+  }
+  setCookie(value){
+    this.setState({cookieCurrent:value});
+  }
   componentDidMount() {
-    this.timer = setTimeout(() => {
-      this.props.navigation.navigate('Login');
-    }, 2000);
+      let url = "http://81.68.226.132:80/account/login/";  
+      CookieManager.get(url)
+          .then( async (cookies) => {
+            let myCookie = cookies["myCookie"];
+            if(myCookie){
+              this.props.addToken(myCookie.value);console.log(myCookie.value);
+              let resAll = await getData(urlAll,this.props.login.token);
+              // let resAll = await getData(urlAll,'1');
+              let resToday = await getData(urlChoosen,this.props.login.token);
+              let resShop= await getData(urlShop,this.props.login.token);
+              let flagAll = true;
+              let flagShop = true;
+              let flagToday = true;
+
+              if(resAll===403||resAll==='403'||resAll['code']!=='1') {
+                flagAll = false;
+              } 
+              if(resShop["code"]!=="1") {
+                flagShop = false;
+              } 
+              if(resToday["code"]!==1) {
+                flagToday = false;
+              }
+              if(flagAll&&flagShop&&flagToday){
+                this.props.addPlan(resAll["data"]);
+                this.props.addPlanIndex(resAll["data"]);
+                this.props.addTodayDetail(resToday["data"]);
+                this.props.addToday(resToday["data"].map(item => item.id));
+                this.props.addShop(resShop["data"]);
+                this.setCookie(true);
+              } 
+            }
+            this.timer = setTimeout(() => {
+              this.props.navigation.navigate('MainPage');
+              // if(this.state.cookieCurrent===true) {
+              //   this.props.navigation.navigate('MainPage');
+              // }
+              // else{
+              //   this.props.navigation.navigate('Login');
+              // }
+            }, 2000);
+          });
   }
   componentWillUnMount() {
     this.timer !== undefined ? this.clearTimeout(this.timer) : null;
@@ -88,3 +139,14 @@ const styles = StyleSheet.create({
     fontSize: 24,
   },
 });
+const mapStateToProps = state =>{
+  return {
+      login:state.login,
+      todayPlan:state.todayPlans,
+      plan:state.allPlans,
+      planIndex:state.allPlansIndex
+  };
+
+};
+
+export default connect(mapStateToProps,actions)(WelcomePage);

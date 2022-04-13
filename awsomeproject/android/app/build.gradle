@@ -191,12 +191,17 @@ android {
 }
 
 dependencies {
+    implementation 'com.facebook.fresco:animated-gif:2.5.0'
     implementation fileTree(dir: "libs", include: ["*.jar"])
     //noinspection GradleDynamicVersion
     implementation "com.facebook.react:react-native:+"  // From node_modules
+<<<<<<< HEAD
 
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     implementation "org.jetbrains.kotlin:kotlin-stdlib"
+=======
+    implementation project(':react-native-charts-wrapper')
+>>>>>>> e1659bd0225714c29016e1a79c96ed5705f6cc71
     implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.0.0"
 
     implementation 'androidx.core:core-ktx:1.5.0'

@@ -41,13 +41,21 @@ allprojects {
             }
         }
         google()
+<<<<<<< HEAD
         mavenCentral()
         jcenter()
         maven { url 'https://www.jitpack.io' }
         maven {
             name 'ossrh-snapshot'
             url 'https://oss.sonatype.org/content/repositories/snapshots'
+=======
+        jcenter() {
+            content {
+                includeModule("com.yqritc", "android-scalablevideoview")
+            }
+>>>>>>> e1659bd0225714c29016e1a79c96ed5705f6cc71
         }
+        maven { url 'https://www.jitpack.io' }
     }
 }
 task clean(type: Delete) {

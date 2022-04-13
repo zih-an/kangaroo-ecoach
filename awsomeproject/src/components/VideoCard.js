@@ -1,6 +1,6 @@
 import React,{useState} from 'react';
 import {StyleSheet, View , Image , TouchableOpacity ,ScrollView,Modal} from 'react-native';
-import {Layout, Text, CheckBox,Button} from '@ui-kitten/components';
+import {Layout, Text, CheckBox,Button,TopNavigationAction,Icon} from '@ui-kitten/components';
 import {default as theme} from '../custom-theme.json';
 import Video from 'react-native-video';
 import StarGroup from "./StarGroup";
@@ -9,7 +9,15 @@ import { connect } from "react-redux";
 
 const url = "http://81.68.226.132:80/";
 
+const BackIcon = props => <Icon {...props} name="arrow-back" />;
+
+
 const ModalContainerForVd = (props) => {
+  const navigateBack = () => {props.setVisible(false)};
+
+  const BackAction = () => (
+    <TopNavigationAction icon={BackIcon} onPress={navigateBack} />
+  );
   return (
     <Modal
       style={styles.modalContainer}
@@ -20,33 +28,25 @@ const ModalContainerForVd = (props) => {
       // transparent={true}
     >
       <View>
+      <View style={{height:"5%",width:"80%",alignItems:"center",marginTop:20,flexDirection:"row",justifyContent:"flex-start"}}>
+          <BackAction/>
+          <View style={{justifyContent:"center",alignItems:"center",width:"95%"}}>
+            <Text style={{fontSize:17,color:'#454545'}}>{props.name}</Text>
+          </View>
+      </View>
         <Video
-              // source={{ uri:"http://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4", type: 'mpd' }} 
               source={{uri: props.uri}}//设置视频源  
-              // source={require('../assets/videos/手臂/跪姿释手俯卧撑.mp4')}
-              style={{marginRight: 30 ,marginLeft: 30,height:"55%", width:"80%"}}//组件样式
-              // rate={1}//播放速率
-              // paused={true}//暂停
-              // volume={1}//调节音量
-              // muted={false}//控制音频是否静音
+              style={{marginRight: 5 ,marginLeft: 5,height:"60%", width:"97%",marginBottom:0}}//组件样式
               resizeMode='contain'//缩放模式
-              // onLoad={this.onLoad}//加载媒体并准备播放时调用的回调函数。
-              // onProgress={this.onProgress}//视频播放过程中每个间隔进度单位调用的回调函数
-              // onEnd={this.onEnd}//视频播放结束时的回调函数
-              // onAudioBecomingNoisy={this.onAudioBecomingNoisy}//音频变得嘈杂时的回调 - 应暂停视频
-              // onAudioFocusChanged={this.onAudioFocusChanged}//音频焦点丢失时的回调 - 如果焦点丢失则暂停
               repeat={true}//确定在到达结尾时是否重复播放视频。
         />
-        <ScrollView style={{ marginRight: 30 ,marginLeft: 30 ,height:"30%"}}>
-          <Text style={{fontSize:14,color:'gray'}} >
+        {/* <Text style={{fontSize:20,color:'#454545',marginLeft:30,marginBottom:5}}>{props.name}</Text> */}
+        <ScrollView style={{ marginRight: 30 ,marginLeft: 30 ,height:"30%",borderTopWidth:1,borderTopColor:"lightgrey",paddingTop:10}}>
+          <Text>步骤</Text>
+          <Text style={{fontSize:12,color:'gray',marginLeft:10,fontFamily: 'PingFang SC',lineHeight: 20}} >
             {props.modalInfo}
           </Text>
         </ScrollView>
-        <View style={{height:"10%",width:"30%",alignItems:"center",marginLeft:125,marginTop:10}}>
-            <Button size="medium" onPress={() => props.setVisible(false)}>
-             确定
-            </Button>
-        </View>
       </View>
     </Modal>
   );
@@ -102,6 +102,7 @@ function VideoCard(props) {
             setVisible={setModalVisibleFV}
             modalInfo={props.introduction}
             uri={url+props.sv_path}
+            name={props.title}
       />
     </Layout>
   );
@@ -126,7 +127,7 @@ const styles = StyleSheet.create({
     marginLeft:10,
     marginRight:0,
     borderTopWidth:1,
-    borderColor:"#40808080"
+    borderColor:"#dfdfe4"
     
   },
   footerContainer: {
@@ -134,11 +135,11 @@ const styles = StyleSheet.create({
     alignItems:"flex-end",
     marginBottom:10,
     borderTopWidth:1,
-    borderColor:"#40808080",
+    borderColor:"#dfdfe4",
   },
   font:{
     marginTop:20,
-    color:'#FF7700',
+    color:'#454545',
     fontSize:12,
     marginBottom:10
     },

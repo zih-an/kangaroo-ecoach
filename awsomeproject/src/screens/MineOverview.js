@@ -1,5 +1,5 @@
 import React,{useState} from "react";
-import { StyleSheet, TouchableOpacity } from "react-native";
+import { StyleSheet, TouchableOpacity, Alert,View,ScrollView } from "react-native";
 import {
   Layout,
   List,
@@ -12,7 +12,12 @@ import {
   Button,
   Input,
 } from "@ui-kitten/components";
+import Svg from "../components/Svg";
 import { default as theme } from "../custom-theme.json";
+import CookieManager from '@react-native-cookies/cookies';
+import RNRestart from 'react-native-restart'; 
+import LinearGradinet from 'react-native-linear-gradient';
+import { color } from "react-native-tcharts/theme/theme";
 
 const HomeIcon = (props) => (
   <Icon
@@ -78,6 +83,7 @@ const ModalContainer = (props) => {
 
 export default class Mine extends React.Component {
   state = {
+    enableScrollViewScroll: true,
     msg: [
       {
         title: "生日",
@@ -100,21 +106,23 @@ export default class Mine extends React.Component {
         description: "鼠崽",
       },
       {
-        title: "身高",
-        description: "177cm",
-      },
-      {
-        title: "查看历史训练记录",
-        description: "运动情况",
+        title: "历史记录",
+        description: "",
       },
       {
         title: "清空所有数据",
+      },
+      {
+        title: "退出登录",
       },
     ],
     visible: false,
     currentIndex: 0,
     currentTitle:"身高",
   };
+  setScroll = (value) =>{
+    this.setState({enableScrollViewScroll:value});
+  }
   setVisible = (shown) => {
     this.setState({ visible: shown });
   };
@@ -146,24 +154,33 @@ export default class Mine extends React.Component {
     });
     this.setState({msg:arr});
   }
+  clickBtnQuit = () =>{
+    CookieManager.clearAll().then((success) => {
+      if(success) RNRestart.Restart();
+    });
+  }
   renderItem = ({ item, index }) => {
-    if (index === this.state.msg.length - 2) {
+    if (index === this.state.msg.length - 3) {
       // 查看历史训练记录
       return (
         <ListItem
           title={(evaProps) => (
-            <Text
+            <View style={{flexDirection:"row",alignItems: 'center',justifyContent: 'flex-end',}}>
+              <Svg icon={item.title} size="15" color={theme["color-primary-500"]}/>
+              <Text
               {...evaProps}
-              style={[evaProps.style, { color: theme["color-primary-500"] }]}
+              style={[evaProps.style, { color: theme["color-primary-500"],
+              alignSelf: "flex-end", }]}
             >
               {item.title}
             </Text>
+            </View>
           )}
           description={item.description}
           onPress={this.navigateTrainHistoryRec}
         />
       );
-    } else if (index === this.state.msg.length - 1) {
+    } else if (index === this.state.msg.length - 2) {
       // 清空数据
       return (
         <ListItem
@@ -186,13 +203,37 @@ export default class Mine extends React.Component {
           )}
         />
       );
-    } else {
+    }else if (index === this.state.msg.length - 1) {
+      // 清空数据
       return (
         <ListItem
-          style={{height:65}}
+          style={{ backgroundColor: "transparent" }}
+          title={(evaProps) => (
+            <TouchableOpacity onPress={this.clickBtnQuit}>
+              <Text
+              {...evaProps}
+              style={[
+                evaProps.style,
+                {
+                  color: theme["color-primary-500"],
+                  alignSelf: "flex-end",
+                },
+              ]}
+            >
+              {item.title}
+            </Text>
+            </TouchableOpacity>
+          )}
+        />
+      );
+    } 
+    else {
+      return (
+        <ListItem
+          style={{height:75}}
           title={item.title}
           description={item.description}
-          accessoryRight={<HomeIcon />}
+          accessoryLeft={<Svg icon={item.title} size="25" color={theme["color-primary-500"]} />}
           onPress={() => {this.setVisible(true);this.setCurrentIndex(index);this.setCurrentTitle(item.title)}}
         />
       );
@@ -201,11 +242,41 @@ export default class Mine extends React.Component {
 
   render() {
     return (
-      <Layout style={styles.container}>
+      <ScrollView 
+        style={styles.scrollContainer} 
+        contentContainerStyle={styles.scrollContent}
+        scrollEnabled={this.state.enableScrollViewScroll}
+      >
+        <View style={{height:180,width:"100%", borderBottomRadius: 20,}}>
+          <LinearGradinet
+            start={{x: 0, y: 0}}
+            end={{x: 1, y: 0}}
+            colors={[theme["color-primary-500"], 'pink','white']}
+            style={{width: "100%", height: "100%",borderRadius: 20}}
+          >
+            <View style={{flexDirection:"row"}}>
+              <View style={{height:80,width:80,backgroundColor: "white",borderRadius: 40,marginTop:20,marginLeft:20}}>
+              </View>
+              <View style={{height:80,width:200,backgroundColor: "white",borderRadius: 40,marginTop:20,marginLeft:20,
+              justifyContent:"center",alignItems:"center"}}>
+                <Text>运动总时长</Text>
+              </View>
+            </View>
+            <View style={{flexDirection: 'row',alignItems: 'center',justifyContent:"space-between",marginTop:35}}>
+              <View  style={{width:"30%",justifyContent: 'center',alignItems:"center",}}>
+              <Svg icon="历史记录" size="15" color={theme["color-primary-100"]}/>
+              <Text style={{fontSize:12, color:"white"}}>历史记录</Text></View>
+              <View><Text style={{fontSize:12, color:"salmon"}}>清空所有数据</Text></View>
+              <View><Text style={{fontSize:12, color:"salmon"}}>退出登录</Text></View>
+            </View>
+          </LinearGradinet>
+        </View>
         <List
           data={this.state.msg}
           ItemSeparatorComponent={Divider}
           renderItem={this.renderItem}
+          horizontal={true}
+          showsHorizontalScrollIndicator={false}
         />
         <ModalContainer
           visible={this.state.visible}
@@ -214,13 +285,24 @@ export default class Mine extends React.Component {
           setMessage={this.setMessage}
           title={this.state.currentTitle}
         />
-      </Layout>
+      </ScrollView>
     );
   }
 }
 const styles = StyleSheet.create({
   container: {
     height: "100%",
+  },
+  scrollContainer: {
+    flexGrow: 1,
+    width: "100%",
+    maxHeight: "93%",
+    padding: 5,
+  },
+  scrollContent: {
+    width: "100%",
+    justifyContent: "flex-start",
+    alignItems: "center",
   },
   modalContainer: {
     position: "absolute",

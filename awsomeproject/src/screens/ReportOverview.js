@@ -5,15 +5,18 @@ import PostTab from "../components/PostTab";
 import HLMomentTab from "../components/HLMomentTab";
 
 export default class ReportOverview extends React.Component {
+  constructor(props){
+    super(props);
+  }
   state = { selectedIndex: 0 };
   showTab = (index) => {
     switch (index) {
       case 0:
-        return <AnalysisTab />;
+        return <AnalysisTab navigation={this.props.navigation}/>;
       case 1:
-        return <PostTab />;
+        return <PostTab navigation={this.props.navigation}/>;
       case 2:
-        return <HLMomentTab />;
+        return <HLMomentTab navigation={this.props.navigation}/>;
     }
   };
   render() {

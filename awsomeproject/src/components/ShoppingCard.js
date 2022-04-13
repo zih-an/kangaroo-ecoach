@@ -1,7 +1,7 @@
 import React from "react";
-import { StyleSheet, Image, ScrollView, Linking } from "react-native";
-import { Layout, Card, Text, Button } from "@ui-kitten/components";
-import { default as theme } from "../custom-theme.json";
+import { StyleSheet, Image, ScrollView, Linking,View } from "react-native";
+import { Layout, Text, Button } from "@ui-kitten/components";
+
 
 export default function ShoppingCard(props) {
   const open=()=>{
@@ -13,11 +13,18 @@ export default function ShoppingCard(props) {
           style={styles.imgStyle}
           source={{uri: props.imageUrl}}
         />
-      <Text category="h5">{props.name}</Text>
-      <Text style={{fontSize:15}}>{props.price}</Text>
-      <Button style={styles.btnStyle} appearance="outline" onPress={open}>
-        购买
-      </Button>
+      <Text category="h5" style={{color:"#444444"}}>{props.name}</Text>
+      <View style={{flexDirection:"row",alignItems:"center",justifyContent:"center"}}>
+        <View style={{width:80,alignItems:"center",justifyContent:"center"}}><Text style={{fontSize:15}}>￥{props.price}</Text></View>
+        <Button style={styles.btnStyle} appearance="outline" onPress={open}>
+          购买
+        </Button>
+      </View>
+      <View style={{width:"100%",alignItems:"flex-start",marginLeft:40,borderBottomWidth:1,borderBottomColor:"lightgrey"}}>
+        <Text style={styles.paraStyle}>
+            商品信息
+          </Text>
+      </View>
       <ScrollView style={styles.paraCardStyle}>
         <Text style={styles.paraStyle}>
           {props.data}
@@ -42,18 +49,21 @@ const styles = StyleSheet.create({
     height: 150
   },
   paraStyle: {
-    padding: 10,
-    fontSize:14
+    fontSize:12,
+    color:'#666666',
+    marginLeft:10,
+    fontFamily: 'PingFang SC',
+    lineHeight: 25
   },
   btnStyle: {
-    width: "40%",
+    width: "21%",
     backgroundColor: "transparent", 
-    margin: 10,
+    marginTop: 10,
   },
   imgStyle: {
     borderWidth: 2,
     borderRadius: 20,
-    borderColor: "orange",
+    borderColor: "#fca766",
     width: "80%",
     height: 200,
     
