@@ -24,7 +24,6 @@ data class Person(
     val keyPoints: List<KeyPoint>,
     val boundingBox: RectF? = null, // Only MoveNet MultiPose return bounding box.
     var score: Float
-
 ) {
     fun isTrust(): Boolean {
         var totalScore=0.0
@@ -33,5 +32,14 @@ data class Person(
             totalScore+=keyPoints.get(i).score
         }
         return totalScore> CameraSource.MIN_CONFIDENCE*keyPoints.count()
+    }
+    fun isTrustMoreSerious(): Boolean {
+        for (i in 0..keyPoints.count()-1)
+        {
+            if(keyPoints.get(i).score<CameraSource.MIN_CONFIDENCE)
+                return false
+
+        }
+        return true
     }
 }

@@ -42,12 +42,12 @@ function TodayTrainPlanCard(props) {
       <Text category="h5" style={styles.dateStyle}>
         {date}
       </Text>
-      <Card>
+      <Card style={{height:250}}>
         <Text category="s1" style={{ color: theme["color-primary-800"] }}>
           今日训练计划
         </Text>
         <List
-          style={{ maxHeight: 110, marginTop: 8 }}
+          style={{ maxHeight: 240, marginTop: 8 }}
           data={props.todayPlanDetail}
           ItemSeparatorComponent={Divider}
           renderItem={renderItem}

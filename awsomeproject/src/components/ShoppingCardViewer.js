@@ -52,6 +52,7 @@ class ShoppingCardViewer extends React.Component {
           name={myData.name}
           price={myData.price}
           data={myData.introduction}
+          purchase={myData.commodity_path}
           /> 
         })}
       </ViewPager>

@@ -1,9 +1,12 @@
 import React from "react";
-import { StyleSheet, Image, ScrollView } from "react-native";
+import { StyleSheet, Image, ScrollView, Linking } from "react-native";
 import { Layout, Card, Text, Button } from "@ui-kitten/components";
 import { default as theme } from "../custom-theme.json";
 
 export default function ShoppingCard(props) {
+  const open=()=>{
+    Linking.openURL(props.purchase) 
+	}
   return (
     <Layout style={styles.cardContainer}>
       <Image
@@ -11,12 +14,12 @@ export default function ShoppingCard(props) {
           source={{uri: props.imageUrl}}
         />
       <Text category="h5">{props.name}</Text>
-      <Text category="h6">{props.price}</Text>
-      <Button style={styles.btnStyle} appearance="outline">
+      <Text style={{fontSize:15}}>{props.price}</Text>
+      <Button style={styles.btnStyle} appearance="outline" onPress={open}>
         购买
       </Button>
       <ScrollView style={styles.paraCardStyle}>
-        <Text category="p1" style={styles.paraStyle}>
+        <Text style={styles.paraStyle}>
           {props.data}
         </Text>
       </ScrollView>
@@ -39,17 +42,18 @@ const styles = StyleSheet.create({
     height: 150
   },
   paraStyle: {
-    padding: 5,
+    padding: 10,
+    fontSize:14
   },
   btnStyle: {
-    width: "50%",
+    width: "40%",
     backgroundColor: "transparent", 
     margin: 10,
   },
   imgStyle: {
-    borderWidth: 1,
+    borderWidth: 2,
     borderRadius: 20,
-    borderColor: "black",
+    borderColor: "orange",
     width: "80%",
     height: 200,
     

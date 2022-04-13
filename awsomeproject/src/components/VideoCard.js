@@ -16,6 +16,8 @@ const ModalContainerForVd = (props) => {
       visible={props.visible}
       backdropStyle={styles.backdrop}
       onBackdropPress={() => props.setVisible(false)}
+      animationType='slide'
+      // transparent={true}
     >
       <View>
         <Video
@@ -35,12 +37,12 @@ const ModalContainerForVd = (props) => {
               // onAudioFocusChanged={this.onAudioFocusChanged}//音频焦点丢失时的回调 - 如果焦点丢失则暂停
               repeat={true}//确定在到达结尾时是否重复播放视频。
         />
-        <ScrollView style={{ marginRight: 20 ,marginLeft: 20 ,height:"30%"}}>
-          <Text category="h6" >
+        <ScrollView style={{ marginRight: 30 ,marginLeft: 30 ,height:"30%"}}>
+          <Text style={{fontSize:14,color:'gray'}} >
             {props.modalInfo}
           </Text>
         </ScrollView>
-        <View style={{height:"10%",width:"30%",alignItems:"center",marginLeft:125,marginTop:15}}>
+        <View style={{height:"10%",width:"30%",alignItems:"center",marginLeft:125,marginTop:10}}>
             <Button size="medium" onPress={() => props.setVisible(false)}>
              确定
             </Button>
@@ -85,8 +87,8 @@ function VideoCard(props) {
           resizeMode='stretch'
           />
         </TouchableOpacity >
-        <View style={{justifyContent:"flex-start",marginLeft:0}}>
-          <Text category="h6" style={styles.font}>{props.title}</Text>
+        <View style={{justifyContent:"flex-start",marginLeft:10}}>
+          <Text style={styles.font}>{props.title}</Text>
           <StarGroup rate={props.A_intensity} />
         </View>
       </View>
@@ -110,7 +112,9 @@ function VideoCard(props) {
 const styles = StyleSheet.create({
   modalContainer: {
     position: "absolute",
-    width: "80%",
+    // height:"60%",
+    width: "60%",
+    top:30
   },
   backdrop: {
     backgroundColor: "rgba(0, 0, 0, 0.5)",
@@ -119,24 +123,24 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     width:"74%",
     marginBottom:10,
-    marginLeft:5,
+    marginLeft:10,
     marginRight:0,
     borderTopWidth:1,
-    borderColor:"gray"
+    borderColor:"#40808080"
     
   },
   footerContainer: {
     flexDirection: "column",
     alignItems:"flex-end",
     marginBottom:10,
-    marginLeft:0,
     borderTopWidth:1,
-    borderColor:"gray",
+    borderColor:"#40808080",
   },
   font:{
-    marginTop:10,
+    marginTop:20,
     color:'#FF7700',
-    fontSize:15,
+    fontSize:12,
+    marginBottom:10
     },
   fontHidden:{
     marginTop:10,

@@ -1,5 +1,4 @@
 <resources>
-    <string name="app_name">awsomeproject</string>
     <string name="tfe_pe_app_name">TFL Pose Estimation</string>
     <string name="tfe_pe_request_permission">This app needs camera permission.</string>
     <string name="tfe_pe_tv_score">Score: %.2f</string>
@@ -29,5 +28,10 @@
         <item>BoundingBox</item>
         <item>Keypoint</item>
     </string-array>
-</resources>
 
+    <string name="app_name">MediaProjectionDemo</string>
+    <string name="action_settings">Settings</string>
+    <string name="start_recording">Start Recording</string>
+    <string name="stop_recording">Stop Recording</string>
+    <string name="recording">Recording</string>
+</resources>

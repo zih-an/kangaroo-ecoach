@@ -26,6 +26,7 @@ import android.graphics.Matrix
 import android.graphics.Rect
 import android.hardware.camera2.*
 import android.media.ImageReader
+import android.media.MediaPlayer
 import android.os.Handler
 import android.os.HandlerThread
 import android.util.Log
@@ -36,26 +37,29 @@ import android.widget.Toast
 import kotlin.coroutines.resume
 import kotlinx.coroutines.suspendCancellableCoroutine
 import org.json.JSONObject
-import com.awsomeproject.MainActivity
-import com.awsomeproject.MesgSpeak
+import com.awsomeproject.*
 import kotlin.coroutines.resumeWithException
-import com.awsomeproject.VisualizationUtils
-import com.awsomeproject.YuvToRgbConverter
 import com.awsomeproject.data.Person
 import com.awsomeproject.data.ResJSdata
 import com.awsomeproject.data.Sample
 import com.awsomeproject.data.VideoViewRepetend
 import com.awsomeproject.ml.PoseDetector
-import java.io.BufferedReader
-import java.io.InputStreamReader
+import com.awsomeproject.utils.BoneVectorPart
+import com.awsomeproject.utils.DTWprocess
+import com.awsomeproject.utils.Voice
+import java.io.*
 import java.util.*
+import kotlin.random.Random
 
 class CameraSource(
 //    private val videoView:VideoView,0...........................................................................................................................................................................................................................3
     private val surfaceView: SurfaceView,
     private val listener: CameraSourceListener? = null,
-    private val context: Context? = null,
-    private val mainActivity: Activity
+    private val context: Context,
+    private val mainActivity: Activity,
+    private val firstSamplevideoTendency :MutableList<Int>,
+    private val firstSamplevideoName :String,
+    private val firstSamplevideoId:Int
 ) {
 
     companion object {
@@ -71,7 +75,6 @@ class CameraSource(
     private var detector: PoseDetector? = null
     private var isTrackerEnabled = false
     private var yuvConverter: YuvToRgbConverter = YuvToRgbConverter(surfaceView.context)
-    //    private var yuvvideo : YuvToRgbConverter=YuvToRgbConverter(videoView.context)
     private lateinit var imageBitmap: Bitmap
 
     /** Frame count that have been processed so far in an one second interval to calculate FPS. */
@@ -100,7 +103,29 @@ class CameraSource(
     /** [Handler] corresponding to [imageReaderThread] */
     private var imageReaderHandler: Handler? = null
     private var cameraId: String = ""
+    @Volatile
+    private var isAlive:Boolean=true
+    //定时器设置
+    private var NewFrameGenerator = Timer().schedule(object :TimerTask(){
+        override fun run() {
+            if(!isAlive)
+            {
+                cancel()
+            }
+            var tempBitmap:Bitmap?=newestBitmap;
+            tempBitmap?.let{
+                processImage(tempBitmap)
+            }
+        }
+    },500,100)
 
+    @Volatile
+    private var newestBitmap:Bitmap?=null;
+    @Volatile
+    private var newestPersons: MutableList<Person>?=null;
+
+    //语言播放器
+    private val  voice=Voice(context)
 
     //标准视频动作数据
     public var Samples: MutableList<Sample> = arrayListOf<Sample>()
@@ -114,18 +139,25 @@ class CameraSource(
     //是否处理捕获帧
     private var isImageprocess:Boolean=false
 
-    //初始化摄像机，并设置监听器，如果有可用图像就
+    //初期检测人是否在摄像头内部
+    private var isPersonDetect:Boolean=false
+    //初始化摄像机，并设置监听器
     suspend fun initCamera() {
         camera = openCamera(cameraManager, cameraId)
-        Samples.add(Sample("sample3-10fps.processed.json",context!!, object:Sample.scorelistener{
-            override fun onFrameScoreHeight(FramScore: Int) {
-                MesgSpeak(mainActivity,"真不戳",true)
+
+        Samples.add(Sample(firstSamplevideoName+".processed.json",context,firstSamplevideoId,firstSamplevideoTendency,object:Sample.scorelistener{
+            override fun onFrameScoreHeight(FrameScore: Int,part:Int) {
+                voice.voicePraise(FrameScore,part)
             }
-            override fun onFrameScoreLow(FramScore: Int) {
-                MesgSpeak(mainActivity,"就这，就这啊",true)
+            override fun onFrameScoreLow(FrameScore: Int,part:Int) {
+                voice.voiceRemind(FrameScore,part)
+            }
+            override fun onPersonNotDect() {
+                voice.voiceTips()
             }
         }))
-        Users.add(ResJSdata())
+        Users.add(ResJSdata(firstSamplevideoId))
+
         imageReader =
             ImageReader.newInstance(PREVIEW_WIDTH, PREVIEW_HEIGHT, ImageFormat.YUV_420_888, 3)
         imageReader?.setOnImageAvailableListener({ reader ->
@@ -148,7 +180,13 @@ class CameraSource(
                     imageBitmap, 0, 0, PREVIEW_WIDTH, PREVIEW_HEIGHT,
                     rotateMatrix, false
                 )
-                processImage(rotatedBitmap)
+//                processImage(rotatedBitmap)
+                newestBitmap=rotatedBitmap
+                var oldPersons = mutableListOf<Person>();
+                newestPersons?.let{
+                    oldPersons=it
+                }
+                visualize(oldPersons,rotatedBitmap)
                 image.close()
             }
         }, imageReaderHandler)
@@ -156,11 +194,9 @@ class CameraSource(
         imageReader?.surface?.let { surface ->
             session = createSession(listOf(surface))
 
-            val fps: Range<Int> = Range.create(10,10)
             var cameraRequest = camera?.createCaptureRequest(CameraDevice.TEMPLATE_PREVIEW)
-            cameraRequest?.set(CaptureRequest.CONTROL_AE_TARGET_FPS_RANGE,fps)
-            cameraRequest?.build()
-
+//            val fps: Range<Int> = Range.create(10,10)
+//            cameraRequest?.set(CaptureRequest.CONTROL_AE_TARGET_FPS_RANGE,fps)
             cameraRequest?.addTarget(surface)
             cameraRequest?.build()?.let {
                 session?.setRepeatingRequest(it, null, null)
@@ -221,6 +257,11 @@ class CameraSource(
         }
     }
 
+    fun pause()
+    {
+        session?.stopRepeating()
+    }
+
     fun resume() {
         imageReaderThread = HandlerThread("imageReaderThread").apply { start() }
         imageReaderHandler = Handler(imageReaderThread!!.looper)
@@ -235,9 +276,11 @@ class CameraSource(
             0,
             1000
         )
+
     }
 
     fun close() {
+        isAlive=false
         session?.close()
         session = null
         camera?.close()
@@ -260,39 +303,47 @@ class CameraSource(
         //总分数
         var score:Double=0.0
         //部位分数
-        var scoreBypart: MutableList<Double> = mutableListOf<Double>()
+        var scoreBypart: MutableList<Double> = mutableListOf<Double>(0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0)
         //matrix结构的用户关节点
-        var keypointmatrix:Jama.Matrix =Jama.Matrix(0,0)
-
-        if(isImageprocess==true) {
-            Samples[index].clock()
-            synchronized(lock) {
+        var uservector:Jama.Matrix =Jama.Matrix(DTWprocess().num_vector,DTWprocess().num_dimension)
+        synchronized(lock) {
+            if (isImageprocess == true) {
+                Samples[index].clock()
                 detector?.estimatePoses(bitmap)?.let {
                     //捕获当前帧中的用户关节点
                     persons.addAll(it)
                     //捕获对应时刻的标准动作关节点
-                    persons.addAll(Samples[index].getPersonNow())
+                    persons.addAll(Samples[index].getPersonNow(it[0].keyPoints[0].coordinate.x.toDouble(),it[0].keyPoints[0].coordinate.y.toDouble()))
                     //如果获取的帧可信，则处理
-                    if(it.get(0).isTrust()) {
+                    if (it.get(0).isTrust()) {
                         //输入用户关节点动作，进行计算
-                        val S=Samples[index].exec(it)
+                        val S = Samples[index].exec(it)
                         score = S.first
                         scoreBypart = S.second
-                        keypointmatrix = S.third
+                        uservector = S.third
                     }
-                    Users[index].append(scoreBypart,keypointmatrix)
+                    if(Samples[index].getClock()%2==0)
+                        Users[index].append(scoreBypart, uservector,Samples[index].getSampleVectorNow())
                     listener?.onImageprocessListener(score.toInt())
-                    }
                 }
-
-            frameProcessedInOneSecondInterval++
-            if (frameProcessedInOneSecondInterval == 1)
-            {
-                // send fps to view
-                listener?.onFPSListener(framesPerSecond)
+                frameProcessedInOneSecondInterval++
+                if (frameProcessedInOneSecondInterval == 1) {
+                    // send fps to view
+//                    listener?.onFPSListener(framesPerSecond)
+                }
+            }
+            else if (isPersonDetect == false) {
+                    detector?.estimatePoses(bitmap)?.let {
+                        if (Samples[index].tryFirstFrame(it)>=97&&it.get(0).isTrustMoreSerious())
+                        {
+                            isPersonDetect = true
+                            listener?.onPersonDetected()
+                        }
+                }
             }
         }
-        visualize(persons, bitmap)
+        newestPersons=persons
+//        visualize(persons, bitmap)
     }
 
     private fun visualize(persons: List<Person>, bitmap: Bitmap) {
@@ -345,39 +396,11 @@ class CameraSource(
         }
     }
 
-    fun read_csv(filename:String):List<Jama.Matrix>
-    {
-        var posVecList:MutableList<Jama.Matrix> = arrayListOf<Jama.Matrix>()
-        context?.let {
-            val isr = InputStreamReader(it.assets.open("samples/"+filename), "UTF-8")
-            val br = BufferedReader(isr)
-            var line: String?
-            val builder = StringBuilder()
-            while (br.readLine().also { line = it } != null) {
-                builder.append(line)
-            }
-            br.close()
-            isr.close()
-            var testjson: JSONObject = JSONObject(builder.toString());//builder读取了JSON中的数据。
-            val array = testjson.getJSONArray("item")
-            for(i in 0..array.length()-1)
-            {
-                val temp: Jama.Matrix = Jama.Matrix(array.getJSONArray(i).length() / 2, 2)
-                for(j in 0..array.getJSONArray(i).length()/2-1)
-                {
-                    temp.set(j,0,array.getJSONArray(i).get(2*j).toString().toDouble())
-                    temp.set(j,1,array.getJSONArray(i).get(2*j+1).toString().toDouble())
-                }
-                posVecList.add(temp)
-            }
-        }
-        return posVecList
-    }
-
     interface CameraSourceListener {
         fun onFPSListener(fps: Int)
         fun onImageprocessListener(score: Int)
         fun onDetectedInfo(personScore: Float?, poseLabels: List<Pair<String, Float>>?)
+        fun onPersonDetected()
     }
 
     private fun showToast(message: String)

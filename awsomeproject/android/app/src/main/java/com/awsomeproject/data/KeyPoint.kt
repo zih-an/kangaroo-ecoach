@@ -17,7 +17,6 @@ limitations under the License.
 package com.awsomeproject.data
 
 import android.graphics.PointF
-import com.awsomeproject.data.BodyPart
 
 data class KeyPoint(val bodyPart: BodyPart, var coordinate: PointF, val score: Float)
 {

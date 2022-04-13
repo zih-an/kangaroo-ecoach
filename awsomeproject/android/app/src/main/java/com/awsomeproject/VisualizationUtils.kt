@@ -65,14 +65,20 @@ object VisualizationUtils {
         persons: List<Person>,
         isTrackerEnabled: Boolean = false
     ): Bitmap {
-        val paintCircle = Paint().apply {
+        val paintCircle1 = Paint().apply {
             strokeWidth = CIRCLE_RADIUS
-            color = Color.RED
+            color = Color.rgb(0,255,255)
             style = Paint.Style.FILL
+        }
+
+        val paintCircle2 = Paint().apply {
+            strokeWidth = CIRCLE_RADIUS
+            color = Color.WHITE
+            style = Paint.Style.STROKE
         }
         val paintLine = Paint().apply {
             strokeWidth = LINE_WIDTH
-            color = Color.RED
+            color = Color.WHITE
             style = Paint.Style.STROKE
         }
 
@@ -103,16 +109,31 @@ object VisualizationUtils {
             bodyJoints.forEach {
                 val pointA = person.keyPoints[it.first.position].coordinate
                 val pointB = person.keyPoints[it.second.position].coordinate
-                originalSizeCanvas.drawLine(pointA.x, pointA.y, pointB.x, pointB.y, paintLine)
+                if(person.keyPoints[it.first.position].score+person.keyPoints[it.second.position].score>= .8f) {
+                    originalSizeCanvas.drawLine(pointA.x, pointA.y, pointB.x, pointB.y, paintLine)
+                }
             }
 
-            person.keyPoints.forEach { point ->
-                originalSizeCanvas.drawCircle(
-                    point.coordinate.x,
-                    point.coordinate.y,
-                    CIRCLE_RADIUS,
-                    paintCircle
-                )
+            person.keyPoints.forEach {
+                if(it.score>= .4f) {
+                    originalSizeCanvas.drawCircle(
+                        it.coordinate.x,
+                        it.coordinate.y,
+                        CIRCLE_RADIUS,
+                        paintCircle2
+                    )
+                }
+            }
+
+            person.keyPoints.forEach {
+                if(it.score>= .4f) {
+                    originalSizeCanvas.drawCircle(
+                        it.coordinate.x,
+                        it.coordinate.y,
+                        CIRCLE_RADIUS,
+                        paintCircle1
+                    )
+                }
             }
         }
         return output

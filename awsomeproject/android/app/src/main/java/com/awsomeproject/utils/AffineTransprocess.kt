@@ -1,9 +1,6 @@
-package org.poseestimation.utils
+package com.awsomeproject.utils
 import Jama.Matrix
-import android.net.MacAddress
 import java.lang.Double.isNaN
-import org.jblas.*
-import org.jblas.Solve
 import kotlin.math.sqrt
 
 class AffineTransprocess {

@@ -1,4 +1,4 @@
-package org.poseestimation.utils
+package com.awsomeproject.utils
 
 import Jama.Matrix
 import android.graphics.PointF
@@ -85,15 +85,15 @@ class DataTypeTransfor {
         var personList:MutableList<Person> = arrayListOf<Person>()
         for(i in 0..matrixList.count()-1)
         {
-            var temp: Person
+            var temp:Person
             var keypoints:MutableList<KeyPoint> = arrayListOf<KeyPoint>()
             for(j in 0..matrixList.get(i).rowDimension-1)
             {
                 var point:PointF= PointF(matrixList.get(i).get(j,0).toFloat(),matrixList.get(i).get(j,1).toFloat())
-                var tempkeypoint: KeyPoint = KeyPoint(BodyPart.fromInt(j),point,1.0.toFloat())
+                var tempkeypoint:KeyPoint=KeyPoint(BodyPart.fromInt(j),point,1.0.toFloat())
                 keypoints.add(tempkeypoint)
             }
-            temp= Person(-1,keypoints,null,1.0.toFloat())
+            temp=Person(-1,keypoints,null,1.0.toFloat())
             personList.add(temp)
         }
         return personList
@@ -185,7 +185,7 @@ class DataTypeTransfor {
     }
 
     //按部位分割
-    fun divide_Jama(posVecList:List<Matrix>,Type:BoneVectorPart):List<Matrix>
+    fun divide_Jama(posVecList:List<Matrix>,Type: BoneVectorPart):MutableList<Matrix>
     {
         var partialposVecList:MutableList<Matrix> = arrayListOf<Matrix>()
         var choocedPart:MutableList<Int> = arrayListOf<Int>()
@@ -202,34 +202,34 @@ class DataTypeTransfor {
                 choocedPart.add(8)
                 choocedPart.add(9)
             }
-            BoneVectorPart.RIGHT_ARM->{
+            BoneVectorPart.RIGHT_ARM ->{
                 choocedPart.add(10)
                 choocedPart.add(11)
             }
-            BoneVectorPart.LEFT_LEG->{
+            BoneVectorPart.LEFT_LEG ->{
                 choocedPart.add(12)
                 choocedPart.add(13)
             }
-            BoneVectorPart.RIGHT_LEG->{
+            BoneVectorPart.RIGHT_LEG ->{
                 choocedPart.add(14)
                 choocedPart.add(15)
             }
-            BoneVectorPart.CROTCH->{
+            BoneVectorPart.CROTCH ->{
                 choocedPart.add(1)
             }
-            BoneVectorPart.SHOULDER->{
+            BoneVectorPart.SHOULDER ->{
                 choocedPart.add(0)
             }
-            BoneVectorPart.RIGHT_NECK->{
+            BoneVectorPart.RIGHT_NECK ->{
                 choocedPart.add(16)
             }
-            BoneVectorPart.LEFT_NECK->{
+            BoneVectorPart.LEFT_NECK ->{
                 choocedPart.add(17)
             }
-            BoneVectorPart.LEFT_TRUCK->{
+            BoneVectorPart.LEFT_TRUCK ->{
                 choocedPart.add(2)
             }
-            BoneVectorPart.RIGHT_TRUCK->{
+            BoneVectorPart.RIGHT_TRUCK ->{
                 choocedPart.add(3)
             }
         }
@@ -247,7 +247,37 @@ class DataTypeTransfor {
         return partialposVecList
     }
 
+    //合并jamalist
+    fun mergin_Jama(JamaListList:MutableList<MutableList<Matrix>>):MutableList<Matrix>
+    {
+        var res:MutableList<Matrix> = arrayListOf()
+        var newRows=0;
 
+        for(i in 0..JamaListList.count()-1)
+        {
+            JamaListList[i][0]?.let {
+                newRows+=it.rowDimension
+            }
+        }
+
+        for(i in 0..JamaListList[0].count()-1)
+        {
+            var newMatrix=Matrix(newRows,num_dimension)
+            var cnt=0;
+            for(j in 0..JamaListList.count()-1)
+            {
+                for(r in 0..JamaListList[j][i].rowDimension-1)
+                {
+                    newMatrix.setMatrix(cnt, cnt, 0, num_dimension - 1,
+                        JamaListList[j][i].getMatrix(r,r,0,num_dimension-1))
+                    cnt++;
+                }
+            }
+            res.add(newMatrix)
+        }
+
+        return res
+    }
 
 
 }

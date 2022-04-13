@@ -1,4 +1,4 @@
-package org.poseestimation.utils
+package com.awsomeproject.utils
 
 import Jama.Matrix
 
