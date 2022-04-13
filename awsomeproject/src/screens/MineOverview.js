@@ -1,5 +1,5 @@
 import React,{useState} from "react";
-import { StyleSheet, TouchableOpacity, Alert,View } from "react-native";
+import { StyleSheet, TouchableOpacity, Alert,View,ScrollView } from "react-native";
 import {
   Layout,
   List,
@@ -16,6 +16,8 @@ import Svg from "../components/Svg";
 import { default as theme } from "../custom-theme.json";
 import CookieManager from '@react-native-cookies/cookies';
 import RNRestart from 'react-native-restart'; 
+import LinearGradinet from 'react-native-linear-gradient';
+import { color } from "react-native-tcharts/theme/theme";
 
 const HomeIcon = (props) => (
   <Icon
@@ -81,6 +83,7 @@ const ModalContainer = (props) => {
 
 export default class Mine extends React.Component {
   state = {
+    enableScrollViewScroll: true,
     msg: [
       {
         title: "生日",
@@ -117,6 +120,9 @@ export default class Mine extends React.Component {
     currentIndex: 0,
     currentTitle:"身高",
   };
+  setScroll = (value) =>{
+    this.setState({enableScrollViewScroll:value});
+  }
   setVisible = (shown) => {
     this.setState({ visible: shown });
   };
@@ -236,11 +242,41 @@ export default class Mine extends React.Component {
 
   render() {
     return (
-      <Layout style={styles.container}>
+      <ScrollView 
+        style={styles.scrollContainer} 
+        contentContainerStyle={styles.scrollContent}
+        scrollEnabled={this.state.enableScrollViewScroll}
+      >
+        <View style={{height:180,width:"100%", borderBottomRadius: 20,}}>
+          <LinearGradinet
+            start={{x: 0, y: 0}}
+            end={{x: 1, y: 0}}
+            colors={[theme["color-primary-500"], 'pink','white']}
+            style={{width: "100%", height: "100%",borderRadius: 20}}
+          >
+            <View style={{flexDirection:"row"}}>
+              <View style={{height:80,width:80,backgroundColor: "white",borderRadius: 40,marginTop:20,marginLeft:20}}>
+              </View>
+              <View style={{height:80,width:200,backgroundColor: "white",borderRadius: 40,marginTop:20,marginLeft:20,
+              justifyContent:"center",alignItems:"center"}}>
+                <Text>运动总时长</Text>
+              </View>
+            </View>
+            <View style={{flexDirection: 'row',alignItems: 'center',justifyContent:"space-between",marginTop:35}}>
+              <View  style={{width:"30%",justifyContent: 'center',alignItems:"center",}}>
+              <Svg icon="历史记录" size="15" color={theme["color-primary-100"]}/>
+              <Text style={{fontSize:12, color:"white"}}>历史记录</Text></View>
+              <View><Text style={{fontSize:12, color:"salmon"}}>清空所有数据</Text></View>
+              <View><Text style={{fontSize:12, color:"salmon"}}>退出登录</Text></View>
+            </View>
+          </LinearGradinet>
+        </View>
         <List
           data={this.state.msg}
           ItemSeparatorComponent={Divider}
           renderItem={this.renderItem}
+          horizontal={true}
+          showsHorizontalScrollIndicator={false}
         />
         <ModalContainer
           visible={this.state.visible}
@@ -249,13 +285,24 @@ export default class Mine extends React.Component {
           setMessage={this.setMessage}
           title={this.state.currentTitle}
         />
-      </Layout>
+      </ScrollView>
     );
   }
 }
 const styles = StyleSheet.create({
   container: {
     height: "100%",
+  },
+  scrollContainer: {
+    flexGrow: 1,
+    width: "100%",
+    maxHeight: "93%",
+    padding: 5,
+  },
+  scrollContent: {
+    width: "100%",
+    justifyContent: "flex-start",
+    alignItems: "center",
   },
   modalContainer: {
     position: "absolute",

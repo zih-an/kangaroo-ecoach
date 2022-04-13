@@ -11,6 +11,7 @@ import {
 } from "@ui-kitten/components";
 import { default as theme } from "../custom-theme.json";
 import TodayTrainPlanCard from "../components/TodayTrainPlanCard";
+import RowDataCard from "../components/RowDateCard";
 import { connect } from "react-redux";
 import * as actions from "./store/actions";
 import {getData} from "../components/FetchData";
@@ -61,6 +62,7 @@ function PlanOverview(props) {
   const [theCode,setTheCode]=useState('0');
   const [generalProgress,setGeneral] =useState(false);
   const [progress,setProgress] =useState(false);
+  let [enableScrollViewScroll,setScoll] = useState(true);
 
   const navigateAddItem = () => {
     setProgress(true);
@@ -103,8 +105,17 @@ function PlanOverview(props) {
   }
   return (
     <Layout style={styles.container}>
+      <View style={{width:"100%",height:80,backgroundColor:"white",marginTop:-50,marginBottom:-30}}>
+        <RowDataCard
+        horizontal={true}
+        showIndicator={false}/>
+      </View>
       <Layout style={styles.planContainer}>
-        <TodayTrainPlanCard height={220}/>
+        <TodayTrainPlanCard 
+          height={220} 
+          onEnableScroll={setScoll}
+          horizontal={false}
+          showIndicator={false}/>
         <TouchableOpacity onPress={()=>navigateAddItem()}  style={btnStyle.btnAddItem}>
           {progress?<View style={{height:24}}>
           <ActivityIndicator color={theme["color-primary-500"]}/>
@@ -143,9 +154,11 @@ function PlanOverview(props) {
 const styles = StyleSheet.create({
   container: {
     height: "100%",
+    width:"100%",
     alignItems: "center",
     justifyContent: "space-evenly",
-    paddingTop: 10,
+    paddingTop: 0,
+    marginTop:0
   },
   btnContainer: {
     flexDirection:"row",

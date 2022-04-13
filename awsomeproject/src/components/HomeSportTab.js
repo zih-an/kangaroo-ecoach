@@ -1,6 +1,6 @@
 import React,{useState} from 'react';
-import {StyleSheet, View, Alert, ActivityIndicator, ScrollView,TouchableOpacity} from 'react-native';
-import {Layout, Card, Text, Button,Modal} from '@ui-kitten/components';
+import {StyleSheet, View, Alert, ActivityIndicator, ScrollView,TouchableOpacity,Image} from 'react-native';
+import {Layout, Text, Button,Modal} from '@ui-kitten/components';
 import {Icon} from '@ui-kitten/components';
 import {default as theme} from '../custom-theme.json';
 import TodayTrainPlanCard from './TodayTrainPlanCard';
@@ -8,7 +8,7 @@ import {getData} from './FetchData';
 import {connect} from 'react-redux';
 import ActionSheetComp from "./ActionSheetComp"
 import Svg from './Svg';
-
+import { Card } from "react-native-shadow-cards";
 const BulbIcon = props => <Icon {...props} name="bulb-outline" />;
 const ArrorDownIcon = props => (
   <Icon {...props} name="arrowhead-down-outline" />
@@ -16,22 +16,25 @@ const ArrorDownIcon = props => (
 const url = "http://81.68.226.132:80/exercise/begin";
 const HistoryTrainCard = () => {
   return (
-    <Card style={styles.historyTrainCard}>
-      <Text category="s1" style={{color: theme['color-info-100']}}>
+    <View style={{width:"95%",justifyContent:"center",alignItems: 'center',}}>
+      <Card style={styles.historyTrainCard}>
+      <Text category="s1" style={{color: "white",marginLeft:20,marginTop:10}}>
         距上次运动已经过去...
       </Text>
       <Layout style={styles.cardMsgContainer}>
         <BulbIcon
-          style={{width: 80, height: 80}}
+          style={{width: 40, height: 40}}
           fill={theme['color-primary-100']}
         />
         <Text
           category="h1"
-          style={{color: '#fff', fontWeight: 'bold', fontSize: 40}}>
+          style={{color: '#fff', fontWeight: 'bold', fontSize: 20}}>
           3天
         </Text>
       </Layout>
     </Card>
+      <Card style={{marginTop:-10,width:"85%",height:300,backgroundColor:"#ffcbad",marginBottom:40,borderRadius:50}}><Text>111</Text></Card>
+    </View>
   );
 };
 
@@ -57,6 +60,7 @@ function HomeSportTab(props) {
   let [modalVisibleCnSe,setModalViseibleCnSe] = useState(false);
   let [deviceOpen,setDeviceOpen] = useState(false);
   let [connect,setConnect] = useState(false);
+  let [enableScrollViewScroll,setScoll] = useState(true);
 
   const toExercising = async () => {
     setLoading(true);
@@ -79,8 +83,22 @@ function HomeSportTab(props) {
     // else  Alert.alert("设备未开启！");
   };
   return (
-    <Layout style={styles.tabContainer}>
-      <TodayTrainPlanCard height={350}/>
+    <ScrollView 
+      style={styles.scrollContainer} 
+      contentContainerStyle={styles.scrollContent}
+      scrollEnabled={enableScrollViewScroll}
+    >
+      <View style={{flexDirection:"row",justifyContent:"flex-start",width:"100%",height:200,backgroundColor:"white"}}>
+        <View style={{paddingTop: 10,paddingLeft: 20,}}>
+        <Svg icon="运动女孩3" size="200"/>
+        </View>
+        <Image
+          style={{ width:"60%",height: 200,position:"absolute",left:130,top:-70}}
+          source={require('../assets/开始运动吧.png')}
+          resizeMode='contain'
+          />
+      </View>
+      {/* <TodayTrainPlanCard height={220} onEnableScroll={setScoll}/> */}
       <Layout style={styles.btnContainer}>
 
         <TouchableOpacity onPress={()=>toConnectSend()} style={styles.touchContainer}>
@@ -103,7 +121,12 @@ function HomeSportTab(props) {
         </TouchableOpacity >
         
       </Layout>
-      {/* <HistoryTrainCard /> */}
+      <TodayTrainPlanCard 
+          height={150} 
+          onEnableScroll={setScoll} 
+          horizontal={true}
+          showIndicator={true}/>
+      <HistoryTrainCard />
       <ActionSheetComp 
         visible={modalVisibleCnRe} 
         setVisible={setModalViseibleCnRe} 
@@ -114,7 +137,7 @@ function HomeSportTab(props) {
         nav={props.nav2exercising}/>
       <ActionSheetComp visible={modalVisibleCnSe} setVisible={setModalViseibleCnSe} items={itemsForCnSe} setStatus={setDeviceOpen} modalTitle="设置设备" token={props.login.token}/>
 
-    </Layout>
+    </ScrollView>
   );
 }
 
@@ -124,24 +147,44 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'flex-start',
   },
+  scrollContainer: {
+    flexGrow: 1,
+    width: "100%",
+    maxHeight: "93%",
+    padding: 5,
+  },
+  scrollContent: {
+    width: "100%",
+    justifyContent: "flex-start",
+    alignItems: "center",
+  },
   btnContainer: {
-    marginTop:"10%",
+    marginTop:-10,
+    marginBottom:15,
     width: '100%',
     flexDirection:"row",
     alignItems: 'center',
     justifyContent: 'space-evenly',
   },
   historyTrainCard: {
+    marginTop:15,
+    marginBottom:-20,
+    zIndex:999,
     width: '90%',
-    backgroundColor: theme['color-info-900'],
+    backgroundColor: theme["color-primary-500"],
+    borderWidth:0,
+    borderColor:theme["color-primary-500"],
+    borderRadius: 40,
   },
   cardMsgContainer: {
-    width: '90%',
-    backgroundColor: theme['color-info-900'],
+    width: '50%',
+    backgroundColor: theme["color-primary-500"],
+    borderRadius:20,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-evenly',
     marginTop: 8,
+    marginLeft:120
   },
   touchContainer:{
     alignItems:"center",
