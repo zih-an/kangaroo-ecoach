@@ -5823,6 +5823,11 @@ react-native-linear-gradient@^2.5.6:
   resolved "https://registry.npmjs.org/react-native-linear-gradient/-/react-native-linear-gradient-2.5.6.tgz#96215cbc5ec7a01247a20890888aa75b834d44a0"
   integrity sha512-HDwEaXcQIuXXCV70O+bK1rizFong3wj+5Q/jSyifKFLg0VWF95xh8XQgfzXwtq0NggL9vNjPKXa016KuFu+VFg==
 
+react-native-picker@^4.3.7:
+  version "4.3.7"
+  resolved "https://registry.npmjs.org/react-native-picker/-/react-native-picker-4.3.7.tgz#9842e8c62ff0d8b676e9514d9f9172413c0518a8"
+  integrity sha1-mELoxi/w2LZ26VFNn5FyQTwFGKg=
+
 react-native-restart@^0.0.24:
   version "0.0.24"
   resolved "https://registry.npmjs.org/react-native-restart/-/react-native-restart-0.0.24.tgz#c7036f25d900d9221b84d3e5129b02d4289d4e94"
