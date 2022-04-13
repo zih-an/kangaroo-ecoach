@@ -135,7 +135,8 @@ class CameraActivity :AppCompatActivity() {
     private fun initView(){
 
         val mainActivity=this
-        val JsonMeg      ="{\n" +
+        var bundle=intent.getExtras()
+        var JsonMeg  ="{\n" +
                 "    \"id\": 1,\n"+
                 "    \"data\": [\n" +
                 "        {\n" +
@@ -148,6 +149,10 @@ class CameraActivity :AppCompatActivity() {
                 "            \"url\": \"sample7\",\n" +
                 "            \"groups\": \"2\"\n" +
                 "        }]}"
+
+        bundle?.getString("ExerciseScheduleMesg")?.let{
+            JsonMeg=it
+        }
 
 
 //                ="{\n" +

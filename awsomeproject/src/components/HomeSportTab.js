@@ -9,6 +9,7 @@ import {connect} from 'react-redux';
 import ActionSheetComp from "./ActionSheetComp"
 import Svg from './Svg';
 import { Card } from "react-native-shadow-cards";
+import CameraModule from"../../KotlinStream"
 const BulbIcon = props => <Icon {...props} name="bulb-outline" />;
 const ArrorDownIcon = props => (
   <Icon {...props} name="arrowhead-down-outline" />
@@ -71,6 +72,8 @@ function HomeSportTab(props) {
     }
     else {
       Alert.alert("开始运动！");
+      res=JSON.stringify(res);
+      CameraModule.startcameraActivity(res);
       props.nav2exercising.navigate("SportOverviewPage");
     }
   };

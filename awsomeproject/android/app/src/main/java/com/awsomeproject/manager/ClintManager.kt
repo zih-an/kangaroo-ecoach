@@ -15,7 +15,7 @@ class ClintManager(reactContext: ReactApplicationContext) : ReactContextBaseJava
     }
 
     @ReactMethod
-    fun startcameraActivity(res: String) {
+    fun startclintActivity(res: String) {
         val intent = Intent(reactApplicationContext, slaveviewActivity::class.java)
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         reactApplicationContext.startActivity(intent)

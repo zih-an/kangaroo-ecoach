@@ -20,7 +20,7 @@
             android:src="@drawable/menu_bg" />
 
 
-        <org.poseestimation.layoutImpliment.BackArrowView
+        <com.awsomeproject.layoutImpliment.BackArrowView
             android:id="@+id/back_arrow"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -193,7 +193,7 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <org.poseestimation.layoutImpliment.ShapeButton
+    <com.awsomeproject.layoutImpliment.ShapeButton
         android:id="@+id/connectBtn"
         android:layout_width="0dp"
         android:layout_height="wrap_content"

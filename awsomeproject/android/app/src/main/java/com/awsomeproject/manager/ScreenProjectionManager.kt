@@ -15,7 +15,7 @@ class ScreenProjectionManager(reactContext: ReactApplicationContext) : ReactCont
     }
 
     @ReactMethod
-    fun startcameraActivity(res: String) {
+    fun startscreenprojectionActivity(res: String) {
         val intent = Intent(reactApplicationContext, screen_sender_connectView::class.java)
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         intent.putExtra("ExerciseScheduleMesg", res)

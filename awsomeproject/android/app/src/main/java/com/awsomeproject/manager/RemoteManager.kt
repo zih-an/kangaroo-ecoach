@@ -15,7 +15,7 @@ class RemoteManager(reactContext: ReactApplicationContext) : ReactContextBaseJav
     }
 
     @ReactMethod
-    fun startcameraActivity(res: String) {
+    fun startremoteActivity(res: String) {
         val intent = Intent(reactApplicationContext, hostviewActivity::class.java)
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         intent.putExtra("ExerciseScheduleMesg", res)
