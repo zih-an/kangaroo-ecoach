@@ -137,7 +137,18 @@ class Sample(
         }
         return listOf(res)
     }
-
+    public fun getPersonOnStart(x:Double,y:Double): List<Person>
+    {
+        var res=samplePersonsList!!.get(0)
+        val x_bias=res.keyPoints[0].coordinate.x-x
+        val y_bias=res.keyPoints[0].coordinate.y-y
+        for(i in 0..res.keyPoints.count()-1)
+        {
+            res.keyPoints[i].coordinate.x-=x_bias.toFloat()
+            res.keyPoints[i].coordinate.y-=y_bias.toFloat()
+        }
+        return listOf(res)
+    }
     public fun exec(usrPersonsList:List<Person>):Triple<Double, MutableList<Double>, Matrix> {
         //初始化
         var fake_markScore = 0.0
@@ -198,9 +209,6 @@ class Sample(
                 fake_tempScoreByPart[j] =dis.first //fake
                 true_tempScoreByPart[j] =dis.second//true
                 fake_tempMarkScore += bodyWeight[j] * fake_tempScoreByPart[j]
-//                println("+++++++++1"+PartMap[j]+" false: "+fake_tempScoreByPart[j])
-                if(j==1||j==2)
-                    println("+++++++++2"+PartMap[j]+" true: "+true_tempScoreByPart[j])
             }
             if (fake_tempMarkScore > fake_markScore)
             {

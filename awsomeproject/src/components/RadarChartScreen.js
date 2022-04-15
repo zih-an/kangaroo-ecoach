@@ -41,7 +41,7 @@ class RadarChartScreen extends React.Component {
             dataSets: 
             [
                 {
-                    values: [{value: stanData}, {value: rhythmData}, {value: intensityData*50}, {value: completeData}, {value: 100}],
+                    values: [{value: stanData}, {value: rhythmData}, {value: intensityData}, {value: completeData}, {value: 100}],
                     label: 'DS 1',
                     config: {
                         color: processColor('powderblue'),

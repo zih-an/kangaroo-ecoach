@@ -1,33 +1,52 @@
 package com.awsomeproject
 
+import android.content.Intent
+import android.content.res.Resources
 import android.graphics.Bitmap
+import android.graphics.Matrix
+import android.graphics.Rect
+import android.media.Image
 import android.os.Bundle
+import android.os.PersistableBundle
+import android.os.SystemClock
 import android.util.Log
 import android.view.*
+import android.widget.FrameLayout
 import androidx.appcompat.app.AppCompatActivity
+import androidx.constraintlayout.widget.ConstraintLayout
+import org.json.JSONObject
 
 import com.awsomeproject.socketconnect.Device
 import com.awsomeproject.socketconnect.communication.host.FrameDataReceiver
+import com.awsomeproject.socketconnect.communication.slave.CommandReceiver
 import com.awsomeproject.videodecoder.GlobalStaticVariable
 import kotlin.concurrent.thread
 
 class screenReceiverActivity  : AppCompatActivity() {
+    private var FrameReceiverConnectThread:Thread?=null
     lateinit var screenSurfaceView: SurfaceView
     public var mainScreenSender: Device?=null
-    private lateinit var imageBitmap: Bitmap
-    private lateinit var yuvConverter: YuvToRgbConverter
-    private var FrameReceiverConnectThread:Thread?=null
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.screen_projection_receiver)
         screenSurfaceView=findViewById(R.id.screen)
-        yuvConverter=YuvToRgbConverter(screenSurfaceView.context)
+        GlobalStaticVariable.isScreenCapture=true
+
+        val screenHeight=resources.displayMetrics.heightPixels
+        val screenWidth=resources.displayMetrics.widthPixels
+
+        val ratio:Double=screenWidth.toDouble()/screenHeight.toDouble()
+        var mp= FrameLayout.LayoutParams((screenWidth).toInt(),(screenWidth*ratio).toInt())
+        mp.topMargin=-((screenWidth*ratio)/2-GlobalStaticVariable.frameLength/2).toInt()
+        screenSurfaceView?.layoutParams=mp
+
         var bundle=intent.getExtras()
         mainScreenSender =Device(bundle!!.getString("mainScreenSenderIp"))
-        GlobalStaticVariable.isScreenCapture=true
+
         screenSurfaceView.holder.addCallback(object :SurfaceHolder.Callback{
             override fun surfaceChanged(holder: SurfaceHolder, format: Int, width: Int, height: Int) {
-
             }
             override fun surfaceCreated(p0: SurfaceHolder) {
                 GlobalStaticVariable.receiverSurface=p0.surface
@@ -45,8 +64,25 @@ class screenReceiverActivity  : AppCompatActivity() {
             override fun surfaceDestroyed(p0: SurfaceHolder) {
             }
         })
-
+        //开始接受通信命令
+        CommandReceiver.start(object : CommandReceiver.CommandListener{
+            override fun onReceive(command: String?) {
+                commandResolver(command)
+            }
+        })
         hideSystemUI()
+
+    }
+    private fun commandResolver(demand:String?)
+    {
+        when(demand) {
+            "finishAcceptFrame" -> {
+                CommandReceiver.close()
+                finish()
+            }
+            null -> {
+            }
+        }
 
     }
     private fun hideSystemUI() {
@@ -68,7 +104,7 @@ class screenReceiverActivity  : AppCompatActivity() {
         FrameReceiverConnectThread?.let{
             it.interrupt()
         }
-//        FrameDataReceiver.close()
+        FrameDataReceiver.close()
     }
 
 }

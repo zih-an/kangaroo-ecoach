@@ -18,7 +18,7 @@ class ResJSdata(private var sampleId:Int=-1) {
     private lateinit var Vectorslist:MutableList<Matrix>
     //标准动作骨架
     private lateinit var SampleVectorslist:MutableList<Matrix>
-//Respond
+    //Respond
     public var count=0
     //动作标准程度
     private lateinit var scoreBypart:MutableList<MutableList<Double>>
@@ -45,7 +45,7 @@ class ResJSdata(private var sampleId:Int=-1) {
         scoreBypart.add(scoreByPart)
         Vectorslist.add(userVector)
         SampleVectorslist.add(sampleVetor)
-        if(scoreByPart.sum()<=75*scoreByPart.count())
+        if(scoreByPart.sum()<=70*scoreByPart.count())
             completeness.add(false)//缺失
         else
             completeness.add(true)//非缺失
@@ -106,7 +106,7 @@ class ResJSdata(private var sampleId:Int=-1) {
                 tool.divide_Jama(this.SampleVectorslist, BoneVectorPart.fromInt(first)),
                 tool.divide_Jama(this.SampleVectorslist, BoneVectorPart.fromInt(second)),
                 tool.divide_Jama(this.SampleVectorslist, BoneVectorPart.fromInt(third))))
-            )
+        )
     }
 
     public fun toJson():JSONObject
@@ -196,6 +196,7 @@ class ResJSdata(private var sampleId:Int=-1) {
         var X_len=dtwres?.DTW_PathList.get(0).first+1
         var Y_len=dtwres?.DTW_PathList.get(0).second+1
         var k=Y_len.toDouble()/X_len.toDouble()
+
         for(i in 1..dtwres?.DTW_PathList.count())
         {
             var x=dtwres?.DTW_PathList.get(dtwres?.DTW_PathList.count()-i).first

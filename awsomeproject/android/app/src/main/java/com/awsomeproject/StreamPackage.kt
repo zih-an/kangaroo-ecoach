@@ -10,10 +10,8 @@ import com.awsomeproject.manager.*
 class StreamPackage : ReactPackage {
     override fun createNativeModules(reactContext: ReactApplicationContext): List<NativeModule> {
         val modules = ArrayList<NativeModule>()
-        modules.add(CameraManager(reactContext))
-        modules.add(ClintManager(reactContext))
-        modules.add(RemoteManager(reactContext))
-        modules.add(ScreenProjectionManager(reactContext))
+//        modules.add(CameraManager(reactContext))
+        modules.add(CameraModule(reactContext))
         return modules
     }
 

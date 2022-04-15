@@ -10,6 +10,8 @@ const defaultPlanIndex=[];
 const defaultTodayPlan=[];
 const defaultTodayPlanDetail=[];
 const defaultShop=[];
+const defaultReport = {};
+
 function  login (state=defaultState,action) {
 //reducer只能接受state，不能改变
 //登陆界面的state：login，含加入邮箱、token、密码
@@ -80,7 +82,14 @@ function  shop (state=defaultShop,action){
     }
     return state;
 }
+
+function report (state = defaultReport,action){
+    if(action.type==='ADD_REPORT'){
+        return action.content;
+    }
+    return state;
+}
 //组合所有reducer（state），外部通过theApp一次引用，只需在根目录App.js引入一次即可，其余使用state的组件
 //只需额外单独引入actions用于改变组件状态，并用connect(react-redux特性)函数来关联组件与state、action即可
-const theApp = combineReducers({login,allPlans,todayPlans,todayPlansDetail,shop,allPlansIndex});
+const theApp = combineReducers({login,allPlans,todayPlans,todayPlansDetail,shop,allPlansIndex,report});
 export default theApp;

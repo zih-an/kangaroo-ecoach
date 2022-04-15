@@ -36,6 +36,8 @@ public class DeviceSearchResponser {
             searchRespThread = null;
         }
     }
+
+
     public static interface OnSearchListener{
         void onGetHost(Device device);
     }

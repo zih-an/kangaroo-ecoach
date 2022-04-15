@@ -9,18 +9,12 @@ import TimeSeriesLineChartScreen from "../components/TimeSeriesLineChartScreen"
 import Svg from "../components/Svg"
 
 import dataSets from "../assets/dataSets"
-import newest from "../assets/newest"
+import newest from "../assets/newest";
+import {reportData} from "../components/HomeSportTab";
 import { connect } from "react-redux";
 import * as actions from "./store/actions";
-
-
-let dataAll = newest["data"];
-let typesId = dataAll.map((item,index)=>{return item.id});
-let SplitData = dataAll.map((item,index)=>{return item.data});
-let ScatterData = SplitData.map((item,index)=>{return item.scorebypart});
-let PieData = SplitData.map((item,index)=>{return item.completeness});
-let LineData = SplitData.map((item,index)=>{return item.exerciseIntensity});
-let DTWdata = SplitData.map((item,index)=>{return item["DTW"]});
+import { Rect } from "react-native-svg";
+import { set } from "lodash";
 
 
 const BackIcon = props => <Icon {...props} name="arrow-back" />;
@@ -28,6 +22,12 @@ const BackIcon = props => <Icon {...props} name="arrow-back" />;
 function SportOverview(props) {
   const [selectedIndex, setSelectedIndex] = React.useState(new IndexPath(0));
   const [loaded,setLoaded] = React.useState(false);
+  const [dataAll,setDataAll] = React.useState(props.report["data"]);
+  const [typesId,setTypesId] = React.useState([]);
+  const [scatterData,setScatter] = React.useState([{}]);
+  const [pieData,setPie] = React.useState([[]]);
+  const [lineData,setLine] = React.useState([[]]);
+  const [dtwData,setDTW] = React.useState([{}]);
   const typesName = props.plansIndex.filter((item,index)=>typesId.includes(index+1));
   const displayValue = typesName[selectedIndex.row];
 
@@ -75,6 +75,25 @@ function SportOverview(props) {
     }
     return (counts/len)*100;
    };
+   React.useEffect(() => { 
+     setDataAll(props.report["data"]);
+    let typesId = dataAll.map((item,index)=>{return item.id});
+    let SplitData = dataAll.map((item,index)=>{return item.data});
+    let ScatterData = SplitData.map((item,index)=>{return item.scorebypart});
+    let PieData = SplitData.map((item,index)=>{return item.completeness});
+    let LineData = SplitData.map((item,index)=>{return item.exerciseIntensity});
+    let DTWdata = SplitData.map((item,index)=>{return item["DTW"]});
+    setTypesId(typesId);
+
+    setScatter(ScatterData);
+
+    setPie(PieData);
+
+    setLine(LineData);
+    
+    setDTW(DTWdata);
+
+  },[dataAll]);
   return (
     <Layout>
       <Layout style={{minHeight: 48,width:"100%",marginLeft:"1%",marginTop:10,flexDirection:"row"}} level='1'>
@@ -91,10 +110,11 @@ function SportOverview(props) {
     </Layout>
       {typesId.map((item,index)=>
         {
-          let averageScore = calculateAver(ScatterData[index]);
-          let rhythmData = DTWdata[index].score;
-          let intensity = calculateInten(LineData[index]);
-          let complete = calculateComp(PieData[index]);
+          let averageScore = calculateAver(scatterData[index]);
+          let rhythmData = dtwData[index].score;
+          let intensity = calculateInten(lineData[index]);
+          let complete = calculateComp(pieData[index]);
+
           return ((selectedIndex.row === index)&&(<Layout
           style={styles.tab}
           level='2'
@@ -138,28 +158,31 @@ function SportOverview(props) {
                   <Svg icon="分数" size="17"/>
                   <Text style={styles.text}>部位得分</Text>
                   </View>
-                <ScatterChartScreen scatterData={ScatterData[index]}></ScatterChartScreen>
+                <ScatterChartScreen scatterData={scatterData[index]}></ScatterChartScreen>
               </View>
 
               <View style={styles.card}>
                 <View style={styles.title}>
                   <Svg icon="汗量强度" size="17"/>
                   <Text style={styles.text}>运动强度</Text></View>
-                {(loaded)&&<LineChartScreen lineData={LineData[index]}></LineChartScreen>}
+                {(loaded)&&<LineChartScreen lineData={lineData[index]}></LineChartScreen>}
+                {/* <LineChartScreen lineData={lineData[index]}></LineChartScreen> */}
               </View>
 
               <View style={styles.card}>
                 <View style={styles.title}>
                   <Svg icon="本月完成度" size="17"/>
                   <Text style={styles.text}>动作完成度</Text></View>
-                {(loaded)&&<PieChartScreen completeness={PieData[index]}></PieChartScreen>}
+                {(loaded)&&<PieChartScreen completeness={pieData[index]}></PieChartScreen>}
+                {/* <PieChartScreen completeness={pieData[index]}></PieChartScreen> */}
               </View>
 
               <View style={styles.card}>
                 <View style={styles.title}>
                   <Svg icon="节奏" size="17"/>
                   <Text style={styles.text}>动作快慢</Text></View>
-                {(loaded)&&<TimeSeriesLineChartScreen dtwData={DTWdata[index]}></TimeSeriesLineChartScreen>}
+                {/* {(loaded)&&<TimeSeriesLineChartScreen dtwData={dtwData[index]}></TimeSeriesLineChartScreen>} */}
+                <TimeSeriesLineChartScreen dtwData={dtwData[index]}></TimeSeriesLineChartScreen>
               </View>
 
           </ScrollView>
@@ -243,6 +266,7 @@ const mapStateToProps = state =>{
   return {
       login:state.login,
       plansIndex:state.allPlansIndex,
+      report:state.report
   };
 
 };

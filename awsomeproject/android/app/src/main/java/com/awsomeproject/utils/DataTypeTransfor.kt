@@ -1,10 +1,18 @@
 package com.awsomeproject.utils
 
 import Jama.Matrix
+import android.content.Context
+import android.graphics.Point
 import android.graphics.PointF
+import org.jblas.DoubleMatrix
 import com.awsomeproject.data.BodyPart
 import com.awsomeproject.data.KeyPoint
 import com.awsomeproject.data.Person
+import java.io.InputStreamReader
+
+
+
+
 
 
 enum class BoneVectorPart(val position: Int) {
@@ -185,7 +193,7 @@ class DataTypeTransfor {
     }
 
     //按部位分割
-    fun divide_Jama(posVecList:List<Matrix>,Type: BoneVectorPart):MutableList<Matrix>
+    fun divide_Jama(posVecList:List<Matrix>,Type:BoneVectorPart):MutableList<Matrix>
     {
         var partialposVecList:MutableList<Matrix> = arrayListOf<Matrix>()
         var choocedPart:MutableList<Int> = arrayListOf<Int>()
@@ -202,34 +210,34 @@ class DataTypeTransfor {
                 choocedPart.add(8)
                 choocedPart.add(9)
             }
-            BoneVectorPart.RIGHT_ARM ->{
+            BoneVectorPart.RIGHT_ARM->{
                 choocedPart.add(10)
                 choocedPart.add(11)
             }
-            BoneVectorPart.LEFT_LEG ->{
+            BoneVectorPart.LEFT_LEG->{
                 choocedPart.add(12)
                 choocedPart.add(13)
             }
-            BoneVectorPart.RIGHT_LEG ->{
+            BoneVectorPart.RIGHT_LEG->{
                 choocedPart.add(14)
                 choocedPart.add(15)
             }
-            BoneVectorPart.CROTCH ->{
+            BoneVectorPart.CROTCH->{
                 choocedPart.add(1)
             }
-            BoneVectorPart.SHOULDER ->{
+            BoneVectorPart.SHOULDER->{
                 choocedPart.add(0)
             }
-            BoneVectorPart.RIGHT_NECK ->{
+            BoneVectorPart.RIGHT_NECK->{
                 choocedPart.add(16)
             }
-            BoneVectorPart.LEFT_NECK ->{
+            BoneVectorPart.LEFT_NECK->{
                 choocedPart.add(17)
             }
-            BoneVectorPart.LEFT_TRUCK ->{
+            BoneVectorPart.LEFT_TRUCK->{
                 choocedPart.add(2)
             }
-            BoneVectorPart.RIGHT_TRUCK ->{
+            BoneVectorPart.RIGHT_TRUCK->{
                 choocedPart.add(3)
             }
         }
@@ -283,27 +291,6 @@ class DataTypeTransfor {
 }
 fun main(args: Array<String>)
 {
-//    var persons = arrayListOf<Person>()
-//
-//    for (i in 0..5)
-//    {
-//        var person:Person=Person(keyPoints = arrayListOf<KeyPoint>(),
-//                                 score = 100.0.toFloat())
-//        var p:PointF= PointF(1.0.toFloat(),2.0.toFloat())
-//        for (j in 0..16)
-//        {
-//
-//            var points: MutableList<KeyPoint> = arrayListOf<KeyPoint>()
-//            points.add(
-//                KeyPoint(
-//                    bodyPart = BodyPart.LEFT_ANKLE,
-//                    coordinate = PointF(j.toFloat(), j.toFloat()),
-//                    score = 100.toFloat()
-//                ))
-//             person = Person(keyPoints = points,
-//                                score = 100.0.toFloat())
-//        }
-//        persons.add(person)
-//    }
+
 
 }

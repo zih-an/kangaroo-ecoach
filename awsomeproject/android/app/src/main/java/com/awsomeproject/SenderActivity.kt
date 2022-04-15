@@ -4,13 +4,17 @@ import android.Manifest
 import android.app.AlertDialog
 import android.app.Dialog
 import android.content.DialogInterface
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.os.Process
+import android.os.SystemClock
 import android.view.*
+import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.lifecycleScope
@@ -19,7 +23,9 @@ import kotlinx.coroutines.launch
 import com.awsomeproject.camera.CameraSender
 import com.awsomeproject.socketconnect.Device
 
+import com.awsomeproject.socketconnect.communication.slave.CommandReceiver
 import com.awsomeproject.socketconnect.communication.slave.FrameDataSender
+import com.awsomeproject.socketconnect.connectpopview.slavePopView
 import kotlin.concurrent.thread
 
 
@@ -54,6 +60,12 @@ class SenderActivity :AppCompatActivity() {
         if (!isCameraPermissionGranted()) {
             requestPermission()
         }
+        //开始接受通信命令
+        CommandReceiver.start(object : CommandReceiver.CommandListener{
+            override fun onReceive(command: String?) {
+                commandResolver(command)
+            }
+        })
         thread {
             FrameDataSender.open(mainHost)
         }
@@ -61,7 +73,17 @@ class SenderActivity :AppCompatActivity() {
 
 
     }
-
+    private fun commandResolver(demand:String?)
+    {
+        when(demand) {
+            "finishSendFrame" -> {
+                CommandReceiver.close()
+                finish()
+            }
+            null -> {
+            }
+        }
+    }
     override fun onResume() {
         cameraSender?.resume()
         super.onResume()
@@ -78,6 +100,7 @@ class SenderActivity :AppCompatActivity() {
 //        slavepopView.dismiss()
         cameraSender?.close()
         FrameDataSender.close()
+
     }
 
 

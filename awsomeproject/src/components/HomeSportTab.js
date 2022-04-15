@@ -10,6 +10,10 @@ import ActionSheetComp from "./ActionSheetComp"
 import Svg from './Svg';
 import { Card } from "react-native-shadow-cards";
 import CameraModule from"../../KotlinStream"
+import newest from "../assets/newest.json";
+import * as actions from "../screens/store/actions";
+
+let reportData = newest;
 const BulbIcon = props => <Icon {...props} name="bulb-outline" />;
 const ArrorDownIcon = props => (
   <Icon {...props} name="arrowhead-down-outline" />
@@ -65,25 +69,30 @@ function HomeSportTab(props) {
 
   const toExercising = async () => {
     setLoading(true);
-    let res = await getData(url,props.login.token);
+    let resSchedual = await getData(url,props.login.token);
     setLoading(false);
-    if(res["code"]===0) {
-      Alert.alert(res["message"]);
+    if(resSchedual["code"]===0) {
+      Alert.alert(resSchedual["message"].message);
     }
     else {
-      Alert.alert("开始运动！");
-      res=JSON.stringify(res);
-      CameraModule.startcameraActivity(res);
-      props.nav2exercising.navigate("SportOverviewPage");
+      resSchedual=JSON.stringify(resSchedual);
+      let response = await CameraModule.startcameraActivity(resSchedual);
+      if(response===0)
+      {
+        
+      }else{
+        response = JSON.parse(response);
+        reportData = response;
+        props.addReport(response);
+        props.nav2exercising.navigate("SportOverviewPage");
+      }
     }
   };
   const toConnectSend = () => {
-    // setConnect(false);
     setModalViseibleCnSe(true);
   };
   const toConnectReceive = async () => {
     setModalViseibleCnRe(true);
-    // else  Alert.alert("设备未开启！");
   };
   return (
     <ScrollView 
@@ -201,4 +210,5 @@ const mapStateToProps = state =>{
   };
 };
 
-export default connect(mapStateToProps)(HomeSportTab);
+export default connect(mapStateToProps,actions)(HomeSportTab);
+export {reportData};

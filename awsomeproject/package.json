@@ -13,7 +13,6 @@
     "@babel/runtime": "^7.17.9",
     "@eva-design/eva": "^2.1.1",
     "@react-native-community/art": "^1.2.0",
-    "@react-native-community/cookies": "^5.0.1",
     "@react-native-cookies/cookies": "^6.1.0",
     "@react-navigation/bottom-tabs": "^6.2.0",
     "@react-navigation/native": "^6.0.8",

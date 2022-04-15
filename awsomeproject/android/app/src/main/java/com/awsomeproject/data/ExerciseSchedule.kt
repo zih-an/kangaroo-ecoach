@@ -84,7 +84,6 @@ class ExerciseSchedule(JSONmeg:String) {
             }
             return temp
         }
-
         public fun getTagByIndex(index:Int):MutableList<Int>
         {
             var temp:MutableList<Int> = arrayListOf()
@@ -95,7 +94,6 @@ class ExerciseSchedule(JSONmeg:String) {
             }
             return temp
         }
-
         public fun getName(index:Int):String{
             return exerciseName.get(index)
         }
@@ -111,17 +109,26 @@ class ExerciseSchedule(JSONmeg:String) {
         }
         private var id:Int=-1
         private var size:Int=0;
-        public var  exerciseName:MutableList<String> = arrayListOf<String>()
+        public var exerciseName:MutableList<String> = arrayListOf<String>()
         public var exerciseId:MutableList<Int> = arrayListOf<Int>()
         public var exerciseGroups:MutableList<Int> = arrayListOf<Int>()
         fun getSize():Int
         {
             return size
         }
+        public  fun reSet()
+        {
+            id=-1
+            size=0
+            exerciseName.clear()
+            exerciseId.clear()
+            exerciseGroups.clear()
+        }
     }
 
     private val meg:String=JSONmeg
     init{
+        reSet()
         JSON_decoder()
     }
 

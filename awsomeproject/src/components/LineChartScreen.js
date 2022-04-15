@@ -15,9 +15,12 @@ class LineChartScreen extends React.Component {
   constructor(props) {
     super(props);
     let lineData = this.props.lineData;
-    let tmpData = lineData.map((item,index)=>{
+    let tmpData;
+    if(lineData.length!==0)
+    tmpData = lineData.map((item,index)=>{
         return {x:index*0.2,y:item};
     });
+    else tmpData = [{x:1,y:1}];
     this.state = {
         yAxis:{
             left:{

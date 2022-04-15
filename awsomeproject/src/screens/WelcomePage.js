@@ -48,13 +48,13 @@ class WelcomePage extends Component {
               } 
             }
             this.timer = setTimeout(() => {
-              this.props.navigation.navigate('MainPage');
-              // if(this.state.cookieCurrent===true) {
-              //   this.props.navigation.navigate('MainPage');
-              // }
-              // else{
-              //   this.props.navigation.navigate('Login');
-              // }
+              // this.props.navigation.navigate('MainPage');
+              if(this.state.cookieCurrent===true) {
+                this.props.navigation.navigate('MainPage');
+              }
+              else{
+                this.props.navigation.navigate('Login');
+              }
             }, 2000);
           });
   }

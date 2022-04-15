@@ -146,6 +146,7 @@ class VideoViewRepetend(
     {
         val exVideoId=context.resources.getIdentifier(ExerciseSchedule.getName(index), "raw", context.getPackageName())
         val ExerciseDounturi = "android.resource://" + context.packageName + "/" + exVideoId
+        println("444444"+ExerciseDounturi)
         videoView.setVideoURI(Uri.parse(ExerciseDounturi))
         videoView.seekTo(1)
 

@@ -16,11 +16,10 @@ import android.view.*
 import android.widget.*
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.lifecycleScope
-import com.awsomeproject.MainActivity
-import com.awsomeproject.utils.Voice
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.json.JSONArray
@@ -34,8 +33,12 @@ import com.awsomeproject.socketconnect.Device
 import com.awsomeproject.socketconnect.communication.host.Command
 import com.awsomeproject.socketconnect.communication.host.CommandSender
 import com.awsomeproject.socketconnect.communication.host.FrameDataReceiver
+import com.awsomeproject.socketconnect.communication.slave.FrameDataSender
+import com.awsomeproject.socketconnect.connectpopview.hostPopView
+import com.awsomeproject.utils.Voice
 import java.io.FileOutputStream
 import kotlin.concurrent.thread
+import kotlin.math.log
 
 class ReceiverActivity: AppCompatActivity() {
     companion object {
@@ -54,10 +57,11 @@ class ReceiverActivity: AppCompatActivity() {
     private lateinit var countdownView: SurfaceView
     private lateinit var countdownViewFramLayout: FrameLayout
     private var cameraReceiver: CameraReceiver? = null
-    private val voice= Voice(this)
+    private val voice= com.awsomeproject.utils.Voice(this)
     private var videoviewrepetend: VideoViewRepetend? =null
     private var FrameReceiverConnectThread:Thread?=null
     private lateinit var scoreTextView: TextView
+
     private val requestPermissionLauncher =
         registerForActivityResult(
             ActivityResultContracts.RequestPermission()
@@ -101,6 +105,9 @@ class ReceiverActivity: AppCompatActivity() {
         countdownViewFramLayout=findViewById(R.id.countDownViewLayout)
         scoreTextView=findViewById(R.id.score)
 
+        //——————————————————————语音初始化—————————————————-—————————//
+        Voice.reSet()
+        //————————————————————————————————————————————-————————————//
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.R ||
             Environment.isExternalStorageManager()) {
             Toast.makeText(this, "已获得访问所有文件的权限", Toast.LENGTH_SHORT).show();
@@ -119,7 +126,7 @@ class ReceiverActivity: AppCompatActivity() {
     private fun initView(){
 
         val mainActivity=this
-        val JsonMeg="{\n" +
+        var JsonMeg="{\n" +
                 "    \"id\": 1,\n"+
                 "    \"data\": [\n" +
                 "        {\n" +
@@ -132,6 +139,10 @@ class ReceiverActivity: AppCompatActivity() {
                 "            \"url\": \"sample7\",\n" +
                 "            \"groups\": \"2\"\n" +
                 "        }]}"
+        var bundle=intent.getExtras()
+        bundle?.getString("ExerciseScheduleMesg")?.let{
+            JsonMeg=it
+        }
 
         videoviewrepetend= VideoViewRepetend(JsonMeg,this,videoView,countdownView,countdownViewFramLayout,this.baseContext,object:VideoViewRepetend.VideoViewRepetendListener{
             override fun onExerciseEnd(index:Int,samplevideoName:String,samplevideoTendency:MutableList<Int>,id:Int) {
@@ -204,11 +215,12 @@ class ReceiverActivity: AppCompatActivity() {
     }
 
     override fun onPause() {
+        super.onPause()
         cameraReceiver?.pause()
 //        videoviewrepetend?.videoView?.pause()
         cameraReceiver?.close()
         FrameDataReceiver.close()
-        super.onPause()
+
     }
 
     override fun onStop() {
@@ -219,6 +231,13 @@ class ReceiverActivity: AppCompatActivity() {
         FrameReceiverConnectThread?.let{
             it.interrupt()
         }
+        Voice.close()
+
+        val intent : Intent = Intent();
+        intent.putExtra("state", "finish");
+        setResult(RESULT_OK, intent)
+        finish()
+
     }
 
     // check if permission is granted or not.
@@ -270,8 +289,8 @@ class ReceiverActivity: AppCompatActivity() {
                                     Log.d("old:","Interrupted")
                                 }
                             }
-                        }
-                        //*************************************************************
+                    }
+                //*************************************************************
                 lifecycleScope.launch(Dispatchers.Main) {
                     cameraReceiver?.initCamera()
                 }

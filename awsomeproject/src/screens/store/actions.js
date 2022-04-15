@@ -11,7 +11,7 @@ export const CHANGE_TODAY = 'CHANGE_TODAY';//加入今日计划id
 export const DELETE_TODAY = 'DELETE_TODAY';//删除今日计划id
 export const ADD_TODAY_DETAIL = 'ADD_TODAY_DETAIL';//加入今日计划详情（用于展示）
 export const ADD_SHOP = 'ADD_SHOP';//加入商品信息
-
+export const ADD_REPORT = 'ADD_REPORT';//加入运动报告信息
 
 
 
@@ -51,4 +51,7 @@ export function addTodayDetail(plans){
 }
 export function addShop(items){
     return { type: ADD_SHOP, content:items}
+}
+export function addReport(items){
+    return { type: ADD_REPORT, content:items}
 }

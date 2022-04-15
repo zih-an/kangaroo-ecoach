@@ -10,11 +10,13 @@ import android.widget.Button
 import android.widget.ListView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.awsomeproject.CameraActivity
 import org.json.JSONObject
 import com.awsomeproject.MainActivity
 import com.awsomeproject.R
 import com.awsomeproject.layoutImpliment.BackArrowView
 import com.awsomeproject.layoutImpliment.connectAdapter
+import com.awsomeproject.service.screenCaptureService
 import com.awsomeproject.socketconnect.Device
 import com.awsomeproject.socketconnect.communication.host.Command
 import com.awsomeproject.socketconnect.communication.host.CommandSender
@@ -26,14 +28,15 @@ import kotlin.concurrent.thread
 
 class screen_sender_connectView  : AppCompatActivity()  {
 
+    private val REQUEST_CODE = 1
 
     lateinit var btnSearchDeviceOpen : Button
     lateinit var receiverList: ListView
     lateinit var btnReturn: BackArrowView
-
+    var JsonMeg_Intent:String?=null
     var isSearchDeviceOpen:Boolean=false;
     var devices: MutableMap<String, Device> = mutableMapOf()
-
+    var choosed_device:Device?=null
     fun sendCommand(device: Device,str:String) {
         //发送命令
         val command = Command(str.toByteArray(), object : Command.Callback {
@@ -50,14 +53,20 @@ class screen_sender_connectView  : AppCompatActivity()  {
         CommandSender.addCommand(command)
     }
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.screen_projection_launcher)
+        var bundle=intent.getExtras()
+        bundle?.getString("ExerciseScheduleMesg")?.let{
+            JsonMeg_Intent=it
+        }
+
         btnReturn=findViewById(R.id.back_arrow)
         btnSearchDeviceOpen=this.findViewById(R.id.connectBtn)
         btnReturn=this.findViewById(R.id.back_arrow)
         btnReturn.setOnClickListener{
-            System.exit(0)
+            finish()
         }
 
         receiverList=this.findViewById(R.id.slavelist)
@@ -88,6 +97,7 @@ class screen_sender_connectView  : AppCompatActivity()  {
 
     override fun onResume() {
         super.onResume()
+
     }
 
     override fun onPause() {
@@ -116,6 +126,7 @@ class screen_sender_connectView  : AppCompatActivity()  {
                         override fun onClick(view: View) {
                             var uuid = view.getTag() as String
                             devices.get(uuid)?.let {
+                                choosed_device=it
                                 var JsonObj=JSONObject()
                                 GlobalStaticVariable.frameWidth=Resources.getSystem().displayMetrics.heightPixels
                                 GlobalStaticVariable.frameLength=Resources.getSystem().displayMetrics.widthPixels
@@ -129,20 +140,34 @@ class screen_sender_connectView  : AppCompatActivity()  {
                             thread {
                                 FrameDataSender.open(devices.get(uuid))
                             }
-                            val intent = Intent(baseContext, MainActivity::class.java)
+
+                            val intent = Intent(baseContext, CameraActivity::class.java)
                             intent.putExtra("isScreenProjection", true)
                             intent.putExtra("screenReceiverIp", devices.get(uuid)!!.ip)
+                            JsonMeg_Intent?.let {
+                                intent.putExtra("ExerciseScheduleMesg", it)
+                            }
                             clear()
                             stopSearch()
                             isSearchDeviceOpen = false
                             btnSearchDeviceOpen.setText("开始搜索")
-                            startActivity(intent)
+
+                            startActivityForResult(intent,REQUEST_CODE)
                         }
                     })
                     receiverList.adapter=adapter
                 }
             }
         })
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == REQUEST_CODE) {
+            choosed_device?.let {
+                sendCommand(it, "finishAcceptFrame")
+            }
+        }
     }
     private fun stopSearch() {
         DeviceSearcher.close()

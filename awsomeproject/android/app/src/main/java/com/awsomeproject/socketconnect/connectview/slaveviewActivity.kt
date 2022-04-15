@@ -32,12 +32,6 @@ class slaveviewActivity : AppCompatActivity() {
         btnReturn=findViewById(R.id.back_arrow)
         hostList=findViewById(R.id.hostlist)
         btnListeningOpen=findViewById(R.id.connectBtn)
-        //开始接受通信命令
-        CommandReceiver.start(object : CommandReceiver.CommandListener{
-            override fun onReceive(command: String?) {
-                commandResolver(command)
-            }
-        })
         btnListeningOpen?.setOnClickListener {
             if(isListeningOpen)
             {
@@ -72,7 +66,7 @@ class slaveviewActivity : AppCompatActivity() {
                 val intent = Intent(baseContext, screenReceiverActivity::class.java)
                 var hostIp = hostDevice!!.ip
                 intent.putExtra("mainScreenSenderIp", hostIp)
-                stopListen()
+                CommandReceiver.close()
                 isListeningOpen = false
                 btnListeningOpen.setText("开始监听")
                 startActivity(intent)
@@ -82,7 +76,7 @@ class slaveviewActivity : AppCompatActivity() {
         {
             when(demand) {
                 "openCamera" -> {
-    //                openCamera()
+                    //                openCamera()
                 }
                 "sendFrame" -> {
                     SystemClock.sleep(80)
@@ -90,6 +84,7 @@ class slaveviewActivity : AppCompatActivity() {
                         val intent = Intent(baseContext, SenderActivity::class.java)
                         var hostIp = hostDevice!!.ip
                         intent.putExtra("hostIp", hostIp)
+                        CommandReceiver.close()
                         stopListen()
                         isListeningOpen = false
                         btnListeningOpen.setText("开始监听")
@@ -110,6 +105,13 @@ class slaveviewActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
+        println("88888")
+        //开始接受通信命令
+        CommandReceiver.start(object : CommandReceiver.CommandListener{
+            override fun onReceive(command: String?) {
+                commandResolver(command)
+            }
+        })
     }
 
     override fun onPause() {
@@ -144,9 +146,9 @@ class slaveviewActivity : AppCompatActivity() {
         DeviceSearchResponser.close()
         hostList.setAdapter(
             ArrayAdapter<String>(
-            baseContext,
-            android.R.layout.simple_list_item_1,
-            arrayListOf())
+                baseContext,
+                android.R.layout.simple_list_item_1,
+                arrayListOf())
         )
     }
 

@@ -7,7 +7,6 @@ import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.media.ImageReader
 import android.media.projection.MediaProjectionManager
 import android.os.*
 import android.provider.Settings
@@ -41,25 +40,38 @@ class CameraActivity :AppCompatActivity() {
     companion object {
         private const val FRAGMENT_DIALOG = "dialog"
     }
-    /** A [SurfaceView] for camera preview.   */
+    //摄像机preview
     private lateinit var surfaceView: SurfaceView
-
+    //返回码
     private val REQUEST_CODE = 1
-
+    //模型默认GPU
     private var device = Device.GPU
+    //分数条Progress
     private lateinit var msquareProgress: SquareProgress
+    //运动视频View
     private lateinit var videoView: VideoView
+    //倒计时View
     private lateinit var countdownView: SurfaceView
+    //倒计时framLayaout
     private lateinit var countdownViewFramLayout: FrameLayout
+    //分数框
     private lateinit var scoreTextView: TextView
+    //摄像机
     private var cameraSource: CameraSource? = null
-
-    private val voice= Voice(this)
+    //语言提示
+    private val voice= com.awsomeproject.utils.Voice(this)
+    //运动视频循环节
     private var videoviewrepetend:VideoViewRepetend? =null
-
+    //总返回数据
+    private var returnData:String?=null
+    //正常结束标识符
+    private var isFinishOk=false
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~For Screen Projection~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    //编码器
     private var encoder: EncoderH264?=null
+    //投屏模式下的接收方
     private var mainScreenReceiver:com.awsomeproject.socketconnect.Device?=null
+    //发送帧函数
     fun sendFrameData(frameData:ByteArray,device: com.awsomeproject.socketconnect.Device) {
         //发送命令
         val frameData = FrameData(frameData, object : FrameData.Callback {
@@ -77,6 +89,7 @@ class CameraActivity :AppCompatActivity() {
     }
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~For Screen Projection~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+    //获取权限
     private val requestPermissionLauncher =
         registerForActivityResult(
             ActivityResultContracts.RequestPermission()
@@ -89,54 +102,75 @@ class CameraActivity :AppCompatActivity() {
             }
         }
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        // keep screen on while app is running
-
-        createFile()
-
-        window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+        //创建运动数据文件
+        //createFile()
+        //隐藏UI
         hideSystemUI()
+        //————————————获取Intent数据，判断是否需要开启投屏服务————————————//
         var bundle=intent.getExtras()
-        bundle?.getInt("isScreenProjection")?.let{
-            GlobalStaticVariable.frameRate=25
-            GlobalStaticVariable.isScreenCapture=true
-            mainScreenReceiver=com.awsomeproject.socketconnect.Device(bundle?.getString("screenReceiverIp"))
-            screenProjectioninit()
+        bundle?.getBoolean("isScreenProjection")?.let{
+            if(it==true) {
+                GlobalStaticVariable.frameRate = 25
+                GlobalStaticVariable.isScreenCapture = true
+                mainScreenReceiver =
+                    com.awsomeproject.socketconnect.Device(bundle?.getString("screenReceiverIp"))
+                screenProjectioninit()
+            }
         }
-        msquareProgress = findViewById(R.id.sp);
+        //————————————————————————————————————————————-————————————//
+
+        //———————————————————————初始化控件——————————————————————————//
+        msquareProgress = findViewById(R.id.sp)
+        msquareProgress.setCurProgress(0)
         countdownView= findViewById(R.id.countDownView)
         surfaceView = findViewById(R.id.surfaceView)
         videoView = findViewById(R.id.videoView)
         countdownViewFramLayout=findViewById(R.id.countDownViewLayout)
         scoreTextView=findViewById(R.id.score)
+        //————————————————————————————————————————————-————————————//
+
+        //———————————————————————权限申请————————————————————————————//
         if (!isCameraPermissionGranted()) {
             requestPermission()
         }
+//        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.R ||
+//            Environment.isExternalStorageManager()) {
+//            Toast.makeText(this, "已获得访问所有文件的权限", Toast.LENGTH_SHORT).show();
+//        } else {
+//            var intent:Intent =Intent(Settings.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION);
+//            startActivity(intent);
+//        }
+        //————————————————————————————————————————————-————————————//
 
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.R ||
-            Environment.isExternalStorageManager()) {
-            Toast.makeText(this, "已获得访问所有文件的权限", Toast.LENGTH_SHORT).show();
-        } else {
-            var intent:Intent =Intent(Settings.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION);
-            startActivity(intent);
-        }
+        //——————————————————————语音初始化—————————————————-—————————//
+        Voice.reSet()
+        //————————————————————————————————————————————-————————————//
+
+        //——————————————————————————初始化循环节——————————————————————//
         initView()
-        msquareProgress.setCurProgress(0);
+        //————————————————————————————————————————————-————————————//
 
+        //——————————————————————————初始化摄像机——————————————————————//
         openCamera()
+        //————————————————————————————————————————————-————————————//
+
+        //—————————————————————————初始化模型——————————-————————————//
         createPoseEstimator()
+        //————————————————————————————————————————————-————————————//
     }
+
     override fun onStart() {
         super.onStart()
-
     }
-    private fun initView(){
 
+    private fun initView(){
         val mainActivity=this
-        var bundle=intent.getExtras()
-        var JsonMeg  ="{\n" +
+
+        var JsonMeg      ="{\n" +
                 "    \"id\": 1,\n"+
                 "    \"data\": [\n" +
                 "        {\n" +
@@ -149,12 +183,6 @@ class CameraActivity :AppCompatActivity() {
                 "            \"url\": \"sample7\",\n" +
                 "            \"groups\": \"2\"\n" +
                 "        }]}"
-
-        bundle?.getString("ExerciseScheduleMesg")?.let{
-            JsonMeg=it
-        }
-
-
 //                ="{\n" +
 //                "    \"id\": 5,\n"+
 //                "    \"data\": [\n" +
@@ -163,6 +191,11 @@ class CameraActivity :AppCompatActivity() {
 //                "            \"url\": \"sample24\",\n" +
 //                "            \"groups\": \"2\"\n" +
 //                "        }]}"
+        var bundle=intent.getExtras()
+        bundle?.getString("ExerciseScheduleMesg")?.let{
+            JsonMeg=it
+        }
+
         videoviewrepetend= VideoViewRepetend(JsonMeg,this,videoView,countdownView,countdownViewFramLayout,this.baseContext,object:VideoViewRepetend.VideoViewRepetendListener{
             override fun onExerciseEnd(index:Int,samplevideoName:String,samplevideoTendency:MutableList<Int>,id:Int) {
                 //一轮运动完成，开始创建下一轮运动的数据结构
@@ -221,27 +254,37 @@ class CameraActivity :AppCompatActivity() {
                     }
                     TotalReturnData.put("id",ExerciseSchedule.getTotalId())
                     TotalReturnData.put("data",TotalReturnValue)
-                    writeTofile("test",TotalReturnData.toString())
+                    returnData=TotalReturnData.toString()
+                    val intent = Intent()
+                    intent.putExtra("res",returnData)
+                    println("+++++++1111"+returnData)
+                    mainScreenReceiver?.let {
+                        stopProjection()
+                        intent.putExtra("state", "finish")
+                    }
+                    setResult(RESULT_OK, intent)
+                    finish()
+//                    writeTofile("test",TotalReturnData.toString())
                 }
 
             }
         })
     }
+
     override fun onResume() {
         cameraSource?.resume()
-//        videoviewrepetend?.videoView?.start()
         super.onResume()
     }
 
     override fun onPause() {
         cameraSource?.pause()
-//        videoviewrepetend?.videoView?.pause()
         super.onPause()
     }
 
     override fun onStop() {
         super.onStop()
-        mainScreenReceiver?.let { stopProjection() }
+        cameraSource?.close()
+        Voice.close()
     }
 
     // check if permission is granted or not.
@@ -293,6 +336,7 @@ class CameraActivity :AppCompatActivity() {
         }
     }
 
+
     private fun createPoseEstimator() {
         val poseDetector = MoveNet.create(this, device, ModelType.Thunder)
         poseDetector.let { detector ->
@@ -300,7 +344,9 @@ class CameraActivity :AppCompatActivity() {
         }
     }
 
-    private fun requestPermission() {
+    //权限申请
+    private fun requestPermission()
+    {
         when (PackageManager.PERMISSION_GRANTED) {
             ContextCompat.checkSelfPermission(
                 this,
@@ -318,16 +364,9 @@ class CameraActivity :AppCompatActivity() {
             }
         }
     }
-    private fun writeTofile(filename:String, Jsondata:String)
-    {
-        var path=filename+".txt"
-        var fos: FileOutputStream = baseContext.openFileOutput(path, Context.MODE_PRIVATE)
-        fos.write(Jsondata.toByteArray());
-        fos.flush();
-        fos.close();
-    }
 
 
+    //退出提醒
     override fun onKeyDown(keyCode:Int, event: KeyEvent?):Boolean {
         // TODO Auto-generated method stub
         if(keyCode==KeyEvent.KEYCODE_BACK){
@@ -336,6 +375,13 @@ class CameraActivity :AppCompatActivity() {
                 .setMessage(msg)
                 .setTitle("注意")
                 .setPositiveButton("确认", DialogInterface.OnClickListener { dialogInterface, i ->
+                    val intent = Intent()
+                    intent.putExtra("isFinishOk",isFinishOk)
+                    mainScreenReceiver?.let {
+                        stopProjection()
+                        intent.putExtra("state", "finish")
+                    }
+                    setResult(RESULT_CANCELED, intent)
                     finish()
                 })
                 .setNeutralButton("取消", null)
@@ -351,22 +397,11 @@ class CameraActivity :AppCompatActivity() {
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~For Screen Projection~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     private fun screenProjectioninit()
     {
-
-//        setOnImageAvailableListener(object :ImageReader.OnImageAvailableListener {
-//            override fun onImageAvailable(mImageReader: ImageReader?) {
-//                var image = mImageReader?.acquireLatestImage()
-//                image?.let {
-//                    encoder?.encoderH264(image)
-//                    image?.close()
-//                }
-//            }
-//        })
         // get width and height
         encoder= EncoderH264(
             GlobalStaticVariable.frameLength,GlobalStaticVariable.frameWidth
             ,object : EncoderH264.EncoderListener{
                 override fun h264(data: ByteArray) {
-                    fos?.write(data)
                     Log.d("TAG","H264 SIZE:"+data.size)
                     mainScreenReceiver?.let {
                         sendFrameData(data,it)
@@ -375,20 +410,18 @@ class CameraActivity :AppCompatActivity() {
             },GlobalStaticVariable.frameRate)
         startProjection()
     }
-    private fun startProjection() {
+    private fun startProjection()
+    {
         val mProjectionManager =
             getSystemService(MEDIA_PROJECTION_SERVICE) as MediaProjectionManager
         startActivityForResult(mProjectionManager.createScreenCaptureIntent(), REQUEST_CODE)
     }
-    private fun setOnImageAvailableListener(obj: ImageReader.OnImageAvailableListener)
+    private fun stopProjection()
     {
-        screenCaptureService.setOnImageAvailableListener(obj)
-    }
-    private fun stopProjection() {
         startService(screenCaptureService.getStopIntent(this))
     }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?)
+    {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == REQUEST_CODE) {
             if (resultCode == RESULT_OK) {
@@ -400,20 +433,26 @@ class CameraActivity :AppCompatActivity() {
                     )
                 )
             }
+            else
+            {
+                finish()
+            }
         }
     }
-
-    private var fos:FileOutputStream?=null
-    private fun createFile()
-    {
-        fos = baseContext.openFileOutput("test.h264",Context.MODE_PRIVATE)
-    }
+//    private var fos:FileOutputStream?=null
+//    private fun createFile()
+//    {
+//        fos = baseContext.openFileOutput("test.h264",Context.MODE_PRIVATE)
+//    }
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~For Screen Projection~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 
     private fun hideSystemUI() {
         // Enables regular immersive mode.
         // For "lean back" mode, remove SYSTEM_UI_FLAG_IMMERSIVE.
         // Or for "sticky immersive," replace it with SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+        //设置屏幕常亮
+        window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         window.decorView.systemUiVisibility = (View.SYSTEM_UI_FLAG_IMMERSIVE
                 // Set the content to appear under the system bars so that the
                 // content doesn't resize when the system bars hide and show.
@@ -430,7 +469,6 @@ class CameraActivity :AppCompatActivity() {
     }
 
     class ErrorDialog : DialogFragment() {
-
         override fun onCreateDialog(savedInstanceState: Bundle?): Dialog =
             AlertDialog.Builder(activity)
                 .setMessage(requireArguments().getString(ARG_MESSAGE))
@@ -438,8 +476,6 @@ class CameraActivity :AppCompatActivity() {
                     // do nothing
                 }
                 .create()
-
-
         companion object {
 
             @JvmStatic

@@ -312,8 +312,8 @@ class CameraSource(
                 detector?.estimatePoses(bitmap)?.let {
                     //捕获当前帧中的用户关节点
                     persons.addAll(it)
-                    //捕获对应时刻的标准动作关节点
-                    persons.addAll(Samples[index].getPersonNow(it[0].keyPoints[0].coordinate.x.toDouble(),it[0].keyPoints[0].coordinate.y.toDouble()))
+//                    //捕获对应时刻的标准动作关节点
+//                    persons.addAll(Samples[index].getPersonNow(it[0].keyPoints[0].coordinate.x.toDouble(),it[0].keyPoints[0].coordinate.y.toDouble()))
                     //如果获取的帧可信，则处理
                     if (it.get(0).isTrust()) {
                         //输入用户关节点动作，进行计算
@@ -333,12 +333,15 @@ class CameraSource(
                 }
             }
             else if (isPersonDetect == false) {
-                    detector?.estimatePoses(bitmap)?.let {
-                        if (Samples[index].tryFirstFrame(it)>=97&&it.get(0).isTrustMoreSerious())
-                        {
-                            isPersonDetect = true
-                            listener?.onPersonDetected()
-                        }
+                detector?.estimatePoses(bitmap)?.let {
+                    //捕获对应时刻的标准动作关节点
+                    persons.addAll(it)
+                    persons.addAll(Samples[index].getPersonOnStart(it[0].keyPoints[0].coordinate.x.toDouble(),it[0].keyPoints[0].coordinate.y.toDouble()))
+                    if (Samples[index].tryFirstFrame(it)>=85&&it.get(0).isTrustMoreSerious())
+                    {
+                        isPersonDetect = true
+                        listener?.onPersonDetected()
+                    }
                 }
             }
         }
