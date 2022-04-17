@@ -29,6 +29,7 @@ class slaveviewActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.remote_camera_sender)
+        GlobalStaticVariable.reSet()
         btnReturn=findViewById(R.id.back_arrow)
         hostList=findViewById(R.id.hostlist)
         btnListeningOpen=findViewById(R.id.connectBtn)
@@ -52,20 +53,28 @@ class slaveviewActivity : AppCompatActivity() {
                 Toast.makeText(baseContext, "已经打开监听程序！", Toast.LENGTH_SHORT).show()
             }
         }
+        btnReturn.setOnClickListener{
+            val intent = Intent()
+            setResult(RESULT_CANCELED, intent)
+            finish()
+        }
     }
     private fun commandResolver(demand:String?)
     {
         if(isScreenProjection)
         {
             val JsonObject=JSONObject(demand)
+
             GlobalStaticVariable.frameWidth=  JsonObject.getInt("Width")
             GlobalStaticVariable.frameLength= JsonObject.getInt("Length")
             GlobalStaticVariable.frameRate=25
             isScreenProjection=false
+
             runOnUiThread {
                 val intent = Intent(baseContext, screenReceiverActivity::class.java)
                 var hostIp = hostDevice!!.ip
                 intent.putExtra("mainScreenSenderIp", hostIp)
+                stopListen()
                 CommandReceiver.close()
                 isListeningOpen = false
                 btnListeningOpen.setText("开始监听")
@@ -76,11 +85,13 @@ class slaveviewActivity : AppCompatActivity() {
         {
             when(demand) {
                 "openCamera" -> {
+                    isScreenProjection=false
                     //                openCamera()
                 }
                 "sendFrame" -> {
-                    SystemClock.sleep(80)
+                    SystemClock.sleep(500)
                     runOnUiThread {
+                        isScreenProjection=false
                         val intent = Intent(baseContext, SenderActivity::class.java)
                         var hostIp = hostDevice!!.ip
                         intent.putExtra("hostIp", hostIp)
@@ -95,17 +106,19 @@ class slaveviewActivity : AppCompatActivity() {
                     isScreenProjection = true
                 }
                 null -> {
+                    isScreenProjection=false
                 }
             }
         }
     }
     override fun onStop() {
         super.onStop()
+        val intent = Intent()
+        setResult(RESULT_CANCELED, intent)
     }
 
     override fun onResume() {
         super.onResume()
-        println("88888")
         //开始接受通信命令
         CommandReceiver.start(object : CommandReceiver.CommandListener{
             override fun onReceive(command: String?) {

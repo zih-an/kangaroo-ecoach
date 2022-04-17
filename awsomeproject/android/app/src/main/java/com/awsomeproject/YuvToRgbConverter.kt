@@ -9,6 +9,7 @@ import android.renderscript.Allocation
 import android.renderscript.Element
 import android.renderscript.RenderScript
 import android.renderscript.ScriptIntrinsicYuvToRGB
+import java.io.IOException
 import java.nio.ByteBuffer
 
 class YuvToRgbConverter(context: Context) {
@@ -22,30 +23,37 @@ class YuvToRgbConverter(context: Context) {
 
     @Synchronized
     fun yuvToRgb(image: Image, output: Bitmap) {
+        try {
 
-        // Ensure that the intermediate output byte buffer is allocated
-        if (!::yuvBuffer.isInitialized) {
-            pixelCount = image.cropRect.width() * image.cropRect.height()
-            yuvBuffer = ByteBuffer.allocateDirect(
-                pixelCount * ImageFormat.getBitsPerPixel(ImageFormat.YUV_420_888) / 8)
+
+            // Ensure that the intermediate output byte buffer is allocated
+            if (!::yuvBuffer.isInitialized) {
+                pixelCount = image.cropRect.width() * image.cropRect.height()
+                yuvBuffer = ByteBuffer.allocateDirect(
+                    pixelCount * ImageFormat.getBitsPerPixel(ImageFormat.YUV_420_888) / 8)
+            }
+
+            // Get the YUV data in byte array form
+            imageToByteBuffer(image, yuvBuffer)
+
+            // Ensure that the RenderScript inputs and outputs are allocated
+            if (!::inputAllocation.isInitialized) {
+                inputAllocation = Allocation.createSized(rs, Element.U8(rs), yuvBuffer.array().size)
+            }
+            if (!::outputAllocation.isInitialized) {
+                outputAllocation = Allocation.createFromBitmap(rs, output)
+            }
+
+            // Convert YUV to RGB
+            inputAllocation.copyFrom(yuvBuffer.array())
+            scriptYuvToRgb.setInput(inputAllocation)
+            scriptYuvToRgb.forEach(outputAllocation)
+            outputAllocation.copyTo(output)
         }
-
-        // Get the YUV data in byte array form
-        imageToByteBuffer(image, yuvBuffer)
-
-        // Ensure that the RenderScript inputs and outputs are allocated
-        if (!::inputAllocation.isInitialized) {
-            inputAllocation = Allocation.createSized(rs, Element.U8(rs), yuvBuffer.array().size)
+        catch (e: IOException)
+        {
+            e.printStackTrace()
         }
-        if (!::outputAllocation.isInitialized) {
-            outputAllocation = Allocation.createFromBitmap(rs, output)
-        }
-
-        // Convert YUV to RGB
-        inputAllocation.copyFrom(yuvBuffer.array())
-        scriptYuvToRgb.setInput(inputAllocation)
-        scriptYuvToRgb.forEach(outputAllocation)
-        outputAllocation.copyTo(output)
     }
 
     private fun imageToByteBuffer(image: Image, outputBuffer: ByteBuffer) {

@@ -6,7 +6,9 @@ import android.app.Dialog
 import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
+import android.content.pm.ActivityInfo
 import android.content.pm.PackageManager
+import android.content.res.Configuration
 import android.media.projection.MediaProjectionManager
 import android.os.*
 import android.provider.Settings
@@ -25,6 +27,7 @@ import org.json.JSONObject
 import com.awsomeproject.camera.CameraSource
 import com.awsomeproject.data.*
 import com.awsomeproject.layoutImpliment.SquareProgress
+import com.awsomeproject.manager.CameraModule.Companion.PROJECTION_CAMERA_REQUEST
 import com.awsomeproject.ml.ModelType
 import com.awsomeproject.ml.MoveNet
 import com.awsomeproject.service.screenCaptureService
@@ -64,8 +67,6 @@ class CameraActivity :AppCompatActivity() {
     private var videoviewrepetend:VideoViewRepetend? =null
     //总返回数据
     private var returnData:String?=null
-    //正常结束标识符
-    private var isFinishOk=false
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~For Screen Projection~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     //编码器
     private var encoder: EncoderH264?=null
@@ -102,24 +103,34 @@ class CameraActivity :AppCompatActivity() {
             }
         }
 
-
+    override fun onConfigurationChanged(newConfig: Configuration) {
+        super.onConfigurationChanged(newConfig)
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
         //创建运动数据文件
         //createFile()
         //隐藏UI
         hideSystemUI()
         //————————————获取Intent数据，判断是否需要开启投屏服务————————————//
         var bundle=intent.getExtras()
-        bundle?.getBoolean("isScreenProjection")?.let{
-            if(it==true) {
-                GlobalStaticVariable.frameRate = 25
-                GlobalStaticVariable.isScreenCapture = true
-                mainScreenReceiver =
-                    com.awsomeproject.socketconnect.Device(bundle?.getString("screenReceiverIp"))
-                screenProjectioninit()
+        if(bundle?.getBoolean("isScreenProjection")!=null)
+        {
+            bundle?.getBoolean("isScreenProjection").let {
+                if (it == true) {
+                    GlobalStaticVariable.frameRate = 25
+                    GlobalStaticVariable.isScreenCapture = true
+                    mainScreenReceiver =
+                        com.awsomeproject.socketconnect.Device(bundle?.getString("screenReceiverIp"))
+                    screenProjectioninit()
+                }
             }
+        }
+        else
+        {
+           GlobalStaticVariable.reSet()
         }
         //————————————————————————————————————————————-————————————//
 
@@ -254,10 +265,10 @@ class CameraActivity :AppCompatActivity() {
                     }
                     TotalReturnData.put("id",ExerciseSchedule.getTotalId())
                     TotalReturnData.put("data",TotalReturnValue)
+
                     returnData=TotalReturnData.toString()
                     val intent = Intent()
                     intent.putExtra("res",returnData)
-                    println("+++++++1111"+returnData)
                     mainScreenReceiver?.let {
                         stopProjection()
                         intent.putExtra("state", "finish")
@@ -283,8 +294,10 @@ class CameraActivity :AppCompatActivity() {
 
     override fun onStop() {
         super.onStop()
+        encoder?.close()
         cameraSource?.close()
         Voice.close()
+
     }
 
     // check if permission is granted or not.
@@ -376,7 +389,6 @@ class CameraActivity :AppCompatActivity() {
                 .setTitle("注意")
                 .setPositiveButton("确认", DialogInterface.OnClickListener { dialogInterface, i ->
                     val intent = Intent()
-                    intent.putExtra("isFinishOk",isFinishOk)
                     mainScreenReceiver?.let {
                         stopProjection()
                         intent.putExtra("state", "finish")
@@ -414,7 +426,7 @@ class CameraActivity :AppCompatActivity() {
     {
         val mProjectionManager =
             getSystemService(MEDIA_PROJECTION_SERVICE) as MediaProjectionManager
-        startActivityForResult(mProjectionManager.createScreenCaptureIntent(), REQUEST_CODE)
+        startActivityForResult(mProjectionManager.createScreenCaptureIntent(), PROJECTION_CAMERA_REQUEST)
     }
     private fun stopProjection()
     {
@@ -423,7 +435,7 @@ class CameraActivity :AppCompatActivity() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?)
     {
         super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == REQUEST_CODE) {
+        if (requestCode == PROJECTION_CAMERA_REQUEST) {
             if (resultCode == RESULT_OK) {
                 startService(
                     screenCaptureService.getStartIntent(
@@ -435,6 +447,8 @@ class CameraActivity :AppCompatActivity() {
             }
             else
             {
+                val intent = Intent()
+                setResult(RESULT_CANCELED, intent)
                 finish()
             }
         }

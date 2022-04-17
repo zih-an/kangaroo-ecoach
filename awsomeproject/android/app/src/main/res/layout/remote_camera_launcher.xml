@@ -193,7 +193,7 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <org.poseestimation.layoutImpliment.ShapeButton
+    <com.awsomeproject.layoutImpliment.ShapeButton
         android:id="@+id/connectBtn"
         android:layout_width="0dp"
         android:layout_height="wrap_content"

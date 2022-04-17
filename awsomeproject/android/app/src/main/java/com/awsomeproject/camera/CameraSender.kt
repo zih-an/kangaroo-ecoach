@@ -43,7 +43,6 @@ import com.awsomeproject.data.Person
 import com.awsomeproject.socketconnect.Device
 import com.awsomeproject.socketconnect.communication.slave.FrameData
 import com.awsomeproject.socketconnect.communication.slave.FrameDataSender
-import com.awsomeproject.socketconnect.connectpopview.slavePopView
 import com.awsomeproject.videodecoder.EncoderH264
 import java.io.File
 import java.io.FileOutputStream
@@ -96,7 +95,7 @@ class CameraSender(
     private var cameraId: String = ""
 
     /**dcoder*/
-    private lateinit var encoder: EncoderH264
+    private var encoder: EncoderH264?=null
 
 
     //初始化摄像机，并设置监听器
@@ -215,6 +214,8 @@ class CameraSender(
     }
 
     fun close() {
+
+        encoder?.close()
         session?.close()
         session = null
         camera?.close()
@@ -231,9 +232,7 @@ class CameraSender(
     // process image
     private fun processImage(bitmap: Bitmap,image:Image) {
         synchronized(lock) {
-
-                encoder.encoderH264(image)
-
+                encoder?.encoderH264(image)
                 frameProcessedInOneSecondInterval++
                 if (frameProcessedInOneSecondInterval == 1) {
                     // send fps to view

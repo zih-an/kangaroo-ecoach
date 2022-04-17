@@ -7,6 +7,7 @@
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-feature
         android:name="android.hardware.camera"
@@ -14,18 +15,19 @@
     <application
       android:name=".MainApplication"
       android:label="@string/app_name"
-      android:icon="@mipmap/ic_launcher"
-      android:roundIcon="@mipmap/ic_launcher_round"
+      android:icon="@drawable/logo"
+      android:roundIcon="@drawable/logo"
       android:supportsRtl="true"
       android:allowBackup="false"
-      android:theme="@style/AppTheme">
+      android:theme="@style/Theme.PoseEstimation">
 <!--      android:requestLegacyExternalStorage="true">-->
       <activity
         android:name=".MainActivity"
         android:label="@string/app_name"
         android:configChanges="keyboard|keyboardHidden|orientation|screenSize|uiMode"
         android:launchMode="singleTask"
-        android:windowSoftInputMode="adjustResize">
+        android:windowSoftInputMode="adjustResize"
+        android:screenOrientation="portrait">
         <intent-filter>
             <action android:name="android.intent.action.MAIN" />
             <category android:name="android.intent.category.LAUNCHER" />
@@ -33,7 +35,8 @@
       </activity>
     <activity android:name=".screenReceiverActivity"
         android:exported="true"
-        android:screenOrientation="landscape" >
+        android:screenOrientation="landscape"
+        android:configChanges="orientation|keyboardHidden|screenSize|screenLayout">
         <!--            <intent-filter>-->
         <!--                <action android:name="android.intent.action.MAIN" />-->
         <!--                <category android:name="android.intent.category.LAUNCHER" />-->
@@ -41,7 +44,8 @@
     </activity>
         <activity
             android:name=".socketconnect.screenprojection.screen_sender_connectView"
-            android:exported="true" >
+            android:exported="true"
+            android:screenOrientation="portrait">
             <!--            <intent-filter>-->
             <!--                <action android:name="android.intent.action.MAIN" />-->
             <!--                <category android:name="android.intent.category.LAUNCHER" />-->
@@ -49,7 +53,8 @@
         </activity>
         <activity
             android:name=".socketconnect.connectview.hostviewActivity"
-            android:exported="true">
+            android:exported="true"
+            android:screenOrientation="portrait">
             <!--            <intent-filter>-->
             <!--                <action android:name="android.intent.action.MAIN" />-->
             <!--                <category android:name="android.intent.category.LAUNCHER" />-->
@@ -57,7 +62,8 @@
         </activity>
         <activity
             android:name=".socketconnect.connectview.slaveviewActivity"
-            android:exported="true">
+            android:exported="true"
+            android:screenOrientation="portrait">
 <!--            <intent-filter>-->
 <!--                <action android:name="android.intent.action.MAIN" />-->
 <!--                <category android:name="android.intent.category.LAUNCHER" />-->
@@ -66,6 +72,7 @@
         <activity
             android:name=".SenderActivity"
             android:screenOrientation="landscape"
+            android:configChanges="orientation|keyboardHidden|screenSize|screenLayout"
             android:exported="true" >
             <!--            <intent-filter>-->
             <!--                <action android:name="android.intent.action.MAIN" />-->
@@ -75,6 +82,7 @@
         <activity
             android:name=".ReceiverActivity"
             android:screenOrientation="landscape"
+            android:configChanges="orientation|keyboardHidden|screenSize|screenLayout"
             android:exported="true" >
             <!--            <intent-filter>-->
             <!--                <action android:name="android.intent.action.MAIN" />-->
@@ -84,7 +92,8 @@
       <activity
           android:name=".CameraActivity"
           android:screenOrientation="landscape"
-          />
+          android:configChanges="orientation|keyboardHidden|screenSize|screenLayout">
+      </activity>
         <meta-data
             android:name="preloaded_fonts"
             android:resource="@array/preloaded_fonts" />

@@ -10,15 +10,16 @@ import com.awsomeproject.R
 import com.awsomeproject.ReceiverActivity
 import com.awsomeproject.layoutImpliment.BackArrowView
 import com.awsomeproject.layoutImpliment.connectAdapter
+import com.awsomeproject.manager.CameraModule.Companion.REMOTE_CAMERA_REQUEST
 import com.awsomeproject.socketconnect.Device
 import com.awsomeproject.socketconnect.communication.host.Command
 import com.awsomeproject.socketconnect.communication.host.CommandSender
 import com.awsomeproject.socketconnect.search.DeviceSearcher
+import com.awsomeproject.videodecoder.GlobalStaticVariable
 
 
 class hostviewActivity: AppCompatActivity() {
 
-    private val REQUEST_CODE = 1
 
     lateinit var btnSearchDeviceOpen : Button
     lateinit var slaveList: ListView
@@ -44,7 +45,7 @@ class hostviewActivity: AppCompatActivity() {
     }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
+        GlobalStaticVariable.reSet()
         var bundle=intent.getExtras()
         bundle?.getString("ExerciseScheduleMesg")?.let{
             JsonMeg_Intent=it
@@ -54,6 +55,8 @@ class hostviewActivity: AppCompatActivity() {
         btnSearchDeviceOpen=this.findViewById(R.id.connectBtn)
         btnReturn=this.findViewById(R.id.back_arrow)
         btnReturn.setOnClickListener{
+            val intent=Intent()
+            setResult(RESULT_CANCELED, intent)
             finish()
         }
         slaveList=this.findViewById(R.id.slavelist)
@@ -119,8 +122,10 @@ class hostviewActivity: AppCompatActivity() {
                             }
 
                             var slaveIp=devices.get(uuid)!!.ip
+                            val ExerciseScheduleMesg=intent.getStringExtra("ExerciseScheduleMesg")
                             val intent = Intent(baseContext, ReceiverActivity::class.java)
                             intent.putExtra("slaveIp",slaveIp)
+                            intent.putExtra("ExerciseScheduleMesg",ExerciseScheduleMesg)
                             JsonMeg_Intent?.let {
                                 intent.putExtra("ExerciseScheduleMesg", it)
                             }
@@ -130,7 +135,7 @@ class hostviewActivity: AppCompatActivity() {
                             isSearchDeviceOpen = false
                             btnSearchDeviceOpen.setText("开始搜索")
                             //跳转并等待返回REQUEST_CODE
-                            startActivityForResult(intent,REQUEST_CODE)
+                            startActivityForResult(intent,REMOTE_CAMERA_REQUEST)
                         }
                     })
                     slaveList.adapter=adapter
@@ -141,9 +146,26 @@ class hostviewActivity: AppCompatActivity() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == REQUEST_CODE) {
-            choosed_device?.let {
-                sendCommand(it, "finishSendFrame")
+        if (requestCode == REMOTE_CAMERA_REQUEST) {
+            if(resultCode== RESULT_OK)
+            {
+                choosed_device?.let {
+                    sendCommand(it, "finishSendFrame")
+                    val intent = Intent()
+                    val returnData= data?.getStringExtra("res")
+                    intent.putExtra("res",returnData)
+                    setResult(RESULT_OK, intent)
+                }
+                finish()
+            }else if(resultCode== RESULT_CANCELED){
+                choosed_device?.let{
+                    sendCommand(it, "finishSendFrame")
+                    val intent = Intent()
+                    setResult(RESULT_CANCELED, intent)
+//                    finish()
+                }
+
+
             }
         }
     }

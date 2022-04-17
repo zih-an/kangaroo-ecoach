@@ -10,8 +10,11 @@ import {
     ActivityIndicator
 } from 'react-native';
 import PropTypes from 'prop-types';
-import {getData} from "./FetchData";
- 
+import CameraModule from"../../KotlinStream"
+import {getData,postData} from "./FetchData";
+import * as actions from "../screens/store/actions"
+import { connect } from 'react-redux'; 
+
 const {width} = Dimensions.get('window');
  
 const url = "http://81.68.226.132:80/exercise/begin";
@@ -69,8 +72,8 @@ class ActionSheetComp extends Component{
                 if(this.props.modalTitle==="设置设备"){
                     // if(timer !== null) clearTimeout(timer);
                         // setTimeout(()=>{
-                        Alert.alert("设备已开启，当前为摄像头");
                         this.props.setStatus(true);
+                        this.toSlave();
                         this.cancelModal();
                 }
                 else if(this.props.modalTitle==="查找附近设备"){
@@ -79,9 +82,10 @@ class ActionSheetComp extends Component{
                 break;
             case 1:
                 if(this.props.modalTitle==="设置设备"){
-                        Alert.alert("设备已开启，当前为摄像头");
                         this.props.setStatus(true);
+                        this.toSlave();
                         this.cancelModal();
+                        
                 }
                 else if(this.props.modalTitle==="查找附近设备"){
                     this.toExercise(index);
@@ -90,20 +94,48 @@ class ActionSheetComp extends Component{
         }
     }
     toExercise = async(index)=>{
-        if(index===0)
+        if(index===0)//摄像头
         this.setState({progressFir:true});
         else this.setState({progressSec:true});
-        let res = await getData(url,this.props.token);
-        if(res["code"]===0) Alert.alert("连接失败！");
+
+        let resSchedual = await getData(url,this.props.token);
+        if(resSchedual["code"]===0) Alert.alert("连接失败！");
         else {
             if(index === 0)
             this.setState({progressFir:false});
             else this.setState({progressSec:false});
             this.props.setStatus(true);
-            Alert.alert("连接成功，开始运动！");
-            this.cancelModal();
-            this.props.nav.navigate("SportOverviewPage");
+            resSchedual=JSON.stringify(resSchedual);
+            let response;
+            if(index===0)
+            {
+                response = await CameraModule.startremoteActivity(resSchedual);
+            }
+            else{
+                response = await CameraModule.startscreenprojectionActivity(resSchedual);
+            }
+            if(response===0)
+            {
+                this.cancelModal();   
+            }else{
+                let finishurl = "http://81.68.226.132:80/exercise/finish/"
+                let resObj = JSON.parse(response);
+                let id = resObj["id"];
+                let resPost = await postData(finishurl,{"information":response,"id":id});
+                if(resPost["code"]==="1"||resPost["code"]===1){
+                    Alert.alert("上传成功，可点击历史记录查看");
+                }else{
+                    Alert.alert("上传失败!");
+                }
+                this.props.addReport(resObj);
+                this.cancelModal();
+                this.props.nav.navigate("SportOverviewPage");
+            }
+            
         }
+    };
+    toSlave = async()=>{
+        let response =await CameraModule.startclintActivity();
     };
     cancelModal(){
         this.setState({modalVisible:false});
@@ -196,4 +228,11 @@ const styles = StyleSheet.create({
         textAlign:'center',
     },
 });
-export default ActionSheetComp;
+
+const mapStateToProps = state =>{
+    return {
+        login:state.login,
+    };
+  };
+  
+export default connect(mapStateToProps,actions)(ActionSheetComp);

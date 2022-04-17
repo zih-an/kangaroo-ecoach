@@ -6,7 +6,9 @@ import android.app.Dialog
 import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
+import android.content.pm.ActivityInfo
 import android.content.pm.PackageManager
+import android.content.res.Configuration
 import android.os.Build
 import android.os.Bundle
 import android.os.Environment
@@ -34,7 +36,6 @@ import com.awsomeproject.socketconnect.communication.host.Command
 import com.awsomeproject.socketconnect.communication.host.CommandSender
 import com.awsomeproject.socketconnect.communication.host.FrameDataReceiver
 import com.awsomeproject.socketconnect.communication.slave.FrameDataSender
-import com.awsomeproject.socketconnect.connectpopview.hostPopView
 import com.awsomeproject.utils.Voice
 import java.io.FileOutputStream
 import kotlin.concurrent.thread
@@ -61,7 +62,9 @@ class ReceiverActivity: AppCompatActivity() {
     private var videoviewrepetend: VideoViewRepetend? =null
     private var FrameReceiverConnectThread:Thread?=null
     private lateinit var scoreTextView: TextView
-
+    //总返回数据
+    private var returnData:String?=null
+    //正常结束标识符
     private val requestPermissionLauncher =
         registerForActivityResult(
             ActivityResultContracts.RequestPermission()
@@ -88,16 +91,22 @@ class ReceiverActivity: AppCompatActivity() {
         command.setDestIp(device.ip)
         CommandSender.addCommand(command)
     }
-
+    override fun onConfigurationChanged(newConfig: Configuration) {
+        super.onConfigurationChanged(newConfig)
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_receiver)
         //accept intent value
         hideSystemUI()
-        var bundle=intent.getExtras()
-        mainSlave=Device(bundle!!.getString("slaveIp"))
+        println("++++++++++++++++++++++onCreate1")
         // keep screen on while app is running
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+        println("++++++++++++++++++++++onCreate2")
+        var bundle=intent.getExtras()
+        mainSlave=Device(bundle!!.getString("slaveIp"))
+
+
         msquareProgress = findViewById(R.id.sp);
         countdownView= findViewById(R.id.countDownView)
         surfaceView = findViewById(R.id.surfaceView)
@@ -108,13 +117,6 @@ class ReceiverActivity: AppCompatActivity() {
         //——————————————————————语音初始化—————————————————-—————————//
         Voice.reSet()
         //————————————————————————————————————————————-————————————//
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.R ||
-            Environment.isExternalStorageManager()) {
-            Toast.makeText(this, "已获得访问所有文件的权限", Toast.LENGTH_SHORT).show();
-        } else {
-            var intent: Intent = Intent(Settings.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION);
-            startActivity(intent);
-        }
 
 
         initView()
@@ -201,7 +203,13 @@ class ReceiverActivity: AppCompatActivity() {
                     }
                     TotalReturnData.put("id",ExerciseSchedule.getTotalId())
                     TotalReturnData.put("data",TotalReturnValue)
-                    writeTofile("test",TotalReturnData.toString())
+
+                    returnData=TotalReturnData.toString()
+                    val intent = Intent()
+                    intent.putExtra("res",returnData)
+                    setResult(RESULT_OK, intent)
+                    finish()
+//                    writeTofile("test",TotalReturnData.toString())
                 }
                 cameraReceiver!!.index++
             }
@@ -210,12 +218,14 @@ class ReceiverActivity: AppCompatActivity() {
 
     override fun onResume() {
         cameraReceiver?.resume()
+        println("++++++++++++++++++++++onResum")
 //        videoviewrepetend?.videoView?.start()
         super.onResume()
     }
 
     override fun onPause() {
         super.onPause()
+        println("++++++++++++++++++++++onPause")
         cameraReceiver?.pause()
 //        videoviewrepetend?.videoView?.pause()
         cameraReceiver?.close()
@@ -225,6 +235,7 @@ class ReceiverActivity: AppCompatActivity() {
 
     override fun onStop() {
         super.onStop()
+        println("++++++++++++++++++++++onStop22222222222")
 //        hostpopView.dismiss()
         cameraReceiver?.close()
         FrameDataReceiver.close()
@@ -232,11 +243,8 @@ class ReceiverActivity: AppCompatActivity() {
             it.interrupt()
         }
         Voice.close()
+        println("++++++++++++++++++++++onStop333333333333")
 
-        val intent : Intent = Intent();
-        intent.putExtra("state", "finish");
-        setResult(RESULT_OK, intent)
-        finish()
 
     }
 
@@ -332,6 +340,8 @@ class ReceiverActivity: AppCompatActivity() {
                 .setMessage(msg)
                 .setTitle("注意")
                 .setPositiveButton("确认", DialogInterface.OnClickListener { dialogInterface, i ->
+                    val intent = Intent()
+                    setResult(RESULT_CANCELED, intent)
                     finish()
                 })
                 .setNeutralButton("取消", null)

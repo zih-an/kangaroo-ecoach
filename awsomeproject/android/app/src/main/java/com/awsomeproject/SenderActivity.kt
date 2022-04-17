@@ -5,7 +5,9 @@ import android.app.AlertDialog
 import android.app.Dialog
 import android.content.DialogInterface
 import android.content.Intent
+import android.content.pm.ActivityInfo
 import android.content.pm.PackageManager
+import android.content.res.Configuration
 import android.os.Bundle
 import android.os.Process
 import android.os.SystemClock
@@ -25,7 +27,6 @@ import com.awsomeproject.socketconnect.Device
 
 import com.awsomeproject.socketconnect.communication.slave.CommandReceiver
 import com.awsomeproject.socketconnect.communication.slave.FrameDataSender
-import com.awsomeproject.socketconnect.connectpopview.slavePopView
 import kotlin.concurrent.thread
 
 
@@ -48,14 +49,18 @@ class SenderActivity :AppCompatActivity() {
                     .show(supportFragmentManager, FRAGMENT_DIALOG)
             }
         }
-
+    override fun onConfigurationChanged(newConfig: Configuration) {
+        super.onConfigurationChanged(newConfig)
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_sender)
+
+        window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+
         var bundle=intent.getExtras()
         mainHost =Device(bundle!!.getString("hostIp"))
         // keep screen on while app is running
-        window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         surfaceView = findViewById(R.id.surfaceView)
         if (!isCameraPermissionGranted()) {
             requestPermission()
@@ -70,7 +75,6 @@ class SenderActivity :AppCompatActivity() {
             FrameDataSender.open(mainHost)
         }
         openCamera()
-
 
     }
     private fun commandResolver(demand:String?)

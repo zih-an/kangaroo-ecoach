@@ -21,7 +21,7 @@ public class RemoteConst {
 	 *
 	 * 设备搜索次数
 	 */
-	public static final int SEARCH_DEVICE_TIMES = 9;
+	public static final int SEARCH_DEVICE_TIMES = 3;
 	/**
 	 * 搜索的最大设备数量
 	 */

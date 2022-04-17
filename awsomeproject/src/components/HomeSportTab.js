@@ -4,7 +4,7 @@ import {Layout, Text, Button,Modal} from '@ui-kitten/components';
 import {Icon} from '@ui-kitten/components';
 import {default as theme} from '../custom-theme.json';
 import TodayTrainPlanCard from './TodayTrainPlanCard';
-import {getData} from './FetchData';
+import {getData,postData} from './FetchData';
 import {connect} from 'react-redux';
 import ActionSheetComp from "./ActionSheetComp"
 import Svg from './Svg';
@@ -18,7 +18,8 @@ const BulbIcon = props => <Icon {...props} name="bulb-outline" />;
 const ArrorDownIcon = props => (
   <Icon {...props} name="arrowhead-down-outline" />
 );
-const url = "http://81.68.226.132:80/exercise/begin";
+const beginurl = "http://81.68.226.132:80/exercise/begin";
+const finishurl = "http://81.68.226.132:80/exercise/finish";
 const HistoryTrainCard = () => {
   return (
     <View style={{width:"95%",justifyContent:"center",alignItems: 'center',}}>
@@ -69,7 +70,7 @@ function HomeSportTab(props) {
 
   const toExercising = async () => {
     setLoading(true);
-    let resSchedual = await getData(url,props.login.token);
+    let resSchedual = await getData(beginurl,props.login.token);
     setLoading(false);
     if(resSchedual["code"]===0) {
       Alert.alert(resSchedual["message"].message);
@@ -81,9 +82,10 @@ function HomeSportTab(props) {
       {
         
       }else{
-        response = JSON.parse(response);
-        reportData = response;
-        props.addReport(response);
+        console.log(response);
+        reportData = JSON.parse(response);
+        let resfinish = await postData(finishurl,{'information':response,'id':reportData['id']},props.login.token);
+        props.addReport(reportData);
         props.nav2exercising.navigate("SportOverviewPage");
       }
     }

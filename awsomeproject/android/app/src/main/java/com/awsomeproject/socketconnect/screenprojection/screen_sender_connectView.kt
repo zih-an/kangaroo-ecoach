@@ -16,6 +16,7 @@ import com.awsomeproject.MainActivity
 import com.awsomeproject.R
 import com.awsomeproject.layoutImpliment.BackArrowView
 import com.awsomeproject.layoutImpliment.connectAdapter
+import com.awsomeproject.manager.CameraModule.Companion.SCREEN_CAMERA_REQUEST
 import com.awsomeproject.service.screenCaptureService
 import com.awsomeproject.socketconnect.Device
 import com.awsomeproject.socketconnect.communication.host.Command
@@ -28,7 +29,6 @@ import kotlin.concurrent.thread
 
 class screen_sender_connectView  : AppCompatActivity()  {
 
-    private val REQUEST_CODE = 1
 
     lateinit var btnSearchDeviceOpen : Button
     lateinit var receiverList: ListView
@@ -57,6 +57,7 @@ class screen_sender_connectView  : AppCompatActivity()  {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.screen_projection_launcher)
+        GlobalStaticVariable.reSet()
         var bundle=intent.getExtras()
         bundle?.getString("ExerciseScheduleMesg")?.let{
             JsonMeg_Intent=it
@@ -66,6 +67,8 @@ class screen_sender_connectView  : AppCompatActivity()  {
         btnSearchDeviceOpen=this.findViewById(R.id.connectBtn)
         btnReturn=this.findViewById(R.id.back_arrow)
         btnReturn.setOnClickListener{
+            val intent=Intent()
+            setResult(RESULT_CANCELED, intent)
             finish()
         }
 
@@ -128,8 +131,8 @@ class screen_sender_connectView  : AppCompatActivity()  {
                             devices.get(uuid)?.let {
                                 choosed_device=it
                                 var JsonObj=JSONObject()
-                                GlobalStaticVariable.frameWidth=Resources.getSystem().displayMetrics.heightPixels
-                                GlobalStaticVariable.frameLength=Resources.getSystem().displayMetrics.widthPixels
+                                GlobalStaticVariable.frameWidth=Resources.getSystem().displayMetrics.widthPixels
+                                GlobalStaticVariable.frameLength=Resources.getSystem().displayMetrics.heightPixels
                                 JsonObj.put("Width",GlobalStaticVariable.frameWidth)
                                 JsonObj.put("Length",GlobalStaticVariable.frameLength)
                                 sendCommand(it,"prepareAcceptFrame")
@@ -140,10 +143,11 @@ class screen_sender_connectView  : AppCompatActivity()  {
                             thread {
                                 FrameDataSender.open(devices.get(uuid))
                             }
-
+                            val ExerciseScheduleMesg=intent.getStringExtra("ExerciseScheduleMesg")
                             val intent = Intent(baseContext, CameraActivity::class.java)
                             intent.putExtra("isScreenProjection", true)
                             intent.putExtra("screenReceiverIp", devices.get(uuid)!!.ip)
+                            intent.putExtra("ExerciseScheduleMesg",ExerciseScheduleMesg)
                             JsonMeg_Intent?.let {
                                 intent.putExtra("ExerciseScheduleMesg", it)
                             }
@@ -152,7 +156,7 @@ class screen_sender_connectView  : AppCompatActivity()  {
                             isSearchDeviceOpen = false
                             btnSearchDeviceOpen.setText("开始搜索")
 
-                            startActivityForResult(intent,REQUEST_CODE)
+                            startActivityForResult(intent,SCREEN_CAMERA_REQUEST)
                         }
                     })
                     receiverList.adapter=adapter
@@ -163,9 +167,21 @@ class screen_sender_connectView  : AppCompatActivity()  {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == REQUEST_CODE) {
-            choosed_device?.let {
-                sendCommand(it, "finishAcceptFrame")
+        if (requestCode == SCREEN_CAMERA_REQUEST) {
+            if(resultCode== RESULT_OK){
+                choosed_device?.let {
+                    sendCommand(it, "finishAcceptFrame")
+                    val intent = Intent()
+                    val returnData = data?.getStringExtra("res")
+                    intent.putExtra("res", returnData)
+                    setResult(RESULT_OK, intent)
+                }
+                finish()
+            }else if(resultCode== RESULT_CANCELED) {
+                choosed_device?.let{
+                    sendCommand(it, "finishAcceptFrame")
+                }
+
             }
         }
     }

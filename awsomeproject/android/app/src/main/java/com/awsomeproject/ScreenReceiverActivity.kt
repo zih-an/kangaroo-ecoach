@@ -1,6 +1,9 @@
 package com.awsomeproject
 
+import android.app.Activity
 import android.content.Intent
+import android.content.pm.ActivityInfo
+import android.content.res.Configuration
 import android.content.res.Resources
 import android.graphics.Bitmap
 import android.graphics.Matrix
@@ -9,6 +12,7 @@ import android.media.Image
 import android.os.Bundle
 import android.os.PersistableBundle
 import android.os.SystemClock
+import android.util.DisplayMetrics
 import android.util.Log
 import android.view.*
 import android.widget.FrameLayout
@@ -27,20 +31,19 @@ class screenReceiverActivity  : AppCompatActivity() {
     lateinit var screenSurfaceView: SurfaceView
     public var mainScreenSender: Device?=null
 
-
+    override fun onConfigurationChanged(newConfig: Configuration) {
+        super.onConfigurationChanged(newConfig)
+        println("+++++++++++onConfigurationChanged")
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        println("+++++++++++oncreate")
         setContentView(R.layout.screen_projection_receiver)
         screenSurfaceView=findViewById(R.id.screen)
         GlobalStaticVariable.isScreenCapture=true
 
-        val screenHeight=resources.displayMetrics.heightPixels
-        val screenWidth=resources.displayMetrics.widthPixels
+        hideSystemUI()
 
-        val ratio:Double=screenWidth.toDouble()/screenHeight.toDouble()
-        var mp= FrameLayout.LayoutParams((screenWidth).toInt(),(screenWidth*ratio).toInt())
-        mp.topMargin=-((screenWidth*ratio)/2-GlobalStaticVariable.frameLength/2).toInt()
-        screenSurfaceView?.layoutParams=mp
 
         var bundle=intent.getExtras()
         mainScreenSender =Device(bundle!!.getString("mainScreenSenderIp"))
@@ -49,11 +52,10 @@ class screenReceiverActivity  : AppCompatActivity() {
             override fun surfaceChanged(holder: SurfaceHolder, format: Int, width: Int, height: Int) {
             }
             override fun surfaceCreated(p0: SurfaceHolder) {
-                GlobalStaticVariable.receiverSurface=p0.surface
                 FrameReceiverConnectThread=
                     thread{
                         try {
-                            FrameDataReceiver.open(null)
+                            FrameDataReceiver.open(p0.surface,null)
                         }
                         catch (e:InterruptedException)
                         {
@@ -70,7 +72,7 @@ class screenReceiverActivity  : AppCompatActivity() {
                 commandResolver(command)
             }
         })
-        hideSystemUI()
+
 
     }
     private fun commandResolver(demand:String?)
@@ -101,10 +103,10 @@ class screenReceiverActivity  : AppCompatActivity() {
     }
     override fun onStop() {
         super.onStop()
-        FrameReceiverConnectThread?.let{
-            it.interrupt()
-        }
         FrameDataReceiver.close()
+        FrameReceiverConnectThread?.interrupt()
+
+        println("+++++++++++onStop")
     }
 
 }

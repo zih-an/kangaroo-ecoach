@@ -1,4 +1,4 @@
-package org.poseestimation
+package com.awsomeproject
 
 class screenSenderActivity {
 }
