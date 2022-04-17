@@ -115,18 +115,15 @@ function HomeSportTab(props) {
     }
     else {
       resSchedual=JSON.stringify(resSchedual);
-      console.log(resSchedual)
       let response = await CameraModule.startcameraActivity(resSchedual);
-      console.log(response);
       if(response===0)
       {
         
       }else{
-        console.log(response);
         reportData = JSON.parse(response);
-        console.log(reportData['id'])
         let resfinish = await postData(finishurl,{'information':response,'id':reportData['id']},props.login.token);
         props.addReport(reportData);
+        if(resfinish["code"]===1||resfinish["code"]==="1") props.addReportTime(resfinish["data"]);
         props.nav2exercising.navigate("SportOverviewPage");
       }
     }
@@ -250,6 +247,7 @@ const styles = StyleSheet.create({
 const mapStateToProps = state =>{
   return {
       login:state.login,
+      reportTime:state.reportTime,
   };
 };
 

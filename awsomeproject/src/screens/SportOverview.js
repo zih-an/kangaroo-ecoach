@@ -30,6 +30,8 @@ function SportOverview(props) {
   const [pieData,setPie] = React.useState([[]]);
   const [lineData,setLine] = React.useState([[]]);
   const [dtwData,setDTW] = React.useState([{}]);
+  const [length,setLength] = React.useState("");
+  const [start,setStart] = React.useState("");
   const typesName = props.plansIndex.filter((item,index)=>typesId.includes(item.id)).map((item,index)=>item.title);
   const displayValue = typesName[selectedIndex.row];
 
@@ -85,6 +87,15 @@ function SportOverview(props) {
     let PieData = SplitData.map((item,index)=>{return item.completeness});
     let LineData = SplitData.map((item,index)=>{return item.exerciseIntensity});
     let DTWdata = SplitData.map((item,index)=>{return item["DTW"]});
+    let len = props.reportTime["length"];
+    let startTime = props.reportTime["start_time"].split(".");
+    startTime = startTime[0].split("T");
+    startTime = startTime[1];
+    
+    setLength(len);
+
+    setStart(startTime);
+
     setTypesId(typesId);
 
     setScatter(ScatterData);
@@ -103,7 +114,7 @@ function SportOverview(props) {
          <BackAction/>
         </View>
       <Select
-        style={{width:200,marginLeft:"12%"}}
+        style={{width:200,marginLeft:"12%",justifyContent: 'center',alignItems: 'center',}}
         value={displayValue}
         selectedIndex={selectedIndex}
         onSelect={index => setSelectedIndex(index)}>
@@ -137,15 +148,15 @@ function SportOverview(props) {
               <Card style={styles.card}>
                 <View style={styles.sportTime}>
                         <View style={styles.timeView}>
-                            <Text style={styles.time}>09:13:35</Text>
+                            <Text style={styles.time}>{start}</Text>
                             <Text style={styles.timeType}>开始时间</Text>
                         </View>
                         <View style={styles.timeView}>
-                            <Text style={styles.time}>00:22:03</Text>
+                            <Text style={styles.time}>{length}</Text>
                             <Text style={styles.timeType}>用时</Text>
                         </View>
                         <View style={styles.timeView}>
-                            <Text style={styles.time}>167</Text>
+                            <Text style={styles.time}>107</Text>
                             <Text style={styles.timeType}>千卡</Text>
                         </View>
                     </View>
@@ -277,7 +288,8 @@ const mapStateToProps = state =>{
   return {
       login:state.login,
       plansIndex:state.allPlansIndex,
-      report:state.report
+      report:state.report,
+      reportTime:state.reportTime
   };
 
 };

@@ -1,4 +1,4 @@
-import React,{useState} from 'react';
+import React,{useEffect, useState} from 'react';
 import {StyleSheet, View , Image , TouchableOpacity ,ScrollView,Modal,ToastAndroid} from 'react-native';
 import {Layout, Text, CheckBox,Button,TopNavigationAction,Icon} from '@ui-kitten/components';
 import {default as theme} from '../custom-theme.json';
@@ -67,7 +67,6 @@ function VideoCard(props) {
   }
   const Footer = ()=> {
     const [activeChecked, setActiveChecked] = React.useState(props.choose);
-
     return (
       <View  style={styles.footerContainer}>
         {/* 这里Text用来撑开父元素 */}
@@ -101,6 +100,7 @@ function VideoCard(props) {
       </TouchableOpacity>
     </View>)
   }
+  
   return (
     <Layout style={{width:"100%",flexDirection:"row"}}>
 
@@ -181,6 +181,7 @@ const mapStateToProps = state =>{
   return {
       login:state.login,
       todayPlans:state.todayPlans,
+      todayPlansB:state.todayPlansB,
       collect:state.collect
   };
 };

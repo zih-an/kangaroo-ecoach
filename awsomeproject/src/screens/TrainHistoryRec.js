@@ -10,12 +10,15 @@ import {
   Calendar,
 } from "@ui-kitten/components";
 import ExeHistoryCard from "../components/ExeHistoryCard";
-import { getData } from "../components/FetchData";
+import { getData,postData } from "../components/FetchData";
 import { useState,useEffect } from "react";
 import { connect } from "react-redux";
+import * as actions from "../screens/store/actions";
 import { color } from "react-native-tcharts/theme/theme";
 
 let url="http://81.68.226.132:80/exercise/date";
+let urlHis="http://81.68.226.132:80/exercise/query_by_id";
+
 const BackIcon = (props) => <Icon {...props} name="arrow-back" />;
 const BackFill = (props) => <Text style={{marginTop:20,marginLeft:0,color:"grey"}}>无历史记录</Text> //组件在无历史记录时显示
 const HisIcon = (props) => <Icon {...props} name="heart" />;
@@ -28,7 +31,10 @@ function TrainHistoryRec(props) {
   const BackAction = () => (
     <TopNavigationAction icon={BackIcon} onPress={navigateBack} />
   );
-  const viewReport = () => {
+  const viewReport = async (id) => {
+    let resHis = await postData(urlHis,{"id":id},props.login.token);
+    props.addReport(resHis["data"]);
+
     props.navigation.navigate("ReportOverview");
   };
    //这里我直接先获取了今日时间用以设置日历时间的初值
@@ -132,7 +138,7 @@ function TrainHistoryRec(props) {
           return <ExeHistoryCard
           key={index}
           date={index+1}
-          onPress={viewReport}
+          onPress={()=>viewReport(myData.id)}
           rate={myData.id}
           content={myData.start_time}
         ></ExeHistoryCard>
@@ -160,10 +166,11 @@ const styles = StyleSheet.create({
 
 const mapStateToProps = state =>{
   return {
-      login:state.login
+      login:state.login,
+      report:state.report,
   };
 
 };
 
 
-export default connect(mapStateToProps)(TrainHistoryRec);
+export default connect(mapStateToProps,actions)(TrainHistoryRec);

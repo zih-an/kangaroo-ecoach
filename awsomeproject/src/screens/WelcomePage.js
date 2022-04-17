@@ -52,6 +52,7 @@ class WelcomePage extends Component {
                 this.props.addPlanIndex(resAll["data"]);
                 this.props.addTodayDetail(resToday["data"]);
                 this.props.addToday(resToday["data"].map(item => item.id));
+                this.props.addTodayB(resToday["data"].map(item => item.id));
                 this.props.addShop(resShop["data"]);
                 this.props.changeCollect(JSON.parse(resCollect["data"]));
                 this.setCookie(true);
