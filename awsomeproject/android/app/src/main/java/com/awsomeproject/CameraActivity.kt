@@ -57,6 +57,8 @@ class CameraActivity :AppCompatActivity() {
     private lateinit var countdownView: SurfaceView
     //倒计时framLayaout
     private lateinit var countdownViewFramLayout: FrameLayout
+    //倒计时背景
+    private lateinit var countdownViewBackground: ImageView
     //分数框
     private lateinit var scoreTextView: TextView
     //摄像机
@@ -142,6 +144,7 @@ class CameraActivity :AppCompatActivity() {
         videoView = findViewById(R.id.videoView)
         countdownViewFramLayout=findViewById(R.id.countDownViewLayout)
         scoreTextView=findViewById(R.id.score)
+        countdownViewBackground=findViewById(R.id.mColor)
         //————————————————————————————————————————————-————————————//
 
         //———————————————————————权限申请————————————————————————————//
@@ -207,7 +210,7 @@ class CameraActivity :AppCompatActivity() {
             JsonMeg=it
         }
 
-        videoviewrepetend= VideoViewRepetend(JsonMeg,this,videoView,countdownView,countdownViewFramLayout,this.baseContext,object:VideoViewRepetend.VideoViewRepetendListener{
+        videoviewrepetend= VideoViewRepetend(JsonMeg,this,videoView,countdownView,countdownViewFramLayout,countdownViewBackground,this.baseContext,object:VideoViewRepetend.VideoViewRepetendListener{
             override fun onExerciseEnd(index:Int,samplevideoName:String,samplevideoTendency:MutableList<Int>,id:Int) {
                 //一轮运动完成，开始创建下一轮运动的数据结构
                 //休息阶段时关闭图像处理
@@ -263,7 +266,7 @@ class CameraActivity :AppCompatActivity() {
                         LineReturnValue.put("data",cameraSource!!.Users.get(i).getJsonData())
                         TotalReturnValue.put(LineReturnValue)
                     }
-                    TotalReturnData.put("id",ExerciseSchedule.getTotalId())
+                    TotalReturnData.put("id",ExerciseSchedule.getTot从d())
                     TotalReturnData.put("data",TotalReturnValue)
 
                     returnData=TotalReturnData.toString()

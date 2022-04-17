@@ -55,8 +55,11 @@ class ReceiverActivity: AppCompatActivity() {
     private var device = com.awsomeproject.data.Device.GPU
     private lateinit var msquareProgress: SquareProgress
     private lateinit var videoView: VideoView
+
     private lateinit var countdownView: SurfaceView
     private lateinit var countdownViewFramLayout: FrameLayout
+    private lateinit var countdownViewBackground: ImageView
+
     private var cameraReceiver: CameraReceiver? = null
     private val voice= com.awsomeproject.utils.Voice(this)
     private var videoviewrepetend: VideoViewRepetend? =null
@@ -113,7 +116,7 @@ class ReceiverActivity: AppCompatActivity() {
         videoView = findViewById(R.id.videoView)
         countdownViewFramLayout=findViewById(R.id.countDownViewLayout)
         scoreTextView=findViewById(R.id.score)
-
+        countdownViewBackground=findViewById(R.id.mColor)
         //——————————————————————语音初始化—————————————————-—————————//
         Voice.reSet()
         //————————————————————————————————————————————-————————————//
@@ -146,7 +149,7 @@ class ReceiverActivity: AppCompatActivity() {
             JsonMeg=it
         }
 
-        videoviewrepetend= VideoViewRepetend(JsonMeg,this,videoView,countdownView,countdownViewFramLayout,this.baseContext,object:VideoViewRepetend.VideoViewRepetendListener{
+        videoviewrepetend= VideoViewRepetend(JsonMeg,this,videoView,countdownView,countdownViewFramLayout,countdownViewBackground,this.baseContext,object:VideoViewRepetend.VideoViewRepetendListener{
             override fun onExerciseEnd(index:Int,samplevideoName:String,samplevideoTendency:MutableList<Int>,id:Int) {
                 //一轮运动完成，开始创建下一轮运动的数据结构
                 //休息阶段时关闭图像处理

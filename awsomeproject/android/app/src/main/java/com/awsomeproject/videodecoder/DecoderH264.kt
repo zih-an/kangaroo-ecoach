@@ -7,6 +7,7 @@ import android.media.MediaCodec
 import android.media.MediaFormat
 import android.view.Surface
 import com.awsomeproject.videodecoder.GlobalStaticVariable
+import java.lang.IllegalStateException
 import java.lang.NullPointerException
 
 
@@ -93,6 +94,10 @@ class DecoderH264(
                 }
             }
             catch (e:NullPointerException)
+            {
+                e.printStackTrace()
+            }
+            catch (e:IllegalStateException)
             {
                 e.printStackTrace()
             }

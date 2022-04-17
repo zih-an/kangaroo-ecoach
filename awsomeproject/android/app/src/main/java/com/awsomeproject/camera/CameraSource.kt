@@ -48,6 +48,7 @@ import com.awsomeproject.utils.BoneVectorPart
 import com.awsomeproject.utils.DTWprocess
 import com.awsomeproject.utils.Voice
 import java.io.*
+import java.lang.IllegalStateException
 import java.util.*
 import kotlin.random.Random
 
@@ -120,7 +121,15 @@ class CameraSource(
             }
             catch (e:InterruptedException)
             {
-
+                e.printStackTrace()
+            }
+            catch (e: IllegalStateException)
+            {
+                e.printStackTrace()
+            }
+            catch (e:Throwable)
+            {
+                e.printStackTrace()
             }
         }
     }

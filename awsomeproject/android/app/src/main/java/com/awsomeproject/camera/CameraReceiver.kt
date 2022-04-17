@@ -34,6 +34,7 @@ import com.awsomeproject.ml.PoseDetector
 import com.awsomeproject.socketconnect.communication.host.FrameDataReceiver
 import com.awsomeproject.utils.DTWprocess
 import com.awsomeproject.utils.Voice
+import java.lang.IllegalStateException
 import java.util.*
 
 
@@ -102,7 +103,15 @@ class CameraReceiver(
             }
             catch (e:InterruptedException)
             {
-
+                e.printStackTrace()
+            }
+            catch (e: IllegalStateException)
+            {
+                e.printStackTrace()
+            }
+            catch (e:Throwable)
+            {
+                e.printStackTrace()
             }
         }
     }
@@ -168,40 +177,46 @@ class CameraReceiver(
         var scoreBypart: MutableList<Double> = mutableListOf<Double>(0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0)
         //matrix结构的用户关节点
         var uservector:Jama.Matrix =Jama.Matrix(DTWprocess().num_vector,DTWprocess().num_dimension)
-        synchronized(lock) {
-            if (isImageprocess == true) {
-                Samples[index].clock()
-                detector?.estimatePoses(bitmap)?.let {
-                    //捕获当前帧中的用户关节点
-                    persons.addAll(it)
-                    //捕获对应时刻的标准动作关节点
+        if(isAlive) {
+            synchronized(lock) {
+                if (isImageprocess == true) {
+                    Samples[index].clock()
+                    detector?.estimatePoses(bitmap)?.let {
+                        //捕获当前帧中的用户关节点
+                        persons.addAll(it)
+                        //捕获对应时刻的标准动作关节点
 //                   persons.addAll(Samples[index].getPersonNow())
-                    //如果获取的帧可信，则处理
-                    if (it.get(0).isTrust()) {
-                        //输入用户关节点动作，进行计算
-                        val S = Samples[index].exec(it)
-                        score = S.first
-                        scoreBypart = S.second
-                        uservector = S.third
+                        //如果获取的帧可信，则处理
+                        if (it.get(0).isTrust()) {
+                            //输入用户关节点动作，进行计算
+                            val S = Samples[index].exec(it)
+                            score = S.first
+                            scoreBypart = S.second
+                            uservector = S.third
+                        }
+                        if (Samples[index].getClock() % 5 == 0)
+                            Users[index].append(
+                                scoreBypart,
+                                uservector,
+                                Samples[index].getSampleVectorNow()
+                            )
+                        listener?.onImageprocessListener(score.toInt())
                     }
-                    if(Samples[index].getClock()%5==0)
-                        Users[index].append(scoreBypart, uservector,Samples[index].getSampleVectorNow())
-                    listener?.onImageprocessListener(score.toInt())
-                }
-                print("");
-            }
-            else if (isPersonDetect == false) {
-                detector?.estimatePoses(bitmap)?.let {
-                    persons.addAll(it)
-                    if (Samples[index].tryFirstFrame(it)>=90&&it.get(0).isTrustMoreSerious())
-                    {
-                        isPersonDetect = true
-                        listener?.onPersonDetected()
+                    print("");
+                } else if (isPersonDetect == false) {
+                    detector?.estimatePoses(bitmap)?.let {
+                        persons.addAll(it)
+                        if (Samples[index].tryFirstFrame(it) >= 90 && it.get(0)
+                                .isTrustMoreSerious()
+                        ) {
+                            isPersonDetect = true
+                            listener?.onPersonDetected()
+                        }
                     }
                 }
             }
+            newestPersons = persons
         }
-        newestPersons=persons
 //        return persons;
 //        visualize(persons, bitmap)
     }

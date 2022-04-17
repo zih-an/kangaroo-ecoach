@@ -18,6 +18,7 @@
       android:icon="@drawable/logo"
       android:roundIcon="@drawable/logo"
       android:supportsRtl="true"
+      android:usesCleartextTraffic="true"
       android:allowBackup="false"
       android:theme="@style/Theme.PoseEstimation">
 <!--      android:requestLegacyExternalStorage="true">-->
