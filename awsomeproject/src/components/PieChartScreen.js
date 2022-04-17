@@ -98,9 +98,6 @@ class PieChartScreen extends React.Component {
             valueTextColor: processColor('green'),
             sliceSpace: 0.3,
             selectionShift: 0,
-            // xValuePosition: "OUTSIDE_SLICE",
-            // yValuePosition: "OUTSIDE_SLICE",
-            // valueFormatter: "#.#'%'"
           }
         }],
       },
@@ -128,12 +125,10 @@ class PieChartScreen extends React.Component {
             legend={this.state.legend}
             highlights={this.state.highlights}
             animation={this.state.animation}
-            // extraOffsets={{left: 5, top: 5, right: 5, bottom: 5}}
             drawEntryLabels={false}
             rotationEnabled={true}
             rotationAngle={-90}
             usePercentValues={true}
-            // styledCenterText={{text:'Pie center text!', color: processColor('pink'), fontFamily: 'HelveticaNeue-Medium', size: 20}}
             centerTextRadiusPercent={100}
             holeRadius={80}
             transparentCircleRadius={0}

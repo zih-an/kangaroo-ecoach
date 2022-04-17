@@ -1,5 +1,5 @@
 import React,{useState} from 'react';
-import {StyleSheet, View, Alert, ActivityIndicator, ScrollView,TouchableOpacity,Image} from 'react-native';
+import {StyleSheet, View, Alert, ActivityIndicator, ScrollView,TouchableOpacity,Image,Linking,ToastAndroid} from 'react-native';
 import {Layout, Text, Button,Modal} from '@ui-kitten/components';
 import {Icon} from '@ui-kitten/components';
 import {default as theme} from '../custom-theme.json';
@@ -21,6 +21,25 @@ const ArrorDownIcon = props => (
 const beginurl = "http://81.68.226.132:80/exercise/begin";
 const finishurl = "http://81.68.226.132:80/exercise/finish";
 const HistoryTrainCard = () => {
+  const displayCards = [
+    {title:"运动中如何正确呼吸？",clickTo:1,icon:"运动女孩2",url:"https://mip.jy135.com/yundong/78571.html"},
+    {title:"大基数鼠崽们如何锻炼？",clickTo:2,icon:"运动女孩1",url:"https://mip.cndzys.com/shenghuoyangsheng/changshi/1952075.html?ivk_sa=1024320u"},
+    {title:"想运动却难坚持怎么办？",clickTo:3,icon:"运动女孩4",url:"https://baijiahao.baidu.com/s?id=1552914123850551&wfr=spider&for=pc&searchword=%E8%BF%90%E5%8A%A8%E5%A6%82%E4%BD%95%E5%9D%9A%E6%8C%81%E7%A7%91%E6%99%AE"},
+    {title:"三分练,七分吃！",clickTo:4,icon:"运动女孩5",url:"https://baijiahao.baidu.com/s?id=1672000560561935648&wfr=spider&for=pc&searchword=%E4%B8%83%E5%88%86%E5%90%83%E4%B8%89%E5%88%86%E7%BB%83"}
+  ];
+
+const handleClick = (index,url) =>{
+  switch(index){
+    case 1:
+      Linking.openURL(url);
+    case 2:
+      Linking.openURL(url);
+    case 3:
+      Linking.openURL(url);
+    case 4:
+      Linking.openURL(url);
+  }
+}
   return (
     <View style={{width:"95%",justifyContent:"center",alignItems: 'center',}}>
       <Card style={styles.historyTrainCard}>
@@ -39,7 +58,26 @@ const HistoryTrainCard = () => {
         </Text>
       </Layout>
     </Card>
-      <Card style={{marginTop:-10,width:"85%",height:300,backgroundColor:"#ffcbad",marginBottom:40,borderRadius:50}}><Text>111</Text></Card>
+      <Card style={{marginTop:-10,width:"85%",height:250,backgroundColor:"#ffcbad",marginBottom:40,borderRadius:50,
+      justifyContent: 'center',
+      alignItems: 'center',}}>
+        <View style={{flexWrap:"wrap",height:"92%",width:"99%",flexDirection:"row",
+        justifyContent: 'center',alignItems: 'center',paddingTop:20}}>
+          {displayCards.map((item,index)=>{
+            return <TouchableOpacity 
+            onPress={()=>handleClick(item.clickTo,item.url)}
+            style={{height:"45%",width:"45%",padding:2,margin:5}}
+            key={index}>
+            <View style={{width:"100%",height:"95%",overflow: 'hidden',
+            justifyContent: 'flex-start',alignItems: 'center',borderRadius: 10,}}>
+              <Svg icon={item.icon} size="100"/>
+            </View>
+            <View style={{height:30,width:"100%",justifyContent: 'center',
+            alignItems: 'center',}}><Text style={{fontSize:7,marginTop:-20,color:"purple"}}>{item.title}</Text></View>
+          </TouchableOpacity>
+          })}
+        </View>
+        </Card>
     </View>
   );
 };
@@ -77,13 +115,16 @@ function HomeSportTab(props) {
     }
     else {
       resSchedual=JSON.stringify(resSchedual);
+      console.log(resSchedual)
       let response = await CameraModule.startcameraActivity(resSchedual);
+      console.log(response);
       if(response===0)
       {
         
       }else{
         console.log(response);
         reportData = JSON.parse(response);
+        console.log(reportData['id'])
         let resfinish = await postData(finishurl,{'information':response,'id':reportData['id']},props.login.token);
         props.addReport(reportData);
         props.nav2exercising.navigate("SportOverviewPage");
@@ -112,25 +153,23 @@ function HomeSportTab(props) {
           resizeMode='contain'
           />
       </View>
-      {/* <TodayTrainPlanCard height={220} onEnableScroll={setScoll}/> */}
+
       <Layout style={styles.btnContainer}>
 
         <TouchableOpacity onPress={()=>toConnectSend()} style={styles.touchContainer}>
           <Svg icon="开始监听" size="40" color={theme["color-primary-500"]}/>
-          {/* <Svg icon="开始监听" size="50"/> */}
           <Text style={{color:"grey",fontSize:10}}>开启设备</Text>
         </TouchableOpacity >
 
         <TouchableOpacity onPress={()=>toExercising()}  style={styles.touchContainer}>
           {loginProgress
-          ? <View style={{width:110,height:100,alignItems:"center",justifyContent:"center"}}><ActivityIndicator color="orange"/></View>
-          : <Svg icon="开始" size="80" />}
+          ? <View style={{width:110,height:80,alignItems:"center",justifyContent:"center"}}><ActivityIndicator color="orange"/></View>
+          : <Svg icon="开始" size="80" color={theme["color-primary-500"]}/>}
           <Text style={{color:"grey",fontSize:15}}>开始运动</Text>
         </TouchableOpacity >
 
         <TouchableOpacity onPress={()=>toConnectReceive()} style={styles.touchContainer}>
           <Svg icon="搜索设备" size="40" color={theme["color-primary-500"]}/>
-          {/* <Svg icon="搜索设备" size="50"/> */}
           <Text style={{color:"grey",fontSize:10}}>附近设备</Text>
         </TouchableOpacity >
         
@@ -140,7 +179,9 @@ function HomeSportTab(props) {
           onEnableScroll={setScoll} 
           horizontal={true}
           showIndicator={true}/>
+      
       <HistoryTrainCard />
+
       <ActionSheetComp 
         visible={modalVisibleCnRe} 
         setVisible={setModalViseibleCnRe} 

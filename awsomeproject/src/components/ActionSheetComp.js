@@ -6,7 +6,7 @@ import {
     Modal,
     TouchableOpacity,
     Dimensions,
-    Alert,
+    ToastAndroid,
     ActivityIndicator
 } from 'react-native';
 import PropTypes from 'prop-types';
@@ -116,16 +116,19 @@ class ActionSheetComp extends Component{
             }
             if(response===0)
             {
+                console.log("1111111111111111")
                 this.cancelModal();   
             }else{
-                let finishurl = "http://81.68.226.132:80/exercise/finish/"
+                let finishurl = "http://81.68.226.132:80/exercise/finish"
                 let resObj = JSON.parse(response);
                 let id = resObj["id"];
-                let resPost = await postData(finishurl,{"information":response,"id":id});
+                console.log("2222222222222")
+                let resPost = await postData(finishurl,{"information":response,"id":id},this.props.login.token);
+                console.log("33333333333333",resPost)
                 if(resPost["code"]==="1"||resPost["code"]===1){
-                    Alert.alert("上传成功，可点击历史记录查看");
+                    ToastAndroid.show("上传成功，可点击历史记录查看",500);
                 }else{
-                    Alert.alert("上传失败!");
+                    ToastAndroid.show("上传失败!",500);
                 }
                 this.props.addReport(resObj);
                 this.cancelModal();

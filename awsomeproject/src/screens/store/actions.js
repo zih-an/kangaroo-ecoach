@@ -12,6 +12,12 @@ export const DELETE_TODAY = 'DELETE_TODAY';//删除今日计划id
 export const ADD_TODAY_DETAIL = 'ADD_TODAY_DETAIL';//加入今日计划详情（用于展示）
 export const ADD_SHOP = 'ADD_SHOP';//加入商品信息
 export const ADD_REPORT = 'ADD_REPORT';//加入运动报告信息
+export const ADD_TITLE = 'ADD_TITLE';//加入浏览页标题信息
+export const ADD_COLLECT = 'ADD_COLLECT';//加入收藏信息
+export const DELETE_COLLECT = 'DELETE_COLLECT';//删除收藏信息
+export const CHANGE_COLLECT = 'CHANGE_COLLECT';//更改收藏信息
+
+
 
 
 
@@ -55,3 +61,15 @@ export function addShop(items){
 export function addReport(items){
     return { type: ADD_REPORT, content:items}
 }
+export function addTitle(items){
+    return { type: ADD_TITLE, content:items}
+};
+export function addCollect(items){
+    return { type: ADD_COLLECT, content:items}
+};
+export function changeCollect(items){
+    return { type: CHANGE_COLLECT, content:items}
+};
+export function deleteCollect(items){
+    return { type: DELETE_COLLECT, content:items}
+};

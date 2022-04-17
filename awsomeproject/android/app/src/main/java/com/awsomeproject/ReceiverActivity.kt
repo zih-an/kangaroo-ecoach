@@ -211,7 +211,6 @@ class ReceiverActivity: AppCompatActivity() {
                     finish()
 //                    writeTofile("test",TotalReturnData.toString())
                 }
-                cameraReceiver!!.index++
             }
         })
     }

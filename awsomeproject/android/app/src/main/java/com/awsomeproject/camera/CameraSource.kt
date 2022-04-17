@@ -348,8 +348,8 @@ class CameraSource(
                 detector?.estimatePoses(bitmap)?.let {
                     //捕获对应时刻的标准动作关节点
                     persons.addAll(it)
-                    persons.addAll(Samples[index].getPersonOnStart(it[0].keyPoints[0].coordinate.x.toDouble(),it[0].keyPoints[0].coordinate.y.toDouble()))
-                    if (Samples[index].tryFirstFrame(it)>=85&&it.get(0).isTrustMoreSerious())
+//                    persons.addAll(Samples[index].getPersonOnStart(it[0].keyPoints[0].coordinate.x.toDouble(),it[0].keyPoints[0].coordinate.y.toDouble()))
+                    if (Samples[index].tryFirstFrame(it)>=90&&it.get(0).isTrustMoreSerious())
                     {
                         isPersonDetect = true
                         listener?.onPersonDetected()

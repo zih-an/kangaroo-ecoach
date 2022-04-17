@@ -6,8 +6,10 @@ const defaultState={
     pwd:''
 };
 const defaultPlan=[];
+const defaultTitle="";
 const defaultPlanIndex=[];
 const defaultTodayPlan=[];
+const defaultCollect=[];
 const defaultTodayPlanDetail=[];
 const defaultShop=[];
 const defaultReport = {};
@@ -42,7 +44,7 @@ function allPlans (state=defaultPlan,action){
 function allPlansIndex (state=defaultPlanIndex,action){
     //所有计划的state：含一次加入所有计划
     if(action.type==='ADD_PLAN_INDEX'){
-        return action.content.map((item,index)=>item.title)
+        return action.content.map((item,index)=>{return {"id":item.id,"title":item.title}})
     }
     return state;
 }
@@ -85,11 +87,38 @@ function  shop (state=defaultShop,action){
 
 function report (state = defaultReport,action){
     if(action.type==='ADD_REPORT'){
-        return action.content;
+        return action.content;}
+    return state;
+}
+
+function title (state=defaultTitle,action){
+    if(action.type==='ADD_TITLE'){
+        return action.content
+    }
+    return state;
+}
+function collect (state=defaultCollect,action){
+    //今日计划的id数组，含增删计划id
+    if(action.type==='ADD_COLLECT'){
+        let newState=JSON.parse(JSON.stringify(state));
+        let arr=newState.concat(action.content);
+        let arrSort=arr.sort(function(a, b){return a - b});
+        return Array.from(new Set(arrSort));
+    }
+    else if(action.type==='DELETE_COLLECT'){
+        return state.filter((plan)=>{return plan !== action.content});
+    }
+    else if(action.type==='CHANGE_COLLECT'){
+        let arr=action.content;
+        let newState = state.filter((plan)=>{return arr.includes(plan)});
+        arr=newState.concat(action.content);
+        let arrSort=arr.sort(function(a, b){return a - b});
+        return Array.from(new Set(arrSort));
     }
     return state;
 }
 //组合所有reducer（state），外部通过theApp一次引用，只需在根目录App.js引入一次即可，其余使用state的组件
 //只需额外单独引入actions用于改变组件状态，并用connect(react-redux特性)函数来关联组件与state、action即可
-const theApp = combineReducers({login,allPlans,todayPlans,todayPlansDetail,shop,allPlansIndex,report});
+// const theApp = combineReducers({login,allPlans,todayPlans,todayPlansDetail,shop,allPlansIndex,report});
+const theApp = combineReducers({login,allPlans,todayPlans,todayPlansDetail,shop,allPlansIndex,title,collect,report});
 export default theApp;

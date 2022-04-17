@@ -7,6 +7,8 @@ import RadarChartScreen from "../components/RadarChartScreen";
 import LineChartScreen from "../components/LineChartScreen";
 import TimeSeriesLineChartScreen from "../components/TimeSeriesLineChartScreen"
 import Svg from "../components/Svg"
+import Video from 'react-native-video';
+import { Card } from "react-native-shadow-cards";
 
 import dataSets from "../assets/dataSets"
 import newest from "../assets/newest";
@@ -28,7 +30,7 @@ function SportOverview(props) {
   const [pieData,setPie] = React.useState([[]]);
   const [lineData,setLine] = React.useState([[]]);
   const [dtwData,setDTW] = React.useState([{}]);
-  const typesName = props.plansIndex.filter((item,index)=>typesId.includes(index+1));
+  const typesName = props.plansIndex.filter((item,index)=>typesId.includes(item.id)).map((item,index)=>item.title);
   const displayValue = typesName[selectedIndex.row];
 
   const navigateBack = () => {props.navigation.goBack();};
@@ -124,7 +126,15 @@ function SportOverview(props) {
               contentContainerStyle={styles.scrollContent}
               onMomentumScrollEnd = {(e)=>_contentViewScroll(e)}
               >
-              <View style={styles.card}>
+              <View style={{height:250,width:"100%",backgroundColor: "white"}}>
+                <Video
+                source={require('../assets/数据分析.mp4')}//设置视频源  
+                style={{height:"100%", width:"90%",position:"absolute",top:0,right:0}}//组件样式
+                resizeMode='stretch'//缩放模式
+                repeat={true}//确定在到达结尾时是否重复播放视频。
+                />
+              </View>
+              <Card style={styles.card}>
                 <View style={styles.sportTime}>
                         <View style={styles.timeView}>
                             <Text style={styles.time}>09:13:35</Text>
@@ -139,8 +149,8 @@ function SportOverview(props) {
                             <Text style={styles.timeType}>千卡</Text>
                         </View>
                     </View>
-              </View>
-              <View style={styles.card}>
+              </Card>
+              <Card style={styles.card}>
                 <View style={styles.title}>
                   <Svg icon="雷达图" size="20"/>
                   <Text style={styles.text}>数据总览</Text>
@@ -151,39 +161,39 @@ function SportOverview(props) {
                 intensityData = {intensity}
                 completeData = {complete}
                 />
-              </View>
+              </Card>
 
-              <View style={styles.card}>
+              <Card style={styles.card}>
                 <View style={styles.title}>
                   <Svg icon="分数" size="17"/>
                   <Text style={styles.text}>部位得分</Text>
                   </View>
                 <ScatterChartScreen scatterData={scatterData[index]}></ScatterChartScreen>
-              </View>
+              </Card>
 
-              <View style={styles.card}>
+              <Card style={styles.card}>
                 <View style={styles.title}>
                   <Svg icon="汗量强度" size="17"/>
                   <Text style={styles.text}>运动强度</Text></View>
                 {(loaded)&&<LineChartScreen lineData={lineData[index]}></LineChartScreen>}
                 {/* <LineChartScreen lineData={lineData[index]}></LineChartScreen> */}
-              </View>
+              </Card>
 
-              <View style={styles.card}>
+              <Card style={styles.card}>
                 <View style={styles.title}>
                   <Svg icon="本月完成度" size="17"/>
                   <Text style={styles.text}>动作完成度</Text></View>
                 {(loaded)&&<PieChartScreen completeness={pieData[index]}></PieChartScreen>}
                 {/* <PieChartScreen completeness={pieData[index]}></PieChartScreen> */}
-              </View>
+              </Card>
 
-              <View style={styles.card}>
+              <Card style={styles.card}>
                 <View style={styles.title}>
                   <Svg icon="节奏" size="17"/>
                   <Text style={styles.text}>动作快慢</Text></View>
                 {/* {(loaded)&&<TimeSeriesLineChartScreen dtwData={dtwData[index]}></TimeSeriesLineChartScreen>} */}
                 <TimeSeriesLineChartScreen dtwData={dtwData[index]}></TimeSeriesLineChartScreen>
-              </View>
+              </Card>
 
           </ScrollView>
         </Layout>))}
@@ -206,14 +216,15 @@ const styles = StyleSheet.create({
     width: "100%",
     maxHeight: "83%",
     padding: 5,
+    backgroundColor: "white",
   }, 
   card:{
     width:"95%",
     marginTop:10,
     marginBottom:10,
-    borderRadius:20,
+    borderRadius:10,
     borderWidth:1,
-    borderColor:"mistyrose",
+    borderColor:"#eeeeee",
     backgroundColor:"#ffffff",
     overflow:'hidden',
     alignItems:'center'
@@ -226,7 +237,7 @@ const styles = StyleSheet.create({
     marginBottom:5,
     paddingLeft:10,
     borderBottomWidth:1,
-    borderBottomColor:"mistyrose"
+    borderBottomColor:"#eeeeee"
   },
   text:{ 
     height: 25,

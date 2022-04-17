@@ -1,69 +1,55 @@
 import React,{useState} from "react";
-import { StyleSheet,ActivityIndicator,View,TouchableOpacity } from "react-native";
+import { StyleSheet,ActivityIndicator,View,TouchableOpacity,ScrollView,Image,ToastAndroid} from "react-native";
 import {
   Layout,
   Text,
   Button,
-  Card,
   Divider,
   TopNavigation,
-  Modal,
 } from "@ui-kitten/components";
 import { default as theme } from "../custom-theme.json";
 import TodayTrainPlanCard from "../components/TodayTrainPlanCard";
-import RowDataCard from "../components/RowDateCard";
 import { connect } from "react-redux";
 import * as actions from "./store/actions";
 import {getData} from "../components/FetchData";
 import Svg from "../components/Svg";
-const ModalContainer1 = (props) => {
-  return (
-    <Modal
-      style={styles.modalContainer}
-      visible={props.visible}
-      backdropStyle={styles.backdrop}
-      onBackdropPress={() => props.setVisible(false)}
-    >
-      <Card disabled={true}>
-        <Text category="h6" style={{ margin: 20 }}>
-          {props.code}
-          {props.message}
-        </Text>
-        <Button size="medium" onPress={() => props.setVisible(false)}>
-          确定
-        </Button>
-      </Card>
-    </Modal>
-  );
-};
+import { Card } from "react-native-shadow-cards";
+import LinearGradinet from 'react-native-linear-gradient';
+import { menus } from "../components/menus";
+import Video from 'react-native-video';
 
 
 const PlanScore = (props) => {
   return (
+    <LinearGradinet
+            start={{x: 0, y: 0}}
+            end={{x: 1, y: 1}}
+            colors={['#FB8C6F' ,'#FF826C','pink','#F8D49B']}
+            style={{height:55,width:"85%",alignSelf: 'center',borderRadius: 60,}}
+          >
     <Card style={scoreStyles.container}>
-      <Text category="h6" style={scoreStyles.scoreHeader}>
-        计划评分
+      <Text style={scoreStyles.scoreHeader}>
+        推荐计划评分
       </Text>
       <Layout style={scoreStyles.scoreContainer}>
-        <Text category="h1" style={scoreStyles.actualScoreStyle}>
+        <Svg icon="评估身体" size="20" color="gray"/>
+        <Text style={scoreStyles.actualScoreStyle}>
           90
         </Text>
-        <Text category="h5" style={scoreStyles.totalScoreStyle}>
+        <Text style={scoreStyles.totalScoreStyle}>
           {" "}
           / 100
         </Text>
       </Layout>
-    </Card>
+      </Card>
+      </LinearGradinet>
   );
 };
 
 function PlanOverview(props) {
-  const [modalVisible1,setModalVisible1]=useState(false);
-  const [theCode,setTheCode]=useState('0');
   const [generalProgress,setGeneral] =useState(false);
   const [progress,setProgress] =useState(false);
   let [enableScrollViewScroll,setScoll] = useState(true);
-
   const navigateAddItem = () => {
     setProgress(true);
     setTimeout(()=>{
@@ -85,32 +71,86 @@ function PlanOverview(props) {
         {
           props.addTodayDetail(resToday["data"]);
           props.changeToday(resToday["data"].map(item => item.id));
-          setTheCode("生成完毕");
           setGeneral(false);
-          setModalVisible1(true);
+          ToastAndroid.show("生成成功！",500)
         },1500)   
       }
       else{
-        setTheCode(resToday["message"]);
+        ToastAndroid.show(resToday["message"],500);
         setGeneral(false);
-        setModalVisible1(true);
       }
     }
     else{
-      setTheCode(res["message"]);
+      ToastAndroid.show(res["message"],500);
       setGeneral(false);
-      setModalVisible1(true);
     }
     
   }
+
+  const typeClick = (name)=>{
+    props.addTitle(name+"运动");
+    props.navigation.navigate("movementDetail");
+  }
+
   return (
-    <Layout style={styles.container}>
-      <View style={{width:"100%",height:80,backgroundColor:"white",marginTop:-50,marginBottom:-30}}>
-        <RowDataCard
-        horizontal={true}
-        showIndicator={false}/>
+    <ScrollView 
+      style={styles.scrollContainer} 
+      contentContainerStyle={styles.scrollContent}
+      scrollEnabled={enableScrollViewScroll}
+      backdropStyle={{backgroundColor: "white",}}
+    >
+
+      {(generalProgress)&&(<View
+        style={{position:"absolute",height:1000,width:"100%",backdrop:"#aaaaaa",
+        backgroundColor: "white",zIndex: 99999,justifyContent: 'flex-start',alignItems: 'center',
+      }}
+      >
+        <View style={{height:"30%",width:"80%",marginTop:0}}>
+        <Video
+              source={require("../assets/计划生成.mp4")}//设置视频源  
+              style={{marginRight: 5 ,marginLeft: 5,height:"100%", width:"100%",marginBottom:0}}//组件样式
+              resizeMode='stretch'//缩放模式
+              repeat={true}//确定在到达结尾时是否重复播放视频。
+        />
+        </View>
+        <Text style={{color:"gray",fontSize:15,marginTop:100}}>...计划生成中...</Text>
+      </View>)}
+
+      <View style={{width:"100%",height:285,backgroundColor:"white",flexDirection: 'row',marginTop:-30}}>
+        <View style={{width:"50%",height:"100%",justifyContent: 'center',alignItems: 'center',position:"absolute",left:50,top:20}}>
+          <Svg icon="告示栏" size="250"/>
+        </View>
+        <View style={{width:"50%",height:"100%",justifyContent: 'center',alignItems: 'center',position:"absolute",right:0,top:20}}>
+          <Svg icon="运动看书人1" size="220"/>
+        </View>
+        <View style={{width:100,height:100,position: "absolute",backgroundColor: "white",left:90,top:110,justifyContent: 'center',alignItems: 'center',}}>
+          <Text style={{fontSize:10,color:theme["color-primary-500"],fontFamily:'Arial'}}>{"        "}涓滴之水终可以磨损大石，
+          不是由于它力量强大，而是由于昼夜不舍的滴坠.
+          {"\n"}{"            "}——贝多芬</Text>
+        </View>
       </View>
+
+      <Layout style={styles.btnContainer}>
+        <TouchableOpacity style={styles.touchContainer}>
+          <Svg icon="评估身体" size="35" color={theme["color-primary-500"]}/>
+          <Text style={{color:"grey",fontSize:10}}>评估身体</Text>
+        </TouchableOpacity >
+
+        <TouchableOpacity onPress={()=>generalPlan()}  style={styles.touchContainer}>
+          {generalProgress
+          ? <View style={{width:35,height:35,alignItems:"center",justifyContent:"center"}}><ActivityIndicator color="orange"/></View>
+          : <Svg icon="生成计划" size="35" color={theme["color-primary-500"]}/>
+          }
+          <Text style={{color:"grey",fontSize:10}}>生成科学计划</Text>
+        </TouchableOpacity >
+      </Layout>
+
       <Layout style={styles.planContainer}>
+        <PlanScore />
+        <View style={{flexDirection:"row",justifyContent:"space-around",alignItems: 'center',width:"100%"}}>
+          <Svg icon="挂钩" size="20" />
+          <Svg icon="挂钩" size="20" />
+        </View>
         <TodayTrainPlanCard 
           height={220} 
           onEnableScroll={setScoll}
@@ -126,28 +166,38 @@ function PlanOverview(props) {
         </TouchableOpacity >
 
       </Layout>
-      <PlanScore />
-      <Layout style={styles.btnContainer}>
-        <TouchableOpacity style={styles.touchContainer}>
-          <Svg icon="评估身体" size="35" color={theme["color-primary-500"]}/>
-          <Text style={{color:"grey",fontSize:10}}>评估身体</Text>
-        </TouchableOpacity >
 
-        <TouchableOpacity onPress={()=>generalPlan()}  style={styles.touchContainer}>
-          {generalProgress
-          ? <View style={{width:35,height:35,alignItems:"center",justifyContent:"center"}}><ActivityIndicator color="orange"/></View>
-          : <Svg icon="生成计划" size="35" color={theme["color-primary-500"]}/>
-          }
-          <Text style={{color:"grey",fontSize:10}}>生成科学计划</Text>
-        </TouchableOpacity >
+      <Layout style={{height: 400,width:"100%",justifyContent:"center",alignItems: 'center',marginBottom:30,marginTop:-20}}>
+          <Card style={{backgroundColor: "white",width:"90%",height:"90%",borderRadius: 10,}}>
+            <View style={{height: "13%",width:"100%",
+            flexDirection: 'row',justifyContent: 'center',alignItems: 'center',
+            borderBottomWidth:1,borderBottomColor: "#dddddd",borderStyle:'dotted'}}>
+              <Svg icon="分类" size="18" color={theme["color-primary-500"]}/>
+              <Text style={{color:"gray",marginLeft:10}}>运动种类</Text>
+              <View style={{height:16,width:16,backgroundColor: "white",borderRadius:10,
+              position:"absolute",left:-8,bottom:-8,borderColor: "#dddddd",borderRightWidth:1}}></View>
+              <View style={{height:16,width:16,backgroundColor: "white",borderRadius:10,
+              position:"absolute",right:-8,bottom:-8,borderColor: "#dddddd",borderLeftWidth:1}}></View>
+            </View>
 
+            <View style={{flexWrap:"wrap",flexDirection: 'row',justifyContent: 'space-evenly',alignItems: 'center',paddingTop:15}}>
+              {menus.map((item,index)=>{
+                return <View
+                  style={{height:90,width:"26%",borderRadius:50,justifyContent: 'center',alignItems: 'center',}}
+                  key={index}
+                >
+                  <TouchableOpacity onPress={()=>typeClick(item.name)} style={{height:45,width:45,borderRadius: 25,borderWidth: 1,borderColor: "#eeeeee",
+                  justifyContent:"center",alignItems:"center",marginBottom:5}}>
+                    <Svg icon={item.name} size="35" color={theme["color-primary-500"]}/>
+                  </TouchableOpacity>
+                  <Text style={{fontSize:8,color:"gray"}}>{item.name}</Text>
+                </View>
+              })}
+            </View>  
+
+          </Card>
       </Layout>
-      <ModalContainer1
-        visible={modalVisible1}
-        setVisible={setModalVisible1}
-        code={theCode}
-      />
-    </Layout>
+    </ScrollView>
   );
 }
 
@@ -160,11 +210,27 @@ const styles = StyleSheet.create({
     paddingTop: 0,
     marginTop:0
   },
+  scrollContainer: {
+    flexGrow: 1,
+    width: "100%",
+    maxHeight: "100%",
+    paddingTop: 5,
+    backgroundColor:"white",
+
+  },
+  scrollContent: {
+    width: "100%",
+    justifyContent: "flex-start",
+    alignItems: "center",
+  },
   btnContainer: {
     flexDirection:"row",
     width: "100%",
     alignItems: "center",
     justifyContent: "center",
+    marginTop:10,
+    marginBottom:20,
+    backgroundColor:"rgb(0,0,0,0)"
   },
   planContainer: {
     width: "100%",
@@ -176,19 +242,22 @@ const styles = StyleSheet.create({
   },
   touchContainer:{
     alignItems:"center",
-    width:"40%"
+    width:"40%",
+    backgroundColor:"rgb(0,0,0,0)"
   },
 });
 
 const scoreStyles = StyleSheet.create({
   container: {
-    borderColor: theme["color-info-800"],
-    borderBottomWidth: 10,
-    width: "90%",
+    width: "94%",
+    height:"99%",
+    overflow: 'hidden',
     flexDirection: "column",
     alignItems: "center",
     justifyContent: "center",
+    alignSelf: 'center',
     borderRadius: 100,
+    marginBottom:2
   },
   scoreContainer: {
     flexDirection: "row",
@@ -197,12 +266,17 @@ const scoreStyles = StyleSheet.create({
   },
   scoreHeader: {
     alignSelf: "center",
+    fontSize: 14,
+    color:"#888888"
   },
   actualScoreStyle: {
+    marginLeft: 10,
     fontWeight: "bold",
+    fontSize:20
   },
   totalScoreStyle: {
     color: theme["color-primary-500"],
+    fontSize: 10
   },
 });
 
@@ -212,6 +286,7 @@ const btnStyle = StyleSheet.create({
     width: "15%",
     marginTop: 5,
     marginRight: 20,
+    marginBottom:50,
     alignSelf: "flex-end",
     alignItems:"center"
   },

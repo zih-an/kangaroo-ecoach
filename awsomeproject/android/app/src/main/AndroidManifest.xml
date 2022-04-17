@@ -25,7 +25,7 @@
         android:name=".MainActivity"
         android:label="@string/app_name"
         android:configChanges="keyboard|keyboardHidden|orientation|screenSize|uiMode"
-        android:launchMode="singleTask"
+        android:launchMode="singleInstance"
         android:windowSoftInputMode="adjustResize"
         android:screenOrientation="portrait">
         <intent-filter>
@@ -36,6 +36,7 @@
     <activity android:name=".screenReceiverActivity"
         android:exported="true"
         android:screenOrientation="landscape"
+        android:launchMode="singleInstance"
         android:configChanges="orientation|keyboardHidden|screenSize|screenLayout">
         <!--            <intent-filter>-->
         <!--                <action android:name="android.intent.action.MAIN" />-->
@@ -45,6 +46,7 @@
         <activity
             android:name=".socketconnect.screenprojection.screen_sender_connectView"
             android:exported="true"
+            android:launchMode="singleInstance"
             android:screenOrientation="portrait">
             <!--            <intent-filter>-->
             <!--                <action android:name="android.intent.action.MAIN" />-->
@@ -54,7 +56,8 @@
         <activity
             android:name=".socketconnect.connectview.hostviewActivity"
             android:exported="true"
-            android:screenOrientation="portrait">
+            android:screenOrientation="portrait"
+            android:launchMode="singleInstance">
             <!--            <intent-filter>-->
             <!--                <action android:name="android.intent.action.MAIN" />-->
             <!--                <category android:name="android.intent.category.LAUNCHER" />-->
@@ -63,7 +66,8 @@
         <activity
             android:name=".socketconnect.connectview.slaveviewActivity"
             android:exported="true"
-            android:screenOrientation="portrait">
+            android:screenOrientation="portrait"
+            android:launchMode="singleInstance">
 <!--            <intent-filter>-->
 <!--                <action android:name="android.intent.action.MAIN" />-->
 <!--                <category android:name="android.intent.category.LAUNCHER" />-->
@@ -73,6 +77,7 @@
             android:name=".SenderActivity"
             android:screenOrientation="landscape"
             android:configChanges="orientation|keyboardHidden|screenSize|screenLayout"
+            android:launchMode="singleInstance"
             android:exported="true" >
             <!--            <intent-filter>-->
             <!--                <action android:name="android.intent.action.MAIN" />-->
@@ -83,6 +88,7 @@
             android:name=".ReceiverActivity"
             android:screenOrientation="landscape"
             android:configChanges="orientation|keyboardHidden|screenSize|screenLayout"
+            android:launchMode="singleInstance"
             android:exported="true" >
             <!--            <intent-filter>-->
             <!--                <action android:name="android.intent.action.MAIN" />-->
@@ -92,6 +98,7 @@
       <activity
           android:name=".CameraActivity"
           android:screenOrientation="landscape"
+          android:launchMode="singleInstance"
           android:configChanges="orientation|keyboardHidden|screenSize|screenLayout">
       </activity>
         <meta-data

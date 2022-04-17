@@ -188,9 +188,13 @@ class ResJSdata(private var sampleId:Int=-1) {
         for(i in 0..count-1) {
             //获得完成度
             CPNresArray.put(completeness[i])
+
+
+        }
+        for(i in 0..exerciseIntensity.count()-1)
+        {
             //获得运动强度，size-1
-            if(i!=count-1)
-                EXTresArray.put(getExerciseIntensityLevel(exerciseIntensity[i]))
+            EXTresArray.put(getExerciseIntensityLevel(exerciseIntensity[i]))
         }
         var COOrdination:Double=0.0;
         var X_len=dtwres?.DTW_PathList.get(0).first+1

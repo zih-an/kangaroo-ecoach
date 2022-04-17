@@ -136,7 +136,6 @@ class TimeSeriesLineChartScreen extends React.Component {
             xAxis={this.state.xAxis}
             
             onSelect={this.handleSelect.bind(this)}
-            // onChange={(event) => console.log(event.nativeEvent)}
 
             ref="chart"
           />

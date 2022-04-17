@@ -1,15 +1,23 @@
 import React,{useState} from 'react';
-import {StyleSheet, View , Image , TouchableOpacity ,ScrollView,Modal} from 'react-native';
+import {StyleSheet, View , Image , TouchableOpacity ,ScrollView,Modal,ToastAndroid} from 'react-native';
 import {Layout, Text, CheckBox,Button,TopNavigationAction,Icon} from '@ui-kitten/components';
 import {default as theme} from '../custom-theme.json';
 import Video from 'react-native-video';
 import StarGroup from "./StarGroup";
 import * as actions from "../screens/store/actions";
 import { connect } from "react-redux";
+import { postData } from './FetchData';
 
 const url = "http://81.68.226.132:80/";
 
 const BackIcon = props => <Icon {...props} name="arrow-back" />;
+const CollectIconY = props => 
+  <Icon
+    style={{width:25,height:25}}
+    fill={(!props.checked&&'#dddddd'||(props.checked)&&theme["color-primary-500"])}
+    name='heart'
+  />
+;
 
 
 const ModalContainerForVd = (props) => {
@@ -59,6 +67,7 @@ function VideoCard(props) {
   }
   const Footer = ()=> {
     const [activeChecked, setActiveChecked] = React.useState(props.choose);
+
     return (
       <View  style={styles.footerContainer}>
         {/* 这里Text用来撑开父元素 */}
@@ -68,14 +77,30 @@ function VideoCard(props) {
           checked={activeChecked}
           onChange={(nextChecked) => {
             setActiveChecked(nextChecked);
-            if(nextChecked) props.addToday(props.id);
-            else props.deleteToday(props.id);
+            if(nextChecked) props.addToday(props.id); 
+            else props.deleteToday(props.id); 
           }}
         >
         </CheckBox>
       </View>
     );
   };
+  const FooterCollect =()=>{
+    // let urlCollect = "http://81.68.226.132:80/standardV/collect"
+    let activeCollect = props.choose;
+    return (<View  style={styles.footerContainer}>
+      {/* 这里Text用来撑开父元素 */}
+      <Text category="h6" style={styles.fontHidden}>lallalalaasl</Text>
+      <TouchableOpacity onPress={()=>{
+        activeCollect = !activeCollect;
+        if(activeCollect) props.addCollect(props.id);
+        else props.deleteCollect(props.id);
+      }}
+      style={{height:32,width:32,marginRight:30,marginTop:-10}}>
+        <CollectIconY checked={activeCollect}/>
+      </TouchableOpacity>
+    </View>)
+  }
   return (
     <Layout style={{width:"100%",flexDirection:"row"}}>
 
@@ -94,7 +119,9 @@ function VideoCard(props) {
       </View>
 
       <View>
-          <Footer/>
+          {(props.type==="modify")&&<Footer/>}
+          {(props.type==="collect")&&<FooterCollect/>}
+
       </View>
       {/* Modal用于显示点击图片后弹出的动作详情 */}
       <ModalContainerForVd
@@ -150,5 +177,11 @@ const styles = StyleSheet.create({
     },
 });
 
-
-export default connect ( null,actions)(VideoCard);
+const mapStateToProps = state =>{
+  return {
+      login:state.login,
+      todayPlans:state.todayPlans,
+      collect:state.collect
+  };
+};
+export default connect ( mapStateToProps,actions)(VideoCard);

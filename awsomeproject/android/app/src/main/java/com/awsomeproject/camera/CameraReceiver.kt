@@ -192,7 +192,8 @@ class CameraReceiver(
             }
             else if (isPersonDetect == false) {
                 detector?.estimatePoses(bitmap)?.let {
-                    if (Samples[index].tryFirstFrame(it)>=97&&it.get(0).isTrustMoreSerious())
+                    persons.addAll(it)
+                    if (Samples[index].tryFirstFrame(it)>=90&&it.get(0).isTrustMoreSerious())
                     {
                         isPersonDetect = true
                         listener?.onPersonDetected()
