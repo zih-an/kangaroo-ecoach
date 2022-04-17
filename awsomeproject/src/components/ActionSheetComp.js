@@ -6,7 +6,7 @@ import {
     Modal,
     TouchableOpacity,
     Dimensions,
-    Alert,
+    ToastAndroid,
     ActivityIndicator
 } from 'react-native';
 import PropTypes from 'prop-types';
@@ -69,7 +69,7 @@ class ActionSheetComp extends Component{
                 if(this.props.modalTitle==="设置设备"){
                     // if(timer !== null) clearTimeout(timer);
                         // setTimeout(()=>{
-                        Alert.alert("设备已开启，当前为摄像头");
+                        ToastAndroid.show("设备已开启，当前为摄像头",500);
                         this.props.setStatus(true);
                         this.cancelModal();
                 }
@@ -79,7 +79,7 @@ class ActionSheetComp extends Component{
                 break;
             case 1:
                 if(this.props.modalTitle==="设置设备"){
-                        Alert.alert("设备已开启，当前为摄像头");
+                        ToastAndroid.show("设备已开启，当前为摄像头",500);
                         this.props.setStatus(true);
                         this.cancelModal();
                 }
@@ -94,13 +94,13 @@ class ActionSheetComp extends Component{
         this.setState({progressFir:true});
         else this.setState({progressSec:true});
         let res = await getData(url,this.props.token);
-        if(res["code"]===0) Alert.alert("连接失败！");
+        if(res["code"]===0) ToastAndroid.show("连接失败！",500);
         else {
             if(index === 0)
             this.setState({progressFir:false});
             else this.setState({progressSec:false});
             this.props.setStatus(true);
-            Alert.alert("连接成功，开始运动！");
+            ToastAndroid.show("连接成功，开始运动！",500);
             this.cancelModal();
             this.props.nav.navigate("SportOverviewPage");
         }

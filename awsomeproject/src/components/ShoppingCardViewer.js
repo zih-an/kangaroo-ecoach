@@ -9,7 +9,7 @@ const ForwardIcon = (props) => (
   <Icon
     {...props}
     name="arrow-ios-forward-outline"
-    fill={theme["color-primary-500"]}
+    fill={"#dddddd"}
     style={styles.iconStyle}
   />
 );
@@ -17,7 +17,7 @@ const BackIcon = (props) => (
   <Icon
     {...props}
     name="arrow-ios-back-outline"
-    fill={theme["color-primary-500"]}
+    fill={"#dddddd"}
     style={styles.iconStyle}
   />
 );
@@ -27,7 +27,7 @@ class ShoppingCardViewer extends React.Component {
   }
   state={
     selectedIndex:0,
-    theData:[{name:"admin",price:399,pic_path:"http://playerz.plus/images/fun-emotion.jpg"}]
+    theData:[{name:"网络请求失败,请尝试重新登陆",price:"",pic_path:"none"}]
   };
   setSelectedIndex(text){
     this.setState(selectedIndex,text);
@@ -45,7 +45,17 @@ class ShoppingCardViewer extends React.Component {
         onSelect={(index) => this.setState({selectedIndex:index})}
       >
         {/* 这里直接读取全局state中商品信息生成购物卡片 */}
-        {this.props.shop.map((myData,index)=>{
+        {(this.props.shop.length>0)&&(this.props.shop.map((myData,index)=>{
+          return <ShoppingCard
+          imageUrl={myData.pic_path}
+          key={index}
+          name={myData.name}
+          price={myData.price}
+          data={myData.introduction}
+          purchase={myData.commodity_path}
+          /> 
+        }))}
+        {(this.props.shop.length<=0)&&this.state.theData.map((myData,index)=>{
           return <ShoppingCard
           imageUrl={myData.pic_path}
           key={index}
@@ -74,8 +84,8 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   iconStyle: {
-    width: 50,
-    height: 50,
+    width: 40,
+    height: 40,
   },
 });
 

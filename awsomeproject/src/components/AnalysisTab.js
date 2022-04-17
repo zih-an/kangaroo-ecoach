@@ -1,5 +1,5 @@
 import React from "react";
-import { ScrollView, View, StyleSheet,Dimensions} from "react-native";
+import { ScrollView, View, StyleSheet,Dimensions,Image} from "react-native";
 import { Layout, Text, ViewPager, Icon,IndexPath,Select,SelectItem,TopNavigationAction,  } from "@ui-kitten/components";
 import ScatterChartScreen from "./ScatterChartScreen";
 import PieChartScreen from "./PieChartScreen";
@@ -7,6 +7,8 @@ import RadarChartScreen from "./RadarChartScreen";
 import LineChartScreen from "./LineChartScreen";
 import TimeSeriesLineChartScreen from "./TimeSeriesLineChartScreen"
 import Svg from "./Svg"
+import LinearGradinet from 'react-native-linear-gradient';
+import { Card } from "react-native-shadow-cards";
 
 import dataSets from "../assets/dataSets"
 import newest from "../assets/newest"
@@ -28,7 +30,7 @@ const BackIcon = props => <Icon {...props} name="arrow-back" />;
 function HLMomentTab(props) {
   const [selectedIndex, setSelectedIndex] = React.useState(new IndexPath(0));
   const [loaded,setLoaded] = React.useState(false);
-  const typesName = props.plansIndex.filter((item,index)=>typesId.includes(index+1));
+  const typesName = props.plansIndex.filter((item,index)=>typesId.includes(item.id)).map((item,index)=>item.title);
   const displayValue = typesName[selectedIndex.row];
 
   const navigateBack = () => {props.navigation.goBack();};
@@ -105,7 +107,24 @@ function HLMomentTab(props) {
               contentContainerStyle={styles.scrollContent}
               onMomentumScrollEnd = {(e)=>_contentViewScroll(e)}
               >
-              <View style={styles.card}>
+              <LinearGradinet
+                  start={{x: 0.5, y: 0}}
+                  end={{x: 0.5, y: 1}}
+                  colors={['#FF826C','#F8D49B','white']}
+                  style={{width:"100%",height:250,borderRadius:40,zIndex:999}}
+                >
+              <Image
+              style={{ width:"100%",height: 250,position:"absolute",top:-25,left:-40}}
+              source={require('../assets/数据分析总体图.png')}
+              resizeMode='contain'
+              />
+              <Image
+              style={{ width:"100%",height: 250,position:"absolute",top:20,left:40}}
+              source={require('../assets/3D运动女孩.png')}
+              resizeMode='contain'
+              />
+              </LinearGradinet>
+              <Card style={styles.card}>
                 <View style={styles.title}>
                   <Svg icon="雷达图" size="20"/>
                   <Text style={styles.text}>数据总览</Text>
@@ -116,36 +135,36 @@ function HLMomentTab(props) {
                 intensityData = {intensity}
                 completeData = {complete}
                 />
-              </View>
+              </Card>
 
-              <View style={styles.card}>
+              <Card style={styles.card}>
                 <View style={styles.title}>
                   <Svg icon="分数" size="17"/>
                   <Text style={styles.text}>部位得分</Text>
                   </View>
                 <ScatterChartScreen scatterData={ScatterData[index]}></ScatterChartScreen>
-              </View>
+              </Card>
 
-              <View style={styles.card}>
+              <Card style={styles.card}>
                 <View style={styles.title}>
                   <Svg icon="汗量强度" size="17"/>
                   <Text style={styles.text}>运动强度</Text></View>
                 {(loaded)&&<LineChartScreen lineData={LineData[index]}></LineChartScreen>}
-              </View>
+              </Card>
 
-              <View style={styles.card}>
+              <Card style={styles.card}>
                 <View style={styles.title}>
                   <Svg icon="本月完成度" size="17"/>
                   <Text style={styles.text}>动作完成度</Text></View>
                 {(loaded)&&<PieChartScreen completeness={PieData[index]}></PieChartScreen>}
-              </View>
+              </Card>
 
-              <View style={styles.card}>
+              <Card style={styles.card}>
                 <View style={styles.title}>
                   <Svg icon="节奏" size="17"/>
                   <Text style={styles.text}>动作快慢</Text></View>
                 {(loaded)&&<TimeSeriesLineChartScreen dtwData={DTWdata[index]}></TimeSeriesLineChartScreen>}
-              </View>
+              </Card>
 
           </ScrollView>
         </Layout>))}
@@ -171,11 +190,10 @@ const styles = StyleSheet.create({
   }, 
   card:{
     width:"95%",
-    marginTop:10,
     marginBottom:10,
     borderRadius:20,
     borderWidth:1,
-    borderColor:"mistyrose",
+    borderColor:"#eeeeee",
     backgroundColor:"#ffffff",
     overflow:'hidden',
     alignItems:'center'
@@ -188,7 +206,7 @@ const styles = StyleSheet.create({
     marginBottom:5,
     paddingLeft:10,
     borderBottomWidth:1,
-    borderBottomColor:"mistyrose"
+    borderBottomColor:"#eeeeee"
   },
   text:{ 
     height: 25,

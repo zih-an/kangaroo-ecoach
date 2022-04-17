@@ -26,17 +26,9 @@ let scatterData = {
 
 function chooseColor(color){
   switch (color){
-    case "头部" : return 'skyblue';
-    case "左臂" : return 'red';
-    case "右臂" : return 'green';
-    case "左腿" : return 'blue';
-    case "右腿" : return 'pink';
-    case "跨部" : return 'yellow';
-    case "双肩" : return 'orange';
-    case "左脖子" : return 'gray';
-    case "右脖子" : return 'darkslateblue';
-    case "躯干左侧": return 'maroon';
-    case "躯干右侧":return 'peru';
+    case 0 : return '#ff7354';
+    case 1 : return '#34ff93';
+    case 2 : return '#9c93ff';
   }
 }
 
@@ -47,6 +39,7 @@ class ScatterChartScreen extends React.Component {
     let tmpData=[];
     let keys = Object.keys(this.props.scatterData);
     scatterData = this.props.scatterData;
+    let index = 0;
     for(let i of keys){
       let obj ={};
       obj.label = i;
@@ -54,13 +47,15 @@ class ScatterChartScreen extends React.Component {
         return {x:(index+1)*0.2,y:item}
       });
       obj.config = {
-        color: processColor(chooseColor(i)),
+        color: processColor(chooseColor(index)),
         scatterShape: 'CIRCLE',
-        scatterShapeSize: 11,
+        scatterShapeSize: 8,
         drawValues:false,
       }
       tmpData.push(obj);
+      index++;
     }
+    index=0;
     this.state = {
       xAxis:{
         gridColor:processColor('white'),

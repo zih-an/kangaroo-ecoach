@@ -1,10 +1,9 @@
 import React,{useState,useEffect} from 'react';
-import {ScrollView, Alert,ActivityIndicator} from 'react-native';
+import {ScrollView, Alert,ActivityIndicator,ToastAndroid,Text} from 'react-native';
 import {
   Divider,
   Icon,
   Layout,
-  Text,
   TopNavigation,
   TopNavigationAction,
 } from '@ui-kitten/components';
@@ -12,32 +11,49 @@ import VideoCard from '../components/VideoCard';
 import { connect } from "react-redux";
 import * as actions from "./store/actions";
 import { getData, postData } from "../components/FetchData";
+import { default as theme } from "../custom-theme.json";
+
 const urlChange = "http://81.68.226.132:80/plan/change";
 const urlChoosen = "http://81.68.226.132:80/plan/index";
 
 const BackIcon = props => <Icon {...props} name="arrow-back" />;
+const ClickIcon = props => <Text style={{color:theme["color-primary-500"],fontSize:18}}>确定</Text>;
+
 
 function AddItem(props) {
   const [progress,setProgress] = useState(false);
-  const navigateBack = async () => {
+  const navigateBackWithSend = async () => {
     setProgress(true);
     //这里的回调函数修改了下，用于在修改计划后，跳转页面前，根据最终的今日计划id数组向服务器请求并更新今日计划
-    let update = await postData(urlChange,{"id":props.todayPlan},props.login.token);
+    let update = await postData(urlChange,{"id":props.todayPlans},props.login.token);
     let message = update["message"];
     if(update["code"]==="1"){
       let resToday = await getData(urlChoosen,props.login.token);
       props.addTodayDetail(resToday["data"]);
+      ToastAndroid.show("修改成功！",500);
       setProgress(false);
       props.navigation.goBack();
     }
     else {
       setProgress(false);
-      Alert.alert(message);
+      ToastAndroid.show(message,500);
     }
+  };
+  const navigateBack = async () => {
+    // setProgress(true);
+    //这里的回调函数修改了下，用于在修改计划后，跳转页面前，根据最终的今日计划id数组向服务器请求并更新今日计划
+      let resToday = await getData(urlChoosen,props.login.token);
+      props.changeToday(resToday["data"].map(item => item.id));
+      console.log(props.todayPlans);
+      props.navigation.goBack();
   };
 
   const BackAction = () => {
-    return (progress? <ActivityIndicator color="orange"/>:<TopNavigationAction icon={BackIcon} onPress={navigateBack} />);
+    return <TopNavigationAction icon={BackIcon} onPress={navigateBack} />;
+  }
+
+  const ClickAction = () => {
+    return (progress? <ActivityIndicator color="orange"/>:<TopNavigationAction icon={ClickIcon} onPress={navigateBackWithSend} />);
   }
 
   return (
@@ -46,11 +62,12 @@ function AddItem(props) {
         title="添加项目"
         alignment="center"
         accessoryLeft={BackAction}
+        accessoryRight={ClickAction}
       />
       <Divider />
       <Layout style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
         {/* 直接根据登录时就获取到的所有计划生成修改计划中的各动作卡片，是否选中卡片由今日计划的id数组决定 */}
-        {props.allPlan.map((Item,index)=>{
+        {props.allPlans.map((Item,index)=>{
           return <VideoCard
           key={index}
           id={Item["id"]}
@@ -59,7 +76,8 @@ function AddItem(props) {
           A_intensity={Item["A_intensity"]}
           title={Item["title"]}
           introduction={Item["introduction"]}
-          choose={props.todayPlan.includes(Item["id"])}
+          choose={props.todayPlans.includes(Item["id"])}
+          type = "modify"
           ></VideoCard>
         })}
       </Layout>
@@ -70,9 +88,9 @@ function AddItem(props) {
 const mapStateToProps = state =>{
   return {
       login:state.login,
-      todayPlan:state.todayPlans,
-      todayPlanDetail:state.todayPlansDetail,
-      allPlan:state.allPlans
+      todayPlans:state.todayPlans,
+      todayPlansDetail:state.todayPlansDetail,
+      allPlans:state.allPlans,
   };
 };
 

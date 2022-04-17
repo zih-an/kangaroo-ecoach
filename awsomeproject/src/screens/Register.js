@@ -9,46 +9,64 @@ import {
   Select,
   IndexPath,
   SelectItem,
+  Icon,
 } from "@ui-kitten/components";
-import { Image, StyleSheet, Dimensions,Alert, View} from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { Image, StyleSheet, Dimensions, View,ToastAndroid,TouchableWithoutFeedback,ActivityIndicator} from "react-native";
 import {postData, getData} from '../components/FetchData';
 import { connect } from "react-redux";
 import * as actions from "./store/actions";
+import {default as theme} from '../custom-theme.json';
 
 
-const ModalContainer = (props) => {
-  return (
-    <Modal
-      style={styles.modalContainer}
-      visible={props.visible}
-      backdropStyle={styles.backdrop}
-      onBackdropPress={() => props.setVisible(false)}
-    >
-      <Card disabled={true}>
-        <Text category="h6" style={{ margin: 20 }}>
-          {props.modalInfo}
-        </Text>
-        <Button size="medium" onPress={() => props.setVisible(false)}>
-          确定
-        </Button>
-      </Card>
-    </Modal>
-  );
-};
+const AlertIcon = (props) => (
+  <Icon {...props} name='alert-circle-outline'/>
+);
 
 export default class Register extends React.Component {
-  // infos = ["账号未注册或密码错误！", "注册成功！","注册失败！"];
-  preferList = [0,1,2,3,4,5,6,7];
+  preferList = [0];
   state = {
     email:'',
     password:'',
+    pwdY:false,
+    passwordDouble:'',
+    check:'',
     modalVisible: false,
     modalInfo: "",
-    selectedIndex:[new IndexPath(0),]
+    selectedIndex:[new IndexPath(0),],
+    tyepsName : [{title:"胸部"},{title:"背部"},{title:"肩部"},{title:"手臂"},{title:"腹部"},{title:"腰部"},{title:"臀部"},{title:"腿部"},{title:"全身耐力"},],
+    displayValue:"请选择您的运动偏好",
+    passwordCheck:"",
+    secureTextEntry:true,
+    timerCount:120,
+    timerTitle:"获取验证码",
+    counting:false,
+    selfEnable:true,
+    loginProgress:false,
   };
+  setLoading = (value) => {
+    this.setState({loginProgress:value});
+  }
+  setSecureTextEntry = (value) =>{
+    this.setState({secureTextEntry:value})
+  }
+  toggleSecureEntry = () => {
+    this.setSecureTextEntry(!this.state.secureTextEntry);
+  };
+  renderIcon = (props) => (
+    <TouchableWithoutFeedback onPress={()=>this.toggleSecureEntry()}>
+      <Icon {...props} name={this.state.secureTextEntry ? 'eye-off' : 'eye'}/>
+    </TouchableWithoutFeedback>
+  );
+
   setSelectedIndex = (index) =>{
-    this.setState({selectedIndex:index})
+    this.setState({selectedIndex:index});
+    let str = "";
+    for(let i of index){
+      str = str + this.state.tyepsName[parseInt(i.row)].title+",";
+    }
+    if(str==="") this.setState({displayValue:"请选择您的运动偏好"})
+    else this.setState({displayValue:str});
+
     let arr = index.map(item => item.row);
     this.preferList = arr.sort(function(a, b){return a - b});
   }
@@ -57,31 +75,111 @@ export default class Register extends React.Component {
   }
   handlePassword=(text)=>{
     this.setState({password:text})
+    if(this.state.password.length<7) this.setState({pwdY:false});
+    else this.setState({pwdY:true});
   }
-  setModalVisible = (shown) => {
-    this.setState({ modalVisible: shown });
-  };
-  setModalInfo = (text) => {
-    this.setState({ modalInfo: text });
-  };
-
+  _countDownAction(){
+    const codeTime = this.state.timerCount;
+    const now = Date.now()
+    const overTimeStamp = now + codeTime * 1000 + 100/*过期时间戳（毫秒） +100 毫秒容错*/
+    this.interval = setInterval(() =>{
+        /* 切换到后台不受影响*/
+        const nowStamp = Date.now()
+        if (nowStamp >= overTimeStamp) {
+            /* 倒计时结束*/
+            this.interval&&clearInterval(this.interval);
+            this.setState({
+                timerCount: codeTime,
+                timerTitle: '获取验证码',
+                counting: false,
+                selfEnable: true
+            })
+        }else{
+            const leftTime = parseInt((overTimeStamp - nowStamp)/1000, 10)
+            this.setState({
+                timerCount: leftTime,
+                timerTitle: `重新获取(${leftTime}s)`,
+            })
+        }
+    },1000)
+  }
+  _shouldStartCountting(shouldStart=true){
+      if (this.state.counting) {return}
+      if (shouldStart) {
+          this._countDownAction()
+          this.setState({counting: true,selfEnable:false})
+      }else{
+          this.setState({selfEnable:true})
+      }
+  }
+  componentWillUnmount(){
+      clearInterval(this.interval)
+  }
   RegisterCallback = async () => {
     // 注册
-
-    // let url = "http://81.68.226.132:80/account/register/";  
-    // let correct = await postData(url,{email:"admin",password:"123"})
-    let correct = '1';
-    if (correct==="1") {
+    this.setLoading(true);
+    let urlReg = "http://81.68.226.132:80/account/register/";  
+    if(this.state.pwdY){
+      let res = await postData(urlReg,{
+        "email":this.state.email,
+        "password":this.state.password,
+        "check_code":this.state.check,
+        "preferList":this.preferList});
+        if (res["code"]==="1") {
+        this.setLoading(false);
         //注册成功跳转登录页面
+        ToastAndroid.show("注册成功！",500)
         this.props.navigation.navigate("Login");
-      } else {
-        // 账号密码不正确，提示
-        this.setModalInfo("注册失败");
-        this.setModalVisible(true);
-      }
-  };
- 
+        } else {
+        ToastAndroid.show(res["message"],500)
+        this.setLoading(false);
 
+        }
+    }
+    else{
+      ToastAndroid.show("请检查您的密码！",500)
+    this.setLoading(false);
+
+    }
+    
+  };
+
+  handleCheck = (text) => {
+    this.setState({ check: text });
+  }
+ 
+  handleCheckClick = async () =>{
+    if (!this.state.counting  && this.state.selfEnable){
+      this.setState({selfEnable:false})
+      let urlCheck = "http://81.68.226.132:80/account/get-code/";
+      let res = await postData(urlCheck,{"email":this.state.email});
+
+      if(res["code"]===1||res["code"]==="1"){
+        ToastAndroid.show(res["message"],500);
+        this._shouldStartCountting(true);
+      }
+      else{
+        ToastAndroid.show(res["message"],500);
+        this._shouldStartCountting(false);
+      }
+    }
+  }
+
+  handlePasswordDouble = (text) =>{
+    this.setState({passwordDouble:text});
+    if(text !== this.state.password) this.setState({passwordCheck:"**两次密码不一致！请检查您的密码**"});
+    else {
+      this.setState({passwordCheck:""});
+    }
+  }
+  renderCaption = () => {
+    return (
+      <View style={styles.captionContainer}>
+        {AlertIcon(styles.captionIcon)}
+        <Text style={styles.captionText}>{!this.state.pwdY&&"请输入至少8位密码"}</Text>
+      </View>
+    )
+  }
   render() {
     return (
       <View>
@@ -95,37 +193,50 @@ export default class Register extends React.Component {
           </Layout>
           <Layout style={styles.inputsContainer}>
             <Input style={styles.input} placeholder="请输入邮箱" onChangeText={this.handleEmail} />
-            <Input style={styles.input} placeholder="请输入密码" onChangeText={this.handlePassword} />
-            <Select style={{height:40,width:250}}
+            <Input 
+              style={styles.input} 
+              placeholder="请输入密码"
+              caption={this.renderCaption}
+              onChangeText={this.handlePassword} 
+              secureTextEntry={this.state.secureTextEntry} 
+              accessoryRight={this.renderIcon}
+              />
+            <Input style={styles.input} placeholder="请再次输入密码" onChangeText={this.handlePasswordDouble} secureTextEntry={this.state.secureTextEntry} accessoryRight={this.renderIcon}/>
+            <Text style={{color:theme["color-primary-500"],fontSize:8}}>{this.state.passwordCheck}</Text>
+
+            
+            <Select style={{height:40,width:250,marginBottom:40}}
                 multiSelect={true}
                 selectedIndex={this.state.selectedIndex}
-                value='请选择您的运动偏好'
+                value={this.state.displayValue}
                 onSelect={(index) => this.setSelectedIndex(index)}
                 caption='建议选择1-3项'
                 >
-                <SelectItem title='背部'/>
-                <SelectItem title='臂部'/>
-                <SelectItem title='腹部'/>
-                <SelectItem title='肩部'/>
-                <SelectItem title='手臂'/>
-                <SelectItem title='腿部'/>
-                <SelectItem title='胸部'/>
-                <SelectItem title='腰部'/>
-                <SelectItem title='耐力训练'/>
+                {this.state.tyepsName.map((item,index)=>{return <SelectItem title={item.title}/>}) }
+
             </Select>
-            <Button
+            <View style={{width:"80%",flexDirection: 'row',}}>
+              <Input style={{width:"60%",borderRadius:20}} placeholder="请输入验证码" onChangeText={this.handleCheck} />
+              <View style={{width:"35%",height:30,marginTop:0,marginLeft:10,
+              borderRadius: 20,
+              justifyContent: 'flex-end',alignItems: 'center',}}>
+                <Text style={{color:(!this.state.selfEnable&&"gray") || (this.state.selfEnable&&theme["color-primary-500"]),
+                fontSize:12,
+                
+              }} onPress={
+                  ()=>this.handleCheckClick()}>
+                    {this.state.timerTitle}</Text>
+              </View>
+            </View>
+          </Layout>
+          <Button
               style={styles.btn}
               appearance="ghost"
               onPress={this.RegisterCallback}
             >
-              注册
+              {this.state.loginProgress
+                    ? <ActivityIndicator color={theme["color-primary-500"]}/>:<Text style={{color:theme["color-primary-500"]}}>注册</Text>}
             </Button>
-          </Layout>
-          <ModalContainer
-            visible={this.state.modalVisible}
-            setVisible={this.setModalVisible}
-            modalInfo={this.state.modalInfo}
-          />
           
         </Layout>
       </View>
@@ -134,14 +245,6 @@ export default class Register extends React.Component {
 }
 
 const styles = StyleSheet.create({
-  // modal
-  modalContainer: {
-    position: "absolute",
-    width: "80%",
-  },
-  backdrop: {
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
-  },
   // containers
   vertical: {
     height: Dimensions.get("window").height,
@@ -152,12 +255,12 @@ const styles = StyleSheet.create({
   headerContainer: {
     justifyContent: "space-evenly",
     alignItems: "center",
-    marginTop: "35%",
-    marginBottom: 30,
+    marginTop: "20%",
+    marginBottom:40,
   },
   inputsContainer: {
     width: "100%",
-    height: "27%",
+    height: "45%",
     justifyContent: "space-evenly",
     alignItems: "center",
   },
@@ -169,10 +272,27 @@ const styles = StyleSheet.create({
   btn: {
     width: "80%",
     textAlign: "center",
-    borderRadius: 30
+    borderRadius: 30,
+    marginTop:25
   },
   input: {
     width: "80%",
     borderRadius: 30,
   },
+  captionContainer: {
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  captionIcon: {
+    width: 10,
+    height: 10,
+    marginRight: 5
+  },
+  captionText: {
+    fontSize: 12,
+    fontWeight: "400",
+    fontFamily: "opensans-regular",
+    color: theme["color-primary-500"],
+  }
 });

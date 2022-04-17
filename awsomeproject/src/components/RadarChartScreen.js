@@ -44,7 +44,7 @@ class RadarChartScreen extends React.Component {
                     values: [{value: stanData}, {value: rhythmData}, {value: intensityData*50}, {value: completeData}, {value: 100}],
                     label: 'DS 1',
                     config: {
-                        color: processColor('powderblue'),
+                        color: processColor('white'),
                         drawFilled: true,
                         drawValues:false,
                         fillColor: processColor('#C0FF8C'),
@@ -86,16 +86,12 @@ class RadarChartScreen extends React.Component {
             chartDescription={{text: ''}}
             legend={this.state.legend}
             drawWeb={true}
-            // visibleRange={this.state.visibleRange}
-            // webLineWidth={0}
             webLineWidthInner={2}
-            // webAlpha={255}
             webColor={processColor("lightgray")}
             webColorInner={processColor("lavender")}
             animation={this.state.animation}
             skipWebLineCount={1}
             onSelect={this.handleSelect.bind(this)}
-            // onChange={(event) => console.log(event.nativeEvent)}
           />
         </View>
 

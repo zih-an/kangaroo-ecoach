@@ -101,7 +101,6 @@ class LineChartScreen extends React.Component {
             animation={this.state.animation}
             keepPositionOnRotation={false}
             onSelect={this.handleSelect.bind(this)}
-            // onChange={(event) => console.log(event.nativeEvent)}
             bezier
           />
         </View>

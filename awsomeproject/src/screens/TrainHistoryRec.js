@@ -95,7 +95,7 @@ function TrainHistoryRec(props) {
     if(res["code"]==="1"){
       setData(res["data"]);
     }
-    else {Alert.alert(message)}
+    else {ToastAndroid.show(message,500)}
   };
   return (
     <Layout style={{ height: "100%" }}>
