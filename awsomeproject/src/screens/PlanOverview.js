@@ -1,4 +1,4 @@
-import React,{useState} from "react";
+import React,{useEffect, useState} from "react";
 import { StyleSheet,ActivityIndicator,View,TouchableOpacity,ScrollView,Image,ToastAndroid} from "react-native";
 import {
   Layout,
@@ -296,6 +296,8 @@ const mapStateToProps = (state) =>{
   return {
     plan:state.allPlans,
     todayPlan:state.todayPlans,
+    todayPlanB:state.todayPlansB,
+
     login:state.login
   };
 }

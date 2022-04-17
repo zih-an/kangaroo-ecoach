@@ -44,7 +44,6 @@ function AddItem(props) {
     //这里的回调函数修改了下，用于在修改计划后，跳转页面前，根据最终的今日计划id数组向服务器请求并更新今日计划
       let resToday = await getData(urlChoosen,props.login.token);
       props.changeToday(resToday["data"].map(item => item.id));
-      console.log(props.todayPlans);
       props.navigation.goBack();
   };
 
@@ -55,7 +54,7 @@ function AddItem(props) {
   const ClickAction = () => {
     return (progress? <ActivityIndicator color="orange"/>:<TopNavigationAction icon={ClickIcon} onPress={navigateBackWithSend} />);
   }
-
+  
   return (
     <ScrollView style={{maxHeight: '100%'}}>
       <TopNavigation
@@ -89,6 +88,7 @@ const mapStateToProps = state =>{
   return {
       login:state.login,
       todayPlans:state.todayPlans,
+      todayPlansB:state.todayPlansB,
       todayPlansDetail:state.todayPlansDetail,
       allPlans:state.allPlans,
   };

@@ -343,11 +343,10 @@ class Mine extends React.Component {
     }
     counts = 0;
     let resFigure = await postData(urlFigure,figureData,this.props.login.token);
-    if(resFigure["code"]===1||resFigure["code"]==="1"){console.log("成功",resFigure)}
+    if(resFigure["code"]===1||resFigure["code"]==="1"){}
     else ToastAndroid.show(resFigure["message"],500);
 
     resFigure = await getData(urlFigure,this.props.login.token);
-    console.log("收回的数据：",resFigure);
   }
   showTab = (index) => {
     this.sendData(this.props.collect);
@@ -415,7 +414,7 @@ class Mine extends React.Component {
           description={item.description}
           accessoryLeft={<Svg icon={item.title} size="25" color={theme["color-primary-500"]} />}
           // onPress={() => {this.setVisible(true);this.setCurrentIndex(index);this.setCurrentTitle(item.title)}}
-          onPress={() => {console.log("暂时不可更改！");}}
+          onPress={() => {ToastAndroid.show("暂时不可更改！",500);}}
           key={index}
         />
       );

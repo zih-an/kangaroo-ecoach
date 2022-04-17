@@ -16,8 +16,10 @@ export const ADD_TITLE = 'ADD_TITLE';//加入浏览页标题信息
 export const ADD_COLLECT = 'ADD_COLLECT';//加入收藏信息
 export const DELETE_COLLECT = 'DELETE_COLLECT';//删除收藏信息
 export const CHANGE_COLLECT = 'CHANGE_COLLECT';//更改收藏信息
-
-
+export const ADD_REPORT_TIME = 'ADD_REPORT_TIME';//更改运动开始时间与结束时间
+export const ADD_TODAY_B = 'ADD_TODAY_B';//加入今日计划id
+export const CHANGE_TODAY_B = 'CHANGE_TODAY_B';//加入今日计划id
+export const DELETE_TODAY_B = 'DELETE_TODAY_B';//删除今日计划id
 
 
 
@@ -52,6 +54,17 @@ export function deleteToday(ixdex){
     return { type: DELETE_TODAY, id:ixdex}
 }
 
+export function addTodayB(plan){
+    return { type: ADD_TODAY_B, content:plan}
+}
+export function changeTodayB(plan){
+    return { type: CHANGE_TODAY_B, content:plan}
+}
+
+export function deleteTodayB(ixdex){
+    return { type: DELETE_TODAY_B, id:ixdex}
+}
+
 export function addTodayDetail(plans){
     return { type: ADD_TODAY_DETAIL, content:plans}
 }
@@ -73,3 +86,6 @@ export function changeCollect(items){
 export function deleteCollect(items){
     return { type: DELETE_COLLECT, content:items}
 };
+export function addReportTime(items){
+    return {type:ADD_REPORT_TIME,content:items}
+}
