@@ -88,7 +88,8 @@ function SportOverview(props) {
     let LineData = SplitData.map((item,index)=>{return item.exerciseIntensity});
     let DTWdata = SplitData.map((item,index)=>{return item["DTW"]});
     let len = props.reportTime["length"];
-    let startTime = props.reportTime["start_time"].split(".");
+    console.log("++++",props.reportTime)
+    let startTime = props.reportTime["startTime"].split(".");
     startTime = startTime[0].split("T");
     startTime = startTime[1];
     
@@ -156,7 +157,7 @@ function SportOverview(props) {
                             <Text style={styles.timeType}>用时</Text>
                         </View>
                         <View style={styles.timeView}>
-                            <Text style={styles.time}>{complete}</Text>
+                            <Text style={styles.time}>{averageScore}</Text>
                             <Text style={styles.timeType}>分数</Text>
                         </View>
                     </View>

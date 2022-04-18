@@ -101,14 +101,6 @@ class CameraReceiver(
                     processImage(tempBitmap)
                 }
             }
-            catch (e:InterruptedException)
-            {
-                e.printStackTrace()
-            }
-            catch (e: IllegalStateException)
-            {
-                e.printStackTrace()
-            }
             catch (e:Throwable)
             {
                 e.printStackTrace()

@@ -130,24 +130,12 @@ class screen_sender_connectView  : AppCompatActivity()  {
                             var uuid = view.getTag() as String
                             devices.get(uuid)?.let {
                                 choosed_device=it
-                                var JsonObj=JSONObject()
-                                GlobalStaticVariable.frameWidth=Resources.getSystem().displayMetrics.widthPixels
-                                GlobalStaticVariable.frameLength=Resources.getSystem().displayMetrics.heightPixels
-                                JsonObj.put("Width",GlobalStaticVariable.frameWidth)
-                                JsonObj.put("Length",GlobalStaticVariable.frameLength)
-                                sendCommand(it,"prepareAcceptFrame")
-                                SystemClock.sleep(100)
-                                sendCommand(it,JsonObj.toString())
+//                                sendCommand(it,"prepareAcceptFrame")
                             }
-                            SystemClock.sleep(300)
-                            thread {
-                                FrameDataSender.open(devices.get(uuid))
-                            }
-                            val ExerciseScheduleMesg=intent.getStringExtra("ExerciseScheduleMesg")
+
                             val intent = Intent(baseContext, CameraActivity::class.java)
                             intent.putExtra("isScreenProjection", true)
                             intent.putExtra("screenReceiverIp", devices.get(uuid)!!.ip)
-                            intent.putExtra("ExerciseScheduleMesg",ExerciseScheduleMesg)
                             JsonMeg_Intent?.let {
                                 intent.putExtra("ExerciseScheduleMesg", it)
                             }

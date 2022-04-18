@@ -23,7 +23,6 @@ class slaveviewActivity : AppCompatActivity() {
     lateinit var btnListeningOpen : Button
     lateinit var hostList: ListView
     lateinit var btnReturn: BackArrowView
-    var isScreenProjection:Boolean=false
     var isListeningOpen:Boolean=false;
     var hostDevice: Device?=null
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -61,55 +60,40 @@ class slaveviewActivity : AppCompatActivity() {
     }
     private fun commandResolver(demand:String?)
     {
-        if(isScreenProjection)
-        {
-            val JsonObject=JSONObject(demand)
-
-            GlobalStaticVariable.frameWidth=  JsonObject.getInt("Width")
-            GlobalStaticVariable.frameLength= JsonObject.getInt("Length")
-            GlobalStaticVariable.frameRate=25
-            isScreenProjection=false
-
-            runOnUiThread {
-                val intent = Intent(baseContext, screenReceiverActivity::class.java)
-                var hostIp = hostDevice!!.ip
-                intent.putExtra("mainScreenSenderIp", hostIp)
-                stopListen()
-                CommandReceiver.close()
-                isListeningOpen = false
-                btnListeningOpen.setText("开始监听")
-                startActivity(intent)
+        when(demand) {
+            "openCamera" -> {
+                //                openCamera()
             }
-        }
-        else
-        {
-            when(demand) {
-                "openCamera" -> {
-                    isScreenProjection=false
-                    //                openCamera()
-                }
-                "sendFrame" -> {
-                    SystemClock.sleep(500)
-                    runOnUiThread {
-                        isScreenProjection=false
-                        val intent = Intent(baseContext, SenderActivity::class.java)
-                        var hostIp = hostDevice!!.ip
-                        intent.putExtra("hostIp", hostIp)
-                        CommandReceiver.close()
-                        stopListen()
-                        isListeningOpen = false
-                        btnListeningOpen.setText("开始监听")
-                        startActivity(intent)
-                    }
-                }
-                "prepareAcceptFrame" -> {
-                    isScreenProjection = true
-                }
-                null -> {
-                    isScreenProjection=false
+            "sendFrame" -> {
+                SystemClock.sleep(500)
+                runOnUiThread {
+                    val intent = Intent(baseContext, SenderActivity::class.java)
+                    var hostIp = hostDevice!!.ip
+                    intent.putExtra("hostIp", hostIp)
+                    CommandReceiver.close()
+                    stopListen()
+                    isListeningOpen = false
+                    btnListeningOpen.setText("开始监听")
+                    startActivity(intent)
                 }
             }
+            "prepareAcceptFrame" -> {
+                GlobalStaticVariable.frameRate=25
+                runOnUiThread {
+                    val intent = Intent(baseContext, screenReceiverActivity::class.java)
+                    var hostIp = hostDevice!!.ip
+                    intent.putExtra("mainScreenSenderIp", hostIp)
+                    stopListen()
+                    CommandReceiver.close()
+                    isListeningOpen = false
+                    btnListeningOpen.setText("开始监听")
+                    startActivity(intent)
+                }
+            }
+            null -> {
+            }
         }
+
     }
     override fun onStop() {
         super.onStop()

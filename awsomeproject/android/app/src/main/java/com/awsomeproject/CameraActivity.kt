@@ -31,6 +31,8 @@ import com.awsomeproject.manager.CameraModule.Companion.PROJECTION_CAMERA_REQUES
 import com.awsomeproject.ml.ModelType
 import com.awsomeproject.ml.MoveNet
 import com.awsomeproject.service.screenCaptureService
+import com.awsomeproject.socketconnect.communication.host.Command
+import com.awsomeproject.socketconnect.communication.host.CommandSender
 import com.awsomeproject.socketconnect.communication.slave.FrameData
 import com.awsomeproject.socketconnect.communication.slave.FrameDataSender
 import com.awsomeproject.utils.Voice
@@ -90,6 +92,22 @@ class CameraActivity :AppCompatActivity() {
         frameData.setDestIp(device.ip)
         FrameDataSender.addFrameData(frameData)
     }
+    fun sendCommand(device: com.awsomeproject.socketconnect.Device, str:String) {
+        //发送命令
+        val command = Command(str.toByteArray(), object : Command.Callback {
+            override fun onEcho(msg: String?) {
+            }
+            override fun onError(msg: String?) {
+            }
+            override fun onRequest(msg: String?) {
+            }
+            override fun onSuccess(msg: String?) {
+            }
+        })
+        command.setDestIp(device.ip)
+        CommandSender.addCommand(command)
+    }
+
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~For Screen Projection~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     //获取权限
@@ -412,6 +430,9 @@ class CameraActivity :AppCompatActivity() {
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~For Screen Projection~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     private fun screenProjectioninit()
     {
+        mainScreenReceiver?.let {
+            sendCommand(it,"prepareAcceptFrame")
+        }
         // get width and height
         encoder= EncoderH264(
             GlobalStaticVariable.frameLength,GlobalStaticVariable.frameWidth
@@ -447,6 +468,11 @@ class CameraActivity :AppCompatActivity() {
                         data
                     )
                 )
+                thread {
+                    mainScreenReceiver?.let {
+                        FrameDataSender.open(it)
+                    }
+                }
             }
             else
             {

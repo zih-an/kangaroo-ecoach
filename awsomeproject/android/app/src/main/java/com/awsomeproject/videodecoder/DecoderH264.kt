@@ -42,9 +42,9 @@ class DecoderH264(
         mediaFormat.setInteger(MediaFormat.KEY_FRAME_RATE, frameRate)
         //关键帧间隔时间，单位是秒
         mediaFormat.setInteger(MediaFormat.KEY_I_FRAME_INTERVAL, 1)
-        if(GlobalStaticVariable.isScreenCapture) {
+        if(GlobalStaticVariable.isScreenCapture)
+        {
             mediaCodec?.configure(mediaFormat, surface, null, 0)
-
         }
         else
         {
@@ -100,6 +100,9 @@ class DecoderH264(
             catch (e:IllegalStateException)
             {
                 e.printStackTrace()
+            }
+            catch  (e:Throwable) {
+                e.printStackTrace();
             }
         }
     }

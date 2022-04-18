@@ -143,7 +143,7 @@ function HLMomentTab(props) {
               <View style={{width:60,alignItems:"center",justifyContent:"center",position:"absolute",top:20,right:30,flexDirection: 'row',}}>
                   {/* <BackAction/> */}
                   {/* <Text style={{color:"white",fontSize:10}}>本次运动</Text> */}
-                  <Text style={{color:"white",fontSize:30,fontWeight:"bold"}}>{parseInt(complete)}</Text>
+                  <Text style={{color:"white",fontSize:30,fontWeight:"bold"}}>{parseInt(averageScore)}</Text>
                   <Text style={{color:"white",fontSize:10,marginLeft:5}}>分</Text>
 
                 </View>

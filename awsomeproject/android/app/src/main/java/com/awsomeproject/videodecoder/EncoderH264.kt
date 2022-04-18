@@ -84,9 +84,12 @@ class EncoderH264(
                 }
                 catch(e:InterruptedException)
                 {
-
+                   e.printStackTrace()
                 }
-
+                catch (e:Throwable)
+                {
+                    e.printStackTrace()
+                }
             }
             videoEncoderThread?.start()
         }
@@ -144,6 +147,11 @@ class EncoderH264(
             {
                 e.printStackTrace()
             }
+            catch (e:Throwable)
+            {
+                e.printStackTrace()
+            }
+
         }
     }
     private fun NV21ToNv12(nv21:ByteArray,width:Int,height: Int):ByteArray

@@ -55,7 +55,7 @@ public class FrameDataReceiver {
             is = new DataInputStream(socket.getInputStream());
             Log.d("TAG", "open: 1111111111111111111122222222");
         }
-        catch (IOException e)
+        catch (Throwable e)
         {
             e.printStackTrace();
         }
@@ -133,7 +133,7 @@ public class FrameDataReceiver {
                             continue;
                         }
                     }
-                } catch (Exception e) {
+                } catch (Throwable e) {
                     e.printStackTrace();
                 }
             }

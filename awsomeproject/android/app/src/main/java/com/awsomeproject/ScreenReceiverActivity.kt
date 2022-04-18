@@ -33,17 +33,13 @@ class screenReceiverActivity  : AppCompatActivity() {
 
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
-        println("+++++++++++onConfigurationChanged")
     }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        println("+++++++++++oncreate")
         setContentView(R.layout.screen_projection_receiver)
         screenSurfaceView=findViewById(R.id.screen)
         GlobalStaticVariable.isScreenCapture=true
-
         hideSystemUI()
-
 
         var bundle=intent.getExtras()
         mainScreenSender =Device(bundle!!.getString("mainScreenSenderIp"))
@@ -57,7 +53,7 @@ class screenReceiverActivity  : AppCompatActivity() {
                         try {
                             FrameDataReceiver.open(p0.surface,null)
                         }
-                        catch (e:InterruptedException)
+                        catch (e:Throwable)
                         {
                             Log.d("old:","Interrupted")
                         }
@@ -106,7 +102,6 @@ class screenReceiverActivity  : AppCompatActivity() {
         FrameDataReceiver.close()
         FrameReceiverConnectThread?.interrupt()
 
-        println("+++++++++++onStop")
     }
 
 }

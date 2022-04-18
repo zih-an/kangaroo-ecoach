@@ -122,9 +122,14 @@ function HomeSportTab(props) {
       }else{
         reportData = JSON.parse(response);
         let resfinish = await postData(finishurl,{'information':response,'id':reportData['id']},props.login.token);
-        props.addReport(reportData);
-        if(resfinish["code"]===1||resfinish["code"]==="1") props.addReportTime(resfinish["data"]);
-        props.nav2exercising.navigate("SportOverviewPage");
+        if(resfinish["code"]==="1"||resfinish["code"]===1){
+          ToastAndroid.show("上传成功，可点击历史记录查看",500);
+          props.addReport(reportData);
+          props.addReportTime(resfinish["data"]);
+          props.nav2exercising.navigate("SportOverviewPage");
+          }else{
+              ToastAndroid.show("上传失败!",500);
+          }
       }
     }
   };

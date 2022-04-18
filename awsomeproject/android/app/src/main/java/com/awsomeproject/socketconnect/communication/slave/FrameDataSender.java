@@ -39,7 +39,7 @@ public class FrameDataSender  {
             socket.connect(new InetSocketAddress(device.getIp(), RemoteConst.FRAME_RECEIVE_PORT));
             os = new DataOutputStream(socket.getOutputStream());
         }
-        catch  (IOException e) {
+        catch  (Throwable e) {
             e.printStackTrace();
         }
     }
@@ -56,7 +56,7 @@ public class FrameDataSender  {
                 socket = null;
             }
         }
-        catch  (IOException e) {
+        catch  (Throwable e) {
             e.printStackTrace();
         }
     }

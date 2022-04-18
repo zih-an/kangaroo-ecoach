@@ -124,14 +124,15 @@ class ActionSheetComp extends Component{
                 let resPost = await postData(finishurl,{"information":response,"id":id},this.props.login.token);
                 if(resPost["code"]==="1"||resPost["code"]===1){
                     ToastAndroid.show("上传成功，可点击历史记录查看",500);
+                    this.props.addReportTime(resPost["data"]);
+                    this.props.addReport(resObj);
+                    this.cancelModal();
+                    this.props.nav.navigate("SportOverviewPage");
                 }else{
                     ToastAndroid.show("上传失败!",500);
-                }
-                this.props.addReport(resObj);
-                this.cancelModal();
-                this.props.nav.navigate("SportOverviewPage");
+                    this.cancelModal();
+                }   
             }
-            
         }
     };
     toSlave = async()=>{
