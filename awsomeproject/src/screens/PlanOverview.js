@@ -1,5 +1,5 @@
 import React,{useEffect, useState} from "react";
-import { StyleSheet,ActivityIndicator,View,TouchableOpacity,ScrollView,Image,ToastAndroid} from "react-native";
+import { StyleSheet,ActivityIndicator,View,TouchableOpacity,ScrollView,Image,ToastAndroid,BackHandler,Alert} from "react-native";
 import {
   Layout,
   Text,
@@ -91,6 +91,25 @@ function PlanOverview(props) {
     props.addTitle(name+"运动");
     props.navigation.navigate("movementDetail");
   }
+
+  const backAction = () => {
+    Alert.alert("稍等!", "确定退出应用吗?", [
+      {
+        text: "取消",
+        onPress: () => null,
+        style: "cancel"
+      },
+      { text: "确定", onPress: () => BackHandler.exitApp() }
+    ]);
+    return true;
+  };
+
+  useEffect(() => {
+    BackHandler.addEventListener("hardwareBackPress", backAction);
+
+    return () =>
+      BackHandler.removeEventListener("hardwareBackPress", backAction);
+  }, []);
 
   return (
     <ScrollView 

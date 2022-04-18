@@ -1,5 +1,5 @@
 import React from "react";
-import { ScrollView, Alert,StyleSheet,View } from "react-native";
+import { ScrollView, Alert,StyleSheet,View,BackHandler } from "react-native";
 import {
   Divider,
   Icon,
@@ -65,10 +65,19 @@ function TrainHistoryRec(props) {
        <Text style={{color:"rgba(220,38,38,0.0)"}}>★</Text>
     </View>);
   };
+  const backAction = () => {
+    navigateBack();
+    return true;
+  };
   useEffect(() => { 
     if(!ready) getRecord();
     
     getResponse();
+
+    BackHandler.addEventListener("hardwareBackPress", backAction);
+
+    return () =>
+      BackHandler.removeEventListener("hardwareBackPress", backAction);
 
   },[date,theUrl]);
   const getRecord = async () => {
