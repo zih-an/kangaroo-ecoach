@@ -21,7 +21,8 @@ export default function ShoppingCard(props) {
       <View style={{flexDirection:"row",alignItems:"center",justifyContent:"center"}}>
         <View style={{width:80,alignItems:"center",justifyContent:"center"}}><Text style={{fontSize:15}}>￥{props.price}</Text></View>
         <Card style={styles.btnStyle}>
-          <Text style={{fontSize:18,color:theme["color-primary-500"]}}>
+          <Text style={{fontSize:18,color:theme["color-primary-500"]}}
+          onPress={()=>open()}>
             购买
           </Text>
         </Card>

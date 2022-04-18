@@ -64,7 +64,7 @@ function HLMomentTab(props) {
       let scoreArr =  data;
       let sum = scoreArr.reduce(function (a,b){return a+b});
       sum = sum/(scoreArr.length);
-      return sum;
+      return sum*12;
    };
    const calculateComp=(data)=>{
     let counts = 0;
@@ -132,12 +132,12 @@ function HLMomentTab(props) {
                 >
               <Image
               style={{ width:"100%",height: 250,position:"absolute",top:-25,left:-40}}
-              source={require('../assets/数据分析总体图.png')}
+              source={require('../assets/planall.png')}
               resizeMode='contain'
               />
               <Image
               style={{ width:"100%",height: 250,position:"absolute",top:20,left:40}}
-              source={require('../assets/3D运动女孩.png')}
+              source={require('../assets/3dgirl.png')}
               resizeMode='contain'
               />
               </LinearGradinet>

@@ -69,7 +69,7 @@ function SportOverview(props) {
       let scoreArr =  data;
       let sum = scoreArr.reduce(function (a,b){return a+b});
       sum = sum/(scoreArr.length);
-      return sum;
+      return sum*12;
    };
    const calculateComp=(data)=>{
     let counts = 0;
@@ -139,7 +139,7 @@ function SportOverview(props) {
               >
               <View style={{height:250,width:"100%",backgroundColor: "white"}}>
                 <Video
-                source={require('../assets/数据分析.mp4')}//设置视频源  
+                source={require('../assets/planAla.mp4')}//设置视频源  
                 style={{height:"100%", width:"90%",position:"absolute",top:0,right:0}}//组件样式
                 resizeMode='stretch'//缩放模式
                 repeat={true}//确定在到达结尾时是否重复播放视频。

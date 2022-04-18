@@ -175,11 +175,13 @@ class screen_sender_connectView  : AppCompatActivity()  {
                     val returnData = data?.getStringExtra("res")
                     intent.putExtra("res", returnData)
                     setResult(RESULT_OK, intent)
+                    finish()
                 }
-                finish()
             }else if(resultCode== RESULT_CANCELED) {
                 choosed_device?.let{
                     sendCommand(it, "finishAcceptFrame")
+                    setResult(RESULT_CANCELED, intent)
+                    finish()
                 }
 
             }

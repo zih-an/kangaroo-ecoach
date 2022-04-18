@@ -107,7 +107,7 @@ function PlanOverview(props) {
       >
         <View style={{height:"30%",width:"80%",marginTop:0}}>
         <Video
-              source={require("../assets/计划生成.mp4")}//设置视频源  
+              source={require("../assets/plangen.mp4")}//设置视频源  
               style={{marginRight: 5 ,marginLeft: 5,height:"100%", width:"100%",marginBottom:0}}//组件样式
               resizeMode='stretch'//缩放模式
               repeat={true}//确定在到达结尾时是否重复播放视频。

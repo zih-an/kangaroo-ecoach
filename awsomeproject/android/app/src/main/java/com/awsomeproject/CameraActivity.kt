@@ -266,7 +266,7 @@ class CameraActivity :AppCompatActivity() {
                         LineReturnValue.put("data",cameraSource!!.Users.get(i).getJsonData())
                         TotalReturnValue.put(LineReturnValue)
                     }
-                    TotalReturnData.put("id",ExerciseSchedule.getTot从d())
+                    TotalReturnData.put("id",ExerciseSchedule.getTotalId())
                     TotalReturnData.put("data",TotalReturnValue)
 
                     returnData=TotalReturnData.toString()

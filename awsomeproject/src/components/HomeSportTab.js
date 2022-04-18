@@ -146,7 +146,7 @@ function HomeSportTab(props) {
         </View>
         <Image
           style={{ width:"60%",height: 200,position:"absolute",left:130,top:-70}}
-          source={require('../assets/开始运动吧.png')}
+          source={require('../assets/begin.png')}
           resizeMode='contain'
           />
       </View>
