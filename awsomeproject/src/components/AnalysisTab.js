@@ -64,7 +64,7 @@ function HLMomentTab(props) {
       let scoreArr =  data;
       let sum = scoreArr.reduce(function (a,b){return a+b});
       sum = sum/(scoreArr.length);
-      return sum;
+      return sum*12;
    };
    const calculateComp=(data)=>{
     let counts = 0;
@@ -140,6 +140,13 @@ function HLMomentTab(props) {
               source={require('../assets/3D运动女孩.png')}
               resizeMode='contain'
               />
+              <View style={{width:60,alignItems:"center",justifyContent:"center",position:"absolute",top:20,right:30,flexDirection: 'row',}}>
+                  {/* <BackAction/> */}
+                  {/* <Text style={{color:"white",fontSize:10}}>本次运动</Text> */}
+                  <Text style={{color:"white",fontSize:30,fontWeight:"bold"}}>{parseInt(complete)}</Text>
+                  <Text style={{color:"white",fontSize:10,marginLeft:5}}>分</Text>
+
+                </View>
               </LinearGradinet>
               <Card style={styles.card}>
                 <View style={styles.title}>

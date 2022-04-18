@@ -69,7 +69,7 @@ function SportOverview(props) {
       let scoreArr =  data;
       let sum = scoreArr.reduce(function (a,b){return a+b});
       sum = sum/(scoreArr.length);
-      return sum;
+      return sum*12;
    };
    const calculateComp=(data)=>{
     let counts = 0;
@@ -156,8 +156,8 @@ function SportOverview(props) {
                             <Text style={styles.timeType}>用时</Text>
                         </View>
                         <View style={styles.timeView}>
-                            <Text style={styles.time}>107</Text>
-                            <Text style={styles.timeType}>千卡</Text>
+                            <Text style={styles.time}>{complete}</Text>
+                            <Text style={styles.timeType}>分数</Text>
                         </View>
                     </View>
               </Card>

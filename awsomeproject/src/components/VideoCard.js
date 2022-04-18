@@ -172,7 +172,7 @@ const styles = StyleSheet.create({
     },
   fontHidden:{
     marginTop:10,
-    color:"white",
+    color:"transparent",
     fontSize:15,
     },
 });
