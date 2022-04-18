@@ -1,5 +1,5 @@
 import React,{useState,useEffect} from 'react';
-import {ScrollView, Alert,ActivityIndicator} from 'react-native';
+import {ScrollView, Alert,ActivityIndicator,BackHandler} from 'react-native';
 import {
   Divider,
   Icon,
@@ -31,16 +31,23 @@ const BackIcon = props => <Icon {...props} name="arrow-back" />;
 function movementDetail(props) {
   const [subType,setType] = useState([]);
 
-  const navigateBack = async () => {
+  const navigateBack = () => {
       props.navigation.goBack();
   };
 
   const BackAction = () => {
     return <TopNavigationAction icon={BackIcon} onPress={navigateBack} />;
   }
- 
+  const backAction = () => {
+    navigateBack();
+    return true;
+  };
   useEffect(() => { 
     setType(subTypes[props.title]);
+    BackHandler.addEventListener("hardwareBackPress", backAction);
+
+    return () =>
+      BackHandler.removeEventListener("hardwareBackPress", backAction);
   },[subType]);
 
   return (

@@ -1,5 +1,5 @@
 import React,{useState,useEffect} from 'react';
-import {ScrollView, Alert,ActivityIndicator,ToastAndroid,Text} from 'react-native';
+import {ScrollView, Alert,ActivityIndicator,ToastAndroid,Text,BackHandler} from 'react-native';
 import {
   Divider,
   Icon,
@@ -45,6 +45,7 @@ function AddItem(props) {
       let resToday = await getData(urlChoosen,props.login.token);
       props.changeToday(resToday["data"].map(item => item.id));
       props.navigation.goBack();
+      ToastAndroid.show("计划未修改！",500);
   };
 
   const BackAction = () => {
@@ -54,7 +55,25 @@ function AddItem(props) {
   const ClickAction = () => {
     return (progress? <ActivityIndicator color="orange"/>:<TopNavigationAction icon={ClickIcon} onPress={navigateBackWithSend} />);
   }
-  
+  const backAction = () => {
+    Alert.alert("稍等!", "确定不修改计划吗?", [
+      {
+        text: "取消",
+        onPress: () => null,
+        style: "cancel"
+      },
+      { text: "确定", onPress: () => navigateBack() }
+    ]);
+    
+    return true;
+  };
+
+  useEffect(() => {
+    BackHandler.addEventListener("hardwareBackPress", backAction);
+
+    return () =>
+      BackHandler.removeEventListener("hardwareBackPress", backAction);
+  }, []);
   return (
     <ScrollView style={{maxHeight: '100%'}}>
       <TopNavigation
