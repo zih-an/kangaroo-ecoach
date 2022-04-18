@@ -156,8 +156,8 @@ function SportOverview(props) {
                             <Text style={styles.timeType}>用时</Text>
                         </View>
                         <View style={styles.timeView}>
-                            <Text style={styles.time}>107</Text>
-                            <Text style={styles.timeType}>千卡</Text>
+                            <Text style={styles.time}>{complete}</Text>
+                            <Text style={styles.timeType}>分数</Text>
                         </View>
                     </View>
               </Card>

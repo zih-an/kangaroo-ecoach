@@ -281,6 +281,8 @@ class Mine extends React.Component {
       else return item;
     });
     this.setState({msg:arr});
+    // console.log("setDonemsg",this.state.msg);
+    // this._sendFigureData();
   }
   navigateTrainHistoryRec = () => {
     this.props.navigation.navigate("TrainHistoryRec");
@@ -293,12 +295,18 @@ class Mine extends React.Component {
       if(success) RNRestart.Restart();
     });
   }
-  UNSAFE_componentWillMount(){
+  clickBtnFigure = () =>{
+    this._sendFigureData();
+  }
+  // UNSAFE_componentWillMount(){
+  //   this.getData();
+  // }
+  componentDidMount(){
     this.getData();
   }
-  componentDidMount(){
-  }
   shouldComponentUpdate(nextProps,nextStates){
+    // console.log("setDonemsg",this.state.msg);
+    // this._sendFigureData();
     return true;
   }
   sendData = async (value)=>{
@@ -342,21 +350,28 @@ class Mine extends React.Component {
       counts++;
     }
     counts = 0;
+
     let resFigure = await postData(urlFigure,figureData,this.props.login.token);
-    if(resFigure["code"]===1||resFigure["code"]==="1"){}
+    if(resFigure["code"]===1||resFigure["code"]==="1"){ToastAndroid.show(resFigure["message"],500)}
     else ToastAndroid.show(resFigure["message"],500);
 
     resFigure = await getData(urlFigure,this.props.login.token);
+
   }
   showTab = (index) => {
     this.sendData(this.props.collect);
     if(this.state.exerciseRecent.length>0){
-      var ids = this.state.exerciseRecent.map((item,index)=>item[0]);
-      var counts = this.state.exerciseRecent.map((item,index)=>item[1]);
+      var ids = this.state.exerciseRecent.map((item,index)=>{return item[0]});
+      var counts = this.state.exerciseRecent.map((item,index)=>{
+        let str = item[0];
+        return {[str]:item[1]}});
+      let obj={}
+      for(let i=0;i<5;i++){
+        obj = Object.assign(obj,counts[i]);
+      }
+      counts = obj;
+
     }
-
-  // this.componentDidMount()
-
     switch (index) {
       case 0:
         return <Card style={{margin:0,width:"100%",}}>
@@ -380,16 +395,16 @@ class Mine extends React.Component {
       case 1:
         return <Card style={{margin:0,width:"100%",flexWrap:"wrap",flexDirection: 'row',}}>
           {(this.state.exerciseRecent.length>0)&&
-          this.props.allPlans.filter((item,index)=>
-          {return ids.includes(item.id)&&counts[index]>0}).map((item,index)=>{
-            return <View style={{height:40,width:"100%",margin:"2%",flexDirection: 'row',alignItems: 'center',}} key={index}>
+          this.props.plansIndex.filter((item,index)=>
+          {return ids.includes(item.id)}).map((item,index)=>{
+            return (counts[item.id.toString()]>0)&&<View style={{height:40,width:"100%",margin:"2%",flexDirection: 'row',alignItems: 'center',}} key={index}>
               <Svg icon="notice" size="25"/>
               <View style={{height:30,width:"50%",justifyContent: 'flex-start',alignItems:"center",flexDirection: 'row',marginLeft:10
               }}><Text style={{fontSize:15,color:"black"}}>{item.title}</Text></View>
 
               <View style={{height:30,width:"30%",justifyContent: 'center',alignItems:"center",flexDirection: 'row',
               }}><Text style={{fontSize:10,color:"#aaaaaa"}}>最近练过</Text>
-              <Text style={{color:theme["color-primary-500"]}}>{counts[index]}</Text>
+              <Text style={{color:theme["color-primary-500"]}}>{counts[item.id.toString()]}</Text>
               <Text style={{fontSize:10,color:"#aaaaaa"}}>次</Text>
               </View>
 
@@ -398,7 +413,7 @@ class Mine extends React.Component {
           {this.state.exerciseRecent.length===0&&<View style={{padding:10,width:"100%"}}>
                     <Text style={{color:"#aaaaaa",fontSize:8}}>最近没有锻炼...</Text>
                   </View>}
-          {this.props.allPlans.filter((item,index)=>{return ids.includes(item.id)&&counts[index]>0}).length===0&&
+          {this.props.plansIndex.filter((item,index)=>{return ids.includes(item.id)&&counts[item.id.toString()]>0}).length===0&&
           <View style={{padding:10,width:"100%"}}>
           <Text style={{color:"#aaaaaa",fontSize:8}}>最近没有锻炼...</Text>
           </View>
@@ -413,8 +428,13 @@ class Mine extends React.Component {
           title={item.title}
           description={item.description}
           accessoryLeft={<Svg icon={item.title} size="25" color={theme["color-primary-500"]} />}
-          // onPress={() => {this.setVisible(true);this.setCurrentIndex(index);this.setCurrentTitle(item.title)}}
-          onPress={() => {ToastAndroid.show("暂时不可更改！",500);}}
+          onPress={() => {
+            if(index===4) ToastAndroid.show("不可更改！",500);
+            else {
+              this.setVisible(true);
+              this.setCurrentIndex(index);
+              this.setCurrentTitle(item.title)
+              }}}
           key={index}
         />
       );
@@ -480,6 +500,9 @@ class Mine extends React.Component {
               <Svg icon="评估身体" size="15" color="gray"/>
               <Text style={{fontSize:12,color:"gray"}}>身体数据</Text>
             {/* </View> */}
+            <Card style={{width:60,height:18,marginLeft:"50%"}}><Text 
+            style={{fontSize:12,color:theme["color-primary-500"]}}
+            onPress={()=>this.clickBtnFigure()}>保存修改</Text></Card>
           </View>
           <List
             style={{width:"95%" ,backgroundColor: "rgb(0,0,0,0)",marginTop: -10,}}
