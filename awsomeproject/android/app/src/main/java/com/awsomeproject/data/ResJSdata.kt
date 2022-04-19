@@ -45,7 +45,7 @@ class ResJSdata(private var sampleId:Int=-1) {
         scoreBypart.add(scoreByPart)
         Vectorslist.add(userVector)
         SampleVectorslist.add(sampleVetor)
-        if(scoreByPart.sum()<=70*scoreByPart.count())
+        if(scoreByPart.sum()<=50*scoreByPart.count())
             completeness.add(false)//缺失
         else
             completeness.add(true)//非缺失
@@ -214,6 +214,8 @@ class ResJSdata(private var sampleId:Int=-1) {
         COOrdination=((X_len.toDouble()*Y_len.toDouble()/2.0) - COOrdination)*100/(X_len.toDouble()*Y_len.toDouble()/2.0)
         DTWscore.put(dtwres.score.toInt())
         DTWresobj.put("path",DTWpathlist)
+        if(COOrdination<0)
+            COOrdination=0.0
         DTWresobj.put("score",COOrdination)
 
         ALLresobj.put("scorebypart",SCOresList)

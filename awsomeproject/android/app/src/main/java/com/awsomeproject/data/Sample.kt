@@ -218,7 +218,7 @@ class Sample(
                 usrVectors= tempUsrVectors
             }
         }
-        if(isVoice&&(count%50==0)&&(Math.random()<=0.4)&&count!=0) {
+        if(isVoice&&(count%50==0)&&(Math.random()<=0.5)&&count!=0) {
             throwForVoice(fake_markScore)
         }
 

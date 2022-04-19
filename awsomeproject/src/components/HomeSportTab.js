@@ -151,7 +151,7 @@ function HomeSportTab(props) {
         </View>
         <Image
           style={{ width:"60%",height: 200,position:"absolute",left:130,top:-70}}
-          source={require('../assets/begin.png')}
+          source={require('../../android/app/src/main/res/drawable-mdpi/src_assets_begin.png')}
           resizeMode='contain'
           />
       </View>

@@ -221,6 +221,6 @@ public class screenCaptureService extends Service {
 //        mImageReader = ImageReader.newInstance(mWidth, mHeight, PixelFormat.RGBA_8888, 10);
 //        mImageReader.setOnImageAvailableListener(listener, mHandler);
 
-        mVirtualDisplay = mMediaProjection.createVirtualDisplay(SCREENCAP_NAME, mWidth, mHeight, 1, getVirtualDisplayFlags(), surface, null, mHandler);
+        mVirtualDisplay = mMediaProjection.createVirtualDisplay(SCREENCAP_NAME, mWidth, mHeight, 240, getVirtualDisplayFlags(), surface, null, mHandler);
     }
 }

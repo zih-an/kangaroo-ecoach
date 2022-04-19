@@ -102,10 +102,8 @@ class ReceiverActivity: AppCompatActivity() {
         setContentView(R.layout.activity_receiver)
         //accept intent value
         hideSystemUI()
-        println("++++++++++++++++++++++onCreate1")
         // keep screen on while app is running
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-        println("++++++++++++++++++++++onCreate2")
         var bundle=intent.getExtras()
         mainSlave=Device(bundle!!.getString("slaveIp"))
 
@@ -220,14 +218,12 @@ class ReceiverActivity: AppCompatActivity() {
 
     override fun onResume() {
         cameraReceiver?.resume()
-        println("++++++++++++++++++++++onResum")
 //        videoviewrepetend?.videoView?.start()
         super.onResume()
     }
 
     override fun onPause() {
         super.onPause()
-        println("++++++++++++++++++++++onPause")
         cameraReceiver?.pause()
 //        videoviewrepetend?.videoView?.pause()
         cameraReceiver?.close()
@@ -237,17 +233,13 @@ class ReceiverActivity: AppCompatActivity() {
 
     override fun onStop() {
         super.onStop()
-        println("++++++++++++++++++++++onStop22222222222")
-//        hostpopView.dismiss()
+//      hostpopView.dismiss()
         cameraReceiver?.close()
         FrameDataReceiver.close()
         FrameReceiverConnectThread?.let{
             it.interrupt()
         }
         Voice.close()
-        println("++++++++++++++++++++++onStop333333333333")
-
-
     }
 
     // check if permission is granted or not.

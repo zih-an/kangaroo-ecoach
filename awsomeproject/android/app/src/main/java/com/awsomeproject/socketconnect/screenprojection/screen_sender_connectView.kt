@@ -96,6 +96,7 @@ class screen_sender_connectView  : AppCompatActivity()  {
     }
     override fun onStop() {
         super.onStop()
+        stopSearch()
     }
 
     override fun onResume() {
@@ -130,9 +131,7 @@ class screen_sender_connectView  : AppCompatActivity()  {
                             var uuid = view.getTag() as String
                             devices.get(uuid)?.let {
                                 choosed_device=it
-//                                sendCommand(it,"prepareAcceptFrame")
                             }
-
                             val intent = Intent(baseContext, CameraActivity::class.java)
                             intent.putExtra("isScreenProjection", true)
                             intent.putExtra("screenReceiverIp", devices.get(uuid)!!.ip)
@@ -143,7 +142,6 @@ class screen_sender_connectView  : AppCompatActivity()  {
                             stopSearch()
                             isSearchDeviceOpen = false
                             btnSearchDeviceOpen.setText("开始搜索")
-
                             startActivityForResult(intent,SCREEN_CAMERA_REQUEST)
                         }
                     })

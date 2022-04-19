@@ -115,7 +115,7 @@ function SportOverview(props) {
          <BackAction/>
         </View>
       <Select
-        style={{width:200,marginLeft:"12%",justifyContent: 'center',alignItems: 'center',}}
+        style={{width:200,marginLeft:"12%",justifyContent: 'center',alignItems: 'center'}}
         value={displayValue}
         selectedIndex={selectedIndex}
         onSelect={index => setSelectedIndex(index)}>
@@ -157,7 +157,7 @@ function SportOverview(props) {
                             <Text style={styles.timeType}>用时</Text>
                         </View>
                         <View style={styles.timeView}>
-                            <Text style={styles.time}>{averageScore}</Text>
+                            <Text style={styles.time}>{parseInt(averageScore)}</Text>
                             <Text style={styles.timeType}>分数</Text>
                         </View>
                     </View>
@@ -187,16 +187,16 @@ function SportOverview(props) {
                 <View style={styles.title}>
                   <Svg icon="汗量强度" size="17"/>
                   <Text style={styles.text}>运动强度</Text></View>
-                {(loaded)&&<LineChartScreen lineData={lineData[index]}></LineChartScreen>}
-                {/* <LineChartScreen lineData={lineData[index]}></LineChartScreen> */}
+                {/* {(loaded)&&<LineChartScreen lineData={lineData[index]}></LineChartScreen>} */}
+                <LineChartScreen lineData={lineData[index]}></LineChartScreen>
               </Card>
 
               <Card style={styles.card}>
                 <View style={styles.title}>
                   <Svg icon="本月完成度" size="17"/>
                   <Text style={styles.text}>动作完成度</Text></View>
-                {(loaded)&&<PieChartScreen completeness={pieData[index]}></PieChartScreen>}
-                {/* <PieChartScreen completeness={pieData[index]}></PieChartScreen> */}
+                {/* {(loaded)&&<PieChartScreen completeness={pieData[index]}></PieChartScreen>} */}
+                <PieChartScreen completeness={pieData[index]}></PieChartScreen>
               </Card>
 
               <Card style={styles.card}>

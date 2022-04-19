@@ -97,6 +97,8 @@ class slaveviewActivity : AppCompatActivity() {
     }
     override fun onStop() {
         super.onStop()
+        stopListen()
+        CommandReceiver.close()
         val intent = Intent()
         setResult(RESULT_CANCELED, intent)
     }

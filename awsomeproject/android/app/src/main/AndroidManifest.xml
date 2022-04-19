@@ -27,7 +27,8 @@
         android:label="@string/app_name"
         android:configChanges="keyboard|keyboardHidden|orientation|screenSize|uiMode"
         android:windowSoftInputMode="adjustResize"
-        android:screenOrientation="portrait">
+        android:screenOrientation="portrait"
+          android:launchMode="singleInstance">
         <intent-filter>
             <action android:name="android.intent.action.MAIN" />
             <category android:name="android.intent.category.LAUNCHER" />
@@ -36,7 +37,8 @@
     <activity android:name=".screenReceiverActivity"
         android:exported="true"
         android:screenOrientation="landscape"
-        android:configChanges="orientation|keyboardHidden|screenSize|screenLayout">
+        android:configChanges="orientation|keyboardHidden|screenSize|screenLayout"
+        android:launchMode="singleInstance">
         <!--            <intent-filter>-->
         <!--                <action android:name="android.intent.action.MAIN" />-->
         <!--                <category android:name="android.intent.category.LAUNCHER" />-->
@@ -45,7 +47,8 @@
         <activity
             android:name=".socketconnect.screenprojection.screen_sender_connectView"
             android:exported="true"
-            android:screenOrientation="portrait">
+            android:screenOrientation="portrait"
+            android:launchMode="singleInstance">
             <!--            <intent-filter>-->
             <!--                <action android:name="android.intent.action.MAIN" />-->
             <!--                <category android:name="android.intent.category.LAUNCHER" />-->
@@ -54,7 +57,8 @@
         <activity
             android:name=".socketconnect.connectview.hostviewActivity"
             android:exported="true"
-            android:screenOrientation="portrait">
+            android:screenOrientation="portrait"
+            android:launchMode="singleInstance">
             <!--            <intent-filter>-->
             <!--                <action android:name="android.intent.action.MAIN" />-->
             <!--                <category android:name="android.intent.category.LAUNCHER" />-->
@@ -63,7 +67,8 @@
         <activity
             android:name=".socketconnect.connectview.slaveviewActivity"
             android:exported="true"
-            android:screenOrientation="portrait">
+            android:screenOrientation="portrait"
+            android:launchMode="singleInstance">
 <!--            <intent-filter>-->
 <!--                <action android:name="android.intent.action.MAIN" />-->
 <!--                <category android:name="android.intent.category.LAUNCHER" />-->
@@ -73,7 +78,8 @@
             android:name=".SenderActivity"
             android:screenOrientation="landscape"
             android:configChanges="orientation|keyboardHidden|screenSize|screenLayout"
-            android:exported="true" >
+            android:exported="true"
+            android:launchMode="singleInstance">
             <!--            <intent-filter>-->
             <!--                <action android:name="android.intent.action.MAIN" />-->
             <!--                <category android:name="android.intent.category.LAUNCHER" />-->
@@ -83,7 +89,8 @@
             android:name=".ReceiverActivity"
             android:screenOrientation="landscape"
             android:configChanges="orientation|keyboardHidden|screenSize|screenLayout"
-            android:exported="true" >
+            android:exported="true"
+            android:launchMode="singleInstance">
             <!--            <intent-filter>-->
             <!--                <action android:name="android.intent.action.MAIN" />-->
             <!--                <category android:name="android.intent.category.LAUNCHER" />-->
@@ -92,7 +99,8 @@
       <activity
           android:name=".CameraActivity"
           android:screenOrientation="landscape"
-          android:configChanges="orientation|keyboardHidden|screenSize|screenLayout">
+          android:configChanges="orientation|keyboardHidden|screenSize|screenLayout"
+          android:launchMode="singleInstance">
       </activity>
         <meta-data
             android:name="preloaded_fonts"

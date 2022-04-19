@@ -85,6 +85,7 @@ class hostviewActivity: AppCompatActivity() {
 
     override fun onStop() {
         super.onStop()
+        stopSearch()
     }
 
     override fun onResume() {
@@ -118,7 +119,7 @@ class hostviewActivity: AppCompatActivity() {
                             var uuid = view.getTag() as String
                             devices.get(uuid)?.let {
                                 choosed_device=it
-                                sendCommand(it,"openCamera")
+//                                sendCommand(it,"openCamera")
                             }
 
                             var slaveIp=devices.get(uuid)!!.ip

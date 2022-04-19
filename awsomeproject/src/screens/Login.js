@@ -116,7 +116,7 @@ class Login extends React.Component {
         <Layout style={styles.vertical}>
           <Layout style={styles.headerContainer}>
             <Image
-              source={require('../assets/logo-final.png')}
+              source={require('../../android/app/src/main/res/drawable-mdpi/src_assets_logofinal.png')}
               style={styles.logo}
             />
             <Text category="h4">袋鼠教练</Text>

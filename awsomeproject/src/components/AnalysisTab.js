@@ -132,12 +132,12 @@ function HLMomentTab(props) {
                 >
               <Image
               style={{ width:"100%",height: 250,position:"absolute",top:-25,left:-40}}
-              source={require('../assets/planall.png')}
+              source={require('../../android/app/src/main/res/drawable-mdpi/src_assets_planall.png')}
               resizeMode='contain'
               />
               <Image
               style={{ width:"100%",height: 250,position:"absolute",top:20,left:40}}
-              source={require('../assets/3dgirl.png')}
+              source={require('../../android/app/src/main/res/drawable-mdpi/src_assets_3dgirl.png')}
               resizeMode='contain'
               />
               <View style={{width:60,alignItems:"center",justifyContent:"center",position:"absolute",top:20,right:30,flexDirection: 'row',}}>
@@ -173,21 +173,24 @@ function HLMomentTab(props) {
                 <View style={styles.title}>
                   <Svg icon="汗量强度" size="17"/>
                   <Text style={styles.text}>运动强度</Text></View>
-                {(loaded)&&<LineChartScreen lineData={lineData[index]}></LineChartScreen>}
+                {/* {(loaded)&&<LineChartScreen lineData={lineData[index]}></LineChartScreen>} */}
+                <LineChartScreen lineData={lineData[index]}></LineChartScreen>
               </Card>
 
               <Card style={styles.card}>
                 <View style={styles.title}>
                   <Svg icon="本月完成度" size="17"/>
                   <Text style={styles.text}>动作完成度</Text></View>
-                {(loaded)&&<PieChartScreen completeness={pieData[index]}></PieChartScreen>}
+                {/* {(loaded)&&<PieChartScreen completeness={pieData[index]}></PieChartScreen>} */}
+                <PieChartScreen completeness={pieData[index]}></PieChartScreen>
               </Card>
 
               <Card style={styles.card}>
                 <View style={styles.title}>
                   <Svg icon="节奏" size="17"/>
                   <Text style={styles.text}>动作快慢</Text></View>
-                {(loaded)&&<TimeSeriesLineChartScreen dtwData={dtwData[index]}></TimeSeriesLineChartScreen>}
+                {/* {(loaded)&&<TimeSeriesLineChartScreen dtwData={dtwData[index]}></TimeSeriesLineChartScreen>} */}
+                <TimeSeriesLineChartScreen dtwData={dtwData[index]}></TimeSeriesLineChartScreen>
               </Card>
 
           </ScrollView>

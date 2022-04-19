@@ -42,16 +42,21 @@ class EncoderH264(
         //height和width一般都是照相机的height和width。
         var mediaFormat = MediaFormat.createVideoFormat("video/avc", width, height)
         //描述平均位速率（以位/秒为单位）的键。 关联的值是一个整数
-        mediaFormat.setInteger(MediaFormat.KEY_BIT_RATE, width * height)
+        mediaFormat.setInteger(MediaFormat.KEY_BIT_RATE, width * height/2)
         //描述视频格式的帧速率（以帧/秒为单位）的键。帧率，一般在15至30之内，太小容易造成视频卡顿。
         mediaFormat.setInteger(MediaFormat.KEY_FRAME_RATE, frameRate)
-//        mediaFormat.setInteger(MediaFormat.KEY_BITRATE_MODE,MediaCodecInfo.EncoderCapabilities.BITRATE_MODE_CBR)
+
         //色彩格式，具体查看相关API，不同设备支持的色彩格式不尽相同
         //COLOR_FormatYUV420SemiPlanar
         if(GlobalStaticVariable.isScreenCapture)
             mediaFormat.setInteger(MediaFormat.KEY_COLOR_FORMAT, MediaCodecInfo.CodecCapabilities.COLOR_FormatSurface)
-        else
-            mediaFormat.setInteger(MediaFormat.KEY_COLOR_FORMAT, MediaCodecInfo.CodecCapabilities.COLOR_FormatYUV420SemiPlanar )
+        else {
+            mediaFormat.setInteger(MediaFormat.KEY_BITRATE_MODE,MediaCodecInfo.EncoderCapabilities.BITRATE_MODE_CBR)
+            mediaFormat.setInteger(
+                MediaFormat.KEY_COLOR_FORMAT,
+                MediaCodecInfo.CodecCapabilities.COLOR_FormatYUV420SemiPlanar
+            )
+        }
         //关键帧间隔时间，单位是秒
         mediaFormat.setInteger(MediaFormat.KEY_I_FRAME_INTERVAL, 1);
         mediaCodec?.configure(mediaFormat, null, null, MediaCodec.CONFIGURE_FLAG_ENCODE)

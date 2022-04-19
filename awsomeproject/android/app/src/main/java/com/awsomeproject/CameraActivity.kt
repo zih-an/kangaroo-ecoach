@@ -430,8 +430,17 @@ class CameraActivity :AppCompatActivity() {
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~For Screen Projection~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     private fun screenProjectioninit()
     {
+        GlobalStaticVariable.frameLength=resources.displayMetrics.widthPixels
+        GlobalStaticVariable.frameWidth=resources.displayMetrics.heightPixels
         mainScreenReceiver?.let {
             sendCommand(it,"prepareAcceptFrame")
+        }
+
+        thread {
+            SystemClock.sleep(200)
+            mainScreenReceiver?.let {
+                FrameDataSender.open(it)
+            }
         }
         // get width and height
         encoder= EncoderH264(
@@ -468,11 +477,6 @@ class CameraActivity :AppCompatActivity() {
                         data
                     )
                 )
-                thread {
-                    mainScreenReceiver?.let {
-                        FrameDataSender.open(it)
-                    }
-                }
             }
             else
             {

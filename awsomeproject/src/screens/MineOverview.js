@@ -360,7 +360,7 @@ class Mine extends React.Component {
   }
   showTab = (index) => {
     this.sendData(this.props.collect);
-    if(this.state.exerciseRecent.length>0){
+    // if(this.state.exerciseRecent.length>0){
       var ids = this.state.exerciseRecent.map((item,index)=>{return item[0]});
       var counts = this.state.exerciseRecent.map((item,index)=>{
         let str = item[0];
@@ -371,7 +371,7 @@ class Mine extends React.Component {
       }
       counts = obj;
 
-    }
+    // }
     switch (index) {
       case 0:
         return <Card style={{margin:0,width:"100%",}}>
@@ -394,8 +394,8 @@ class Mine extends React.Component {
                 </Card>;
       case 1:
         return <Card style={{margin:0,width:"100%",flexWrap:"wrap",flexDirection: 'row',}}>
-          {(this.state.exerciseRecent.length>0)&&
-          this.props.plansIndex.filter((item,index)=>
+          {/* {(this.state.exerciseRecent.length>0)&& */}
+          {this.props.plansIndex.filter((item,index)=>
           {return ids.includes(item.id)}).map((item,index)=>{
             return (counts[item.id.toString()]>0)&&<View style={{height:40,width:"100%",margin:"2%",flexDirection: 'row',alignItems: 'center',}} key={index}>
               <Svg icon="notice" size="25"/>
@@ -410,9 +410,6 @@ class Mine extends React.Component {
 
             </View>
           })}
-          {this.state.exerciseRecent.length===0&&<View style={{padding:10,width:"100%"}}>
-                    <Text style={{color:"#aaaaaa",fontSize:8}}>最近没有锻炼...</Text>
-                  </View>}
           {this.props.plansIndex.filter((item,index)=>{return ids.includes(item.id)&&counts[item.id.toString()]>0}).length===0&&
           <View style={{padding:10,width:"100%"}}>
           <Text style={{color:"#aaaaaa",fontSize:8}}>最近没有锻炼...</Text>
@@ -460,7 +457,7 @@ class Mine extends React.Component {
               <View style={styles.photo}>
               <Image
                 style={{ width:"100%",height: "100%"}}
-                source={require('../assets/avatar.png')}
+                source={require('../../android/app/src/main/res/drawable-mdpi/src_assets_avatar.png')}
                 resizeMode='contain'
                 />
               </View>

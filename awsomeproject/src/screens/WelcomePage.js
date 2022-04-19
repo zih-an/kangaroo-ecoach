@@ -81,7 +81,7 @@ class WelcomePage extends Component {
           <View style={styles.mainContainer}>
             <View style={styles.oval}></View>
             <Image
-              source={require('../assets/logo-final.png')}
+              source={require('../../android/app/src/main/res/drawable-mdpi/src_assets_logofinal.png')}
               style={styles.logo}
             />
           </View>
