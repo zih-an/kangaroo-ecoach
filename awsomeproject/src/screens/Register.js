@@ -4,7 +4,6 @@ import {
   Button,
   Layout,
   Text,
-  Modal,
   Card,
   Select,
   IndexPath,
@@ -30,8 +29,6 @@ export default class Register extends React.Component {
     pwdY:false,
     passwordDouble:'',
     check:'',
-    modalVisible: false,
-    modalInfo: "",
     selectedIndex:[new IndexPath(0),],
     tyepsName : [{title:"胸部"},{title:"背部"},{title:"肩部"},{title:"手臂"},{title:"腹部"},{title:"腰部"},{title:"臀部"},{title:"腿部"},{title:"全身耐力"},],
     displayValue:"请选择您的运动偏好",
@@ -118,7 +115,7 @@ export default class Register extends React.Component {
   RegisterCallback = async () => {
     // 注册
     this.setLoading(true);
-    let urlReg = "http://81.68.226.132:80/account/register/";  
+    let urlReg = "http://120.46.128.131:8000/account/register/";  
     if(this.state.pwdY){
       let res = await postData(urlReg,{
         "email":this.state.email,
@@ -151,7 +148,7 @@ export default class Register extends React.Component {
   handleCheckClick = async () =>{
     if (!this.state.counting  && this.state.selfEnable){
       this.setState({selfEnable:false})
-      let urlCheck = "http://81.68.226.132:80/account/get-code/";
+      let urlCheck = "http://120.46.128.131:8000/account/get-code/";
       let res = await postData(urlCheck,{"email":this.state.email});
 
       if(res["code"]===1||res["code"]==="1"){

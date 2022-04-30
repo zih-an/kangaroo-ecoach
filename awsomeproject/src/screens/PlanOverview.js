@@ -61,8 +61,8 @@ function PlanOverview(props) {
   };
   const generalPlan= async ()=>{
     setGeneral(true);
-    const urlUpdate ="http://81.68.226.132/plan/general";
-    const urlChoosen = "http://81.68.226.132:80/plan/index";
+    const urlUpdate ="http://120.46.128.131:8000/plan/general";
+    const urlChoosen = "http://120.46.128.131:8000/plan/index";
     let res = await getData(urlUpdate,props.login.token);
     if(res["code"]==="1"||res["code"]===1){
       let resToday = await getData(urlChoosen,props.login.token);

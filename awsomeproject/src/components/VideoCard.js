@@ -8,7 +8,7 @@ import * as actions from "../screens/store/actions";
 import { connect } from "react-redux";
 import { postData } from './FetchData';
 
-const url = "http://81.68.226.132:80/";
+const url = "http://120.46.128.131:8000/";
 
 const BackIcon = props => <Icon {...props} name="arrow-back" />;
 const CollectIconY = props => 
@@ -85,7 +85,7 @@ function VideoCard(props) {
     );
   };
   const FooterCollect =()=>{
-    // let urlCollect = "http://81.68.226.132:80/standardV/collect"
+    // let urlCollect = "http://120.46.128.131:8000/standardV/collect"
     let activeCollect = props.choose;
     return (<View  style={styles.footerContainer}>
       {/* 这里Text用来撑开父元素 */}

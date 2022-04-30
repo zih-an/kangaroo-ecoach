@@ -18,8 +18,8 @@ const BulbIcon = props => <Icon {...props} name="bulb-outline" />;
 const ArrorDownIcon = props => (
   <Icon {...props} name="arrowhead-down-outline" />
 );
-const beginurl = "http://81.68.226.132:80/exercise/begin";
-const finishurl = "http://81.68.226.132:80/exercise/finish";
+const beginurl = "http://120.46.128.131:8000/exercise/begin";
+const finishurl = "http://120.46.128.131:8000/exercise/finish";
 const HistoryTrainCard = () => {
   const displayCards = [
     {title:"运动中如何正确呼吸？",clickTo:1,icon:"运动女孩2",url:"https://mip.jy135.com/yundong/78571.html"},

@@ -35,7 +35,7 @@ class ShowMovies extends React.Component{
 }
 
 function handleClick(){
-  let urlf = "http://81.68.226.132:80/exercise/begin"
+  let urlf = "http://120.46.128.131:8000/exercise/begin"
   toExercising = async () => {
     // props.nav2exercising.navigate('Exercising');
     let res = await getData(urlf,props.login.token);

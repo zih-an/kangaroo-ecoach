@@ -23,8 +23,8 @@ const subTypes = {
     "胸部运动":[12,13,14,15],
     "腰部运动":[16,17,18],
 }
-const urlChange = "http://81.68.226.132:80/plan/change";
-const urlChoosen = "http://81.68.226.132:80/plan/index";
+const urlChange = "http://120.46.128.131:8000/plan/change";
+const urlChoosen = "http://120.46.128.131:8000/plan/index";
 
 const BackIcon = props => <Icon {...props} name="arrow-back" />;
 

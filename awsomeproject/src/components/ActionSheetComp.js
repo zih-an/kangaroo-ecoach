@@ -17,7 +17,7 @@ import { connect } from 'react-redux';
 
 const {width} = Dimensions.get('window');
  
-const url = "http://81.68.226.132:80/exercise/begin";
+const url = "http://120.46.128.131:8000/exercise/begin";
 
 class ActionSheetComp extends Component{
     constructor(props){
@@ -118,7 +118,7 @@ class ActionSheetComp extends Component{
             {
                 this.cancelModal();   
             }else{
-                let finishurl = "http://81.68.226.132:80/exercise/finish"
+                let finishurl = "http://120.46.128.131:8000/exercise/finish"
                 let resObj = JSON.parse(response);
                 let id = resObj["id"];
                 let resPost = await postData(finishurl,{"information":response,"id":id},this.props.login.token);
