@@ -164,8 +164,21 @@ function HomeSportTab(props) {
           resizeMode='contain'
           />
       </View>
+
+      <View style={{width:50,height:25,position: "absolute",
+          top:10,left: 20,zIndex:999,justifyContent: 'center',alignItems: 'center',flexDirection: 'row',
+          }}>
+          <TouchableOpacity style={{width:25,height:25,
+         justifyContent: 'center',alignItems: 'center',flexDirection: 'row',
+          backgroundColor:"#179ff1",borderRadius:20
+          }} onPress={()=>{setShowMenu(!showMenu);}}>
+            <Svg icon="运动手表" size="20" color="white"/>
+          </TouchableOpacity>
+          <Text style={{color:"gray",fontSize:10,marginLeft:2,marginTop:2}}>穿戴设备</Text>
+      </View>
+
       {(showMenu)&&(<View style={{height:100,position:"absolute",width:120,
-          justifyContent: 'center',alignItems: 'center',top: 270,right:"33%",zIndex:9999
+          justifyContent: 'center',alignItems: 'center',top: 40,left:0,zIndex:9999
           }}>
         <Card style={{width:"99%",height:100,
         flexDirection: 'column',
@@ -194,12 +207,7 @@ function HomeSportTab(props) {
             </View>
           </Card>
       </View>)}
-      <TouchableOpacity style={{width:25,height:25,position: "absolute",
-          top:295,right: 16,zIndex:999,justifyContent: 'center',alignItems: 'center',flexDirection: 'row',
-          borderWidth: 1,borderColor:theme["color-primary-500"],borderRadius:20
-          }} onPress={()=>{setShowMenu(!showMenu);}}>
-            <Svg icon="运动手表" size="20" color={theme["color-primary-500"]}/>
-          </TouchableOpacity>
+
       <Layout style={styles.btnContainer}>
 
         <TouchableOpacity onPress={()=>toConnectSend()} style={styles.touchContainer}>

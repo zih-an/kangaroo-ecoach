@@ -1,10 +1,11 @@
-import React,{useState} from "react";
+import React,{useEffect, useState} from "react";
 import { 
     StyleSheet,
     Dimensions, 
     TouchableOpacity, 
     View,
     ToastAndroid,
+    Image
 } from "react-native";
 import {
   Text,
@@ -335,6 +336,38 @@ export const ModalContainerName = (props) =>{
   </Modal>)
 }
 
+export const ModalContainerCapture = (props) =>{
+  _closeModal=()=>{
+        props.setVisible(false);
+    }
+  useEffect(()=>{
+    let timer = setInterval(()=>{_closeModal()},4000);
+    return ()=>clearInterval(timer);
+  },[])
+  return (<Modal 
+    style={{
+      position: "absolute",
+      width: "90%",
+      height:"90%",
+      justifyContent: 'center',
+      alignItems: 'center',
+      borderRadius: 20,
+      backgroundColor: "transparent",
+    }}
+    animationType="slide"
+    visible={props.visible}
+    transparent={true}
+    onRequestClose={()=>_closeModal()}
+    backdropStyle={styles.backdrop}
+>
+    <Image 
+    style={{height:"100%",width:"100%",}} 
+    source={{uri:props.uri}}
+    resizeMode='contain'>
+    </Image>
+    </Modal>)
+}
+
 const styles = StyleSheet.create({
     modalTitle:{
       backgroundColor: "white",
@@ -375,7 +408,7 @@ const styles = StyleSheet.create({
       justifyContent: 'center',
       alignItems: 'center',
       borderRadius: 20,
-      backgroundColor: "rgb(255,255,255,0.5)",
+      backgroundColor: "rgba(255,255,255,0.5)",
     },
     backdrop: {
       backgroundColor: "rgba(0, 0, 0, 0.5)",

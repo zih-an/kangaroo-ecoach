@@ -82,7 +82,7 @@ function TrainHistoryRec(props) {
   },[date,theUrl]);
   const getRecord = async () => {
 
-    let urlRecord ="http://81.68.226.132/exercise/all-record";
+    let urlRecord ="http://120.46.128.131:8000/exercise/all-record";
     let res = await getData(urlRecord,props.login.token);
     let datesRecord = res["data"].map((item,index)=>item.start_time);
     datesRecord = datesRecord.map((item,index)=>{let tmp = item.split('T');return tmp[0]});

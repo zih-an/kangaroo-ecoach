@@ -63,8 +63,8 @@ class Mine extends React.Component {
     exerciseRecent:[],
     totalTime:"",
     nickname:"",
+    ranks:[0,0,0,0,0],
   };
-  ranks = [0,0,0,0,0];
   setName = (value) =>{
     this.setState({nickname:value});
   }
@@ -150,8 +150,12 @@ class Mine extends React.Component {
     let url = "http://120.46.128.131:8000/account/avatar";   
     let resAvatar = await getData(url,this.props.login.token);
     this.setState({avatarPath:resAvatar["img"]});
-    if(dataFigure["级别"]==="入门"){
-      
+    switch(dataFigure["级别"]){
+      case "入门": this.setState({ranks:[1,0,0,0,0]});break;
+      case "进阶": this.setState({ranks:[1,1,0,0,0]});break;
+      case "强化": this.setState({ranks:[1,1,1,0,0]});break;
+      case "大牛": this.setState({ranks:[1,1,1,1,0]});break;
+      case "大神": this.setState({ranks:[1,1,1,1,1]});break;
     }
   }
   _sendFigureData = async () =>{
@@ -359,11 +363,11 @@ class Mine extends React.Component {
             <Text style={{color:"gray",fontSize:15}}>成就勋章</Text>
           </View>
           <View style={{marginTop:10,width:"95%",flexDirection:"row",alignItems: 'center',marginLeft:10,justifyContent: 'space-evenly',}}>
-            {this.ranks[0]===1?<Svg icon="额外任务成就1天" size="45"/>:<Svg icon="额外任务成就灰色1天" size="45"/>}
-            {this.ranks[0]===1?<Svg icon="额外任务成就3天" size="45"/>:<Svg icon="额外任务成就灰色3天" size="45"/>}
-            {this.ranks[0]===1?<Svg icon="额外任务成就7天" size="45"/>:<Svg icon="额外任务成就灰色7天" size="45"/>}
-            {this.ranks[0]===1?<Svg icon="额外任务成就15天" size="45"/>:<Svg icon="额外任务成就灰色15天" size="45"/>}
-            {this.ranks[0]===1?<Svg icon="额外任务成就60天" size="45"/>:<Svg icon="额外任务成就灰色60天" size="45"/>}
+            {this.state.ranks[0]===1?<Svg icon="额外任务成就1天" size="45"/>:<Svg icon="额外任务成就灰色1天" size="45"/>}
+            {this.state.ranks[1]===1?<Svg icon="额外任务成就3天" size="45"/>:<Svg icon="额外任务成就灰色3天" size="45"/>}
+            {this.state.ranks[2]===1?<Svg icon="额外任务成就7天" size="45"/>:<Svg icon="额外任务成就灰色7天" size="45"/>}
+            {this.state.ranks[3]===1?<Svg icon="额外任务成就15天" size="45"/>:<Svg icon="额外任务成就灰色15天" size="45"/>}
+            {this.state.ranks[4]===1?<Svg icon="额外任务成就60天" size="45"/>:<Svg icon="额外任务成就灰色60天" size="45"/>}
           </View>
         </View>
 

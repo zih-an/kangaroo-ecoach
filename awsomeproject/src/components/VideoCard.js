@@ -1,5 +1,5 @@
 import React,{useEffect, useState} from 'react';
-import {StyleSheet, View , Image , TouchableOpacity ,ScrollView,Modal,ToastAndroid} from 'react-native';
+import {StyleSheet, View , Image , TouchableOpacity ,ScrollView,Modal,ToastAndroid,ActivityIndicator} from 'react-native';
 import {Layout, Text, CheckBox,Button,TopNavigationAction,Icon} from '@ui-kitten/components';
 import {default as theme} from '../custom-theme.json';
 import Video from 'react-native-video';
@@ -8,7 +8,7 @@ import * as actions from "../screens/store/actions";
 import { connect } from "react-redux";
 import { postData } from './FetchData';
 
-const url = "http://120.46.128.131:8000/";
+const url = "http://120.46.128.131:80/";
 
 const BackIcon = props => <Icon {...props} name="arrow-back" />;
 const CollectIconY = props => 
@@ -42,16 +42,19 @@ const ModalContainerForVd = (props) => {
             <Text style={{fontSize:17,color:'#454545'}}>{props.name}</Text>
           </View>
       </View>
+        <View style={{height: 30,width:30,position:"absolute",top:"35%",right:"45%",}}>
+          <ActivityIndicator color="orange"/>
+        </View>
         <Video
               source={{uri: props.uri}}//设置视频源  
-              style={{marginRight: 5 ,marginLeft: 5,height:"60%", width:"97%",marginBottom:0}}//组件样式
+              style={{marginRight: 5 ,marginLeft: 5,height:"55%", width:"97%",marginBottom:0}}//组件样式
               resizeMode='contain'//缩放模式
               repeat={true}//确定在到达结尾时是否重复播放视频。
         />
         {/* <Text style={{fontSize:20,color:'#454545',marginLeft:30,marginBottom:5}}>{props.name}</Text> */}
         <ScrollView style={{ marginRight: 30 ,marginLeft: 30 ,height:"30%",borderTopWidth:1,borderTopColor:"lightgrey",paddingTop:10}}>
           <Text>步骤</Text>
-          <Text style={{fontSize:12,color:'gray',marginLeft:10,fontFamily: 'PingFang SC',lineHeight: 20}} >
+          <Text style={{fontSize:12,color:'gray',marginLeft:10,fontFamily: 'PingFang SC',lineHeight: 20,marginBottom:20}} >
             {props.modalInfo}
           </Text>
         </ScrollView>

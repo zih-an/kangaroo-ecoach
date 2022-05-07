@@ -1,5 +1,5 @@
-import React from "react";
-import { ScrollView, View, StyleSheet,Dimensions} from "react-native";
+import React,{useRef,useState,useEffect} from "react";
+import { ScrollView, View, StyleSheet,Dimensions,TouchableOpacity,PermissionsAndroid, Platform,ToastAndroid} from "react-native";
 import { Layout, Text, ViewPager, Icon,IndexPath,Select,SelectItem,TopNavigationAction,  } from "@ui-kitten/components";
 import ScatterChartScreen from "../components/ScatterChartScreen";
 import PieChartScreen from "../components/PieChartScreen";
@@ -9,31 +9,36 @@ import TimeSeriesLineChartScreen from "../components/TimeSeriesLineChartScreen"
 import Svg from "../components/Svg"
 import Video from 'react-native-video';
 import { Card } from "react-native-shadow-cards";
-
+import {ModalContainerCapture} from "../components/Modals";
+import { default as theme } from "../custom-theme.json";
 import dataSets from "../assets/dataSets"
 import newest from "../assets/newest";
-import {reportData} from "../components/HomeSportTab";
 import { connect } from "react-redux";
 import * as actions from "./store/actions";
-import { Rect } from "react-native-svg";
-import { set } from "lodash";
+import { captureRef } from "react-native-view-shot";
+import CameraRoll from '@react-native-community/cameraroll'
 
 
 const BackIcon = props => <Icon {...props} name="arrow-back" />;
 
 function SportOverview(props) {
-  const [selectedIndex, setSelectedIndex] = React.useState(new IndexPath(0));
-  const [loaded,setLoaded] = React.useState(false);
-  const [dataAll,setDataAll] = React.useState(props.report["data"]);
-  const [typesId,setTypesId] = React.useState([]);
-  const [scatterData,setScatter] = React.useState([{}]);
-  const [pieData,setPie] = React.useState([[]]);
-  const [lineData,setLine] = React.useState([[]]);
-  const [dtwData,setDTW] = React.useState([{}]);
-  const [length,setLength] = React.useState("");
-  const [start,setStart] = React.useState("");
+  const [selectedIndex, setSelectedIndex] = useState(new IndexPath(0));
+  const [loaded,setLoaded] = useState(false);
+  const [dataAll,setDataAll] = useState(props.report["data"]);
+  const [typesId,setTypesId] = useState([]);
+  const [scatterData,setScatter] = useState([{}]);
+  const [pieData,setPie] = useState([[]]);
+  const [lineData,setLine] = useState([[]]);
+  const [lineDataHeart,setLineHeart] = useState([[]]);
+  const [hasHeartRatio,setHeart] = useState(false);
+  const [dtwData,setDTW] = useState([{}]);
+  const [length,setLength] = useState("");
+  const [start,setStart] = useState("");
+  const [show,setShow] = useState(false);
+  const [uri,setUri] = useState("");
   const typesName = props.plansIndex.filter((item,index)=>typesId.includes(item.id)).map((item,index)=>item.title);
   const displayValue = typesName[selectedIndex.row];
+  const ref = useRef("shareImageRef");
 
   const navigateBack = () => {props.navigation.goBack();};
 
@@ -79,7 +84,41 @@ function SportOverview(props) {
     }
     return (counts/len)*100;
    };
-   React.useEffect(() => { 
+   const checkAndroidPermission = async () => {
+    try {
+      const permission = PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE;
+      await PermissionsAndroid.request(permission);
+      Promise.resolve();
+    } catch (error) {
+      Promise.reject(error);
+    }
+  };
+  const doDownLoadImage = () => {
+      captureRef(ref, {
+      format: "jpg",
+      quality: 0.8,
+      snapshotContentContainer: true,
+      result: "tmpfile",
+      }).then(
+      async (uri) => {
+      // console.error("链接为：", uri)
+      setUri(uri);
+      setShow(true);
+      if (Platform.OS === 'android'){
+        await checkAndroidPermission();
+      }
+      CameraRoll.save(uri, 'photo').then(onfulfilled => {
+        ToastAndroid.show("保存成功！请查看相册", ToastAndroid.SHORT);
+        }).catch(error => {
+            ToastAndroid.show(`${error.message}`, ToastAndroid.SHORT);
+        });
+    },
+      error =>  {
+      console.error("错误信息为：", error)
+      } 
+    );
+    }
+   useEffect(() => { 
      setDataAll(props.report["data"]);
     let typesId = dataAll.map((item,index)=>{return item.id});
     let SplitData = dataAll.map((item,index)=>{return item.data});
@@ -87,8 +126,9 @@ function SportOverview(props) {
     let PieData = SplitData.map((item,index)=>{return item.completeness});
     let LineData = SplitData.map((item,index)=>{return item.exerciseIntensity});
     let DTWdata = SplitData.map((item,index)=>{return item["DTW"]});
+   let lineDataHeart =  SplitData.map((item,index)=>{if(!hasHeartRatio&&item.heartBeatRatio){setHeart(true);} return item.heartBeatRatio});
+
     let len = props.reportTime["length"];
-    console.log("++++",props.reportTime)
     let startTime = props.reportTime["startTime"].split(".");
     startTime = startTime[0].split("T");
     startTime = startTime[1];
@@ -100,6 +140,7 @@ function SportOverview(props) {
     setTypesId(typesId);
 
     setScatter(ScatterData);
+    setLineHeart(lineDataHeart);
 
     setPie(PieData);
 
@@ -121,6 +162,13 @@ function SportOverview(props) {
         onSelect={index => setSelectedIndex(index)}>
           {typesName.map((item,index)=><SelectItem key={index} title={item}/>)}
       </Select>
+      <View style={{width:40,alignItems:"center",justifyContent:"center"}}>
+        <TouchableOpacity style={{width:"90%",backgroundColor:theme["color-primary-500"],
+        alignItems:"center",justifyContent:"center",marginLeft:20,borderRadius: 10,}}
+          onPress={()=>doDownLoadImage()}>
+          <Text style={{color:"white",fontSize:12}}>分享</Text>
+        </TouchableOpacity>
+      </View>
     </Layout>
       {typesId.map((item,index)=>
         {
@@ -134,6 +182,7 @@ function SportOverview(props) {
           level='2'
           key={index}>
           <ScrollView 
+              ref={ref}
               style={styles.scrollContainer} 
               contentContainerStyle={styles.scrollContent}
               onMomentumScrollEnd = {(e)=>_contentViewScroll(e)}
@@ -183,6 +232,14 @@ function SportOverview(props) {
                 <ScatterChartScreen scatterData={scatterData[index]}></ScatterChartScreen>
               </Card>
 
+              {(hasHeartRatio)&&(<Card style={styles.card}>
+                <View style={styles.title}>
+                  <Svg icon="汗量强度" size="17"/>
+                  <Text style={styles.text}>心率强度</Text></View>
+                {/* {(loaded)&&<LineChartScreen lineData={lineData[index]}></LineChartScreen>} */}
+                <LineChartScreen lineData={lineDataHeart[index]}></LineChartScreen>
+              </Card>)}
+
               <Card style={styles.card}>
                 <View style={styles.title}>
                   <Svg icon="汗量强度" size="17"/>
@@ -208,6 +265,11 @@ function SportOverview(props) {
               </Card>
 
           </ScrollView>
+          <ModalContainerCapture
+          visible={show}
+          setVisible={setShow}
+          uri={uri}
+          ></ModalContainerCapture>
         </Layout>))}
       )}
   </Layout>
@@ -218,6 +280,7 @@ const styles = StyleSheet.create({
     height: "100%",
     alignItems: "center",
     justifyContent:'flex-start',
+    backgroundColor: "#fff",
   },
   iconStyle: {
     width: 50,
@@ -228,7 +291,8 @@ const styles = StyleSheet.create({
     width: "100%",
     maxHeight: "83%",
     padding: 5,
-    backgroundColor: "white",
+    overflow: 'visible',
+    backgroundColor: "#fff",
   }, 
   card:{
     width:"95%",
@@ -282,6 +346,8 @@ const styles = StyleSheet.create({
     width: "100%",
     justifyContent: "flex-start",
     alignItems: "center",
+    overflow: 'visible',
+    backgroundColor: "#fff",
   }
 });
 

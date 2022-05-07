@@ -150,17 +150,17 @@ function PlanOverview(props) {
       </View>
 
       <Layout style={styles.btnContainer}>
-        <TouchableOpacity style={styles.touchContainer}>
+        {/* <TouchableOpacity style={styles.touchContainer} onPress={()=>{ToastAndroid.show("请连接手表！",500)}}>
           <Svg icon="评估身体" size="35" color={theme["color-primary-500"]}/>
-          <Text style={{color:"grey",fontSize:10}}>评估身体</Text>
-        </TouchableOpacity >
+          <Text style={{color:"grey",fontSize:10}}>心率检测</Text>
+        </TouchableOpacity > */}
 
         <TouchableOpacity onPress={()=>generalPlan()}  style={styles.touchContainer}>
           {generalProgress
           ? <View style={{width:35,height:35,alignItems:"center",justifyContent:"center"}}><ActivityIndicator color="orange"/></View>
-          : <Svg icon="生成计划" size="35" color={theme["color-primary-500"]}/>
+          : <Svg icon="生成计划" size="15" color="white"/>
           }
-          <Text style={{color:"grey",fontSize:10}}>生成科学计划</Text>
+          <Text style={{color:"white",fontSize:14,fontWeight: 'bold',}}>生成科学计划</Text>
         </TouchableOpacity >
       </Layout>
 
@@ -261,8 +261,12 @@ const styles = StyleSheet.create({
   },
   touchContainer:{
     alignItems:"center",
-    width:"40%",
-    backgroundColor:"rgb(0,0,0,0)"
+    justifyContent: 'center',
+    width:"50%",
+    height:30,
+    borderRadius: 50,
+    flexDirection: 'row',
+    backgroundColor:theme["color-primary-500"]
   },
 });
 

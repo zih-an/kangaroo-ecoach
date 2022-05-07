@@ -129,7 +129,7 @@ class ActionSheetComp extends Component{
                     this.cancelModal();
                     this.props.nav.navigate("SportOverviewPage");
                 }else{
-                    ToastAndroid.show("上传失败!",500);
+                    ToastAndroid.show(resPost["message"],500);
                     this.cancelModal();
                 }   
             }

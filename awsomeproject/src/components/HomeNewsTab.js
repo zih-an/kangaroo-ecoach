@@ -23,8 +23,6 @@ function HomeNewsTab(props){
     setValue(types[index.row]);
   }
   const _gets = async () =>{
-    // console.log("1");
-    // let urlFigure = "http://120.46.128.131:8000/account/information";
     let urlDay = "http://120.46.128.131:8000/account/rankByDay";
     let urlTime = "http://120.46.128.131:8000/account/rankByTime";
     let resDay = await getData(urlDay,props.login.token);
