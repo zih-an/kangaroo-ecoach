@@ -21,6 +21,7 @@ import * as actions from "./store/actions";
 import VideoCard from "../components/VideoCard";
 import {ModalContainerFigure} from "../components/Modals";
 import {ModalContainerAvatar} from "../components/Modals";
+import {ModalContainerName} from "../components/Modals";
 
 let figureMsg = [
   {
@@ -54,13 +55,19 @@ class Mine extends React.Component {
     msg: figureMsg,
     visible: false,
     visibleAvatar:false,
+    visibleName:false,
     avatarPath:"",
     currentIndex: 0,
     currentTitle:"身高",
     selectedIndex: 0,
     exerciseRecent:[],
-    totalTime:""
+    totalTime:"",
+    nickname:"",
   };
+  ranks = [0,0,0,0,0];
+  setName = (value) =>{
+    this.setState({nickname:value});
+  }
   setScroll = (value) =>{
     this.setState({enableScrollViewScroll:value});
   }
@@ -70,6 +77,9 @@ class Mine extends React.Component {
   setVisibleAvatar = (shown) => {
     this.setState({ visibleAvatar: shown });
   };
+  setVisibleName = (shown) =>{
+    this.setState({ visibleName: shown });
+  }
   setAvatarPath = (value) =>{
     this.setState({ avatarPath: value });
   };
@@ -103,6 +113,12 @@ class Mine extends React.Component {
   clickBtnFigure = () =>{
     this._sendFigureData();
   }
+  clickBtnName = async () =>{
+    let urlFigure = "http://120.46.128.131:8000/account/nickname";
+    let resName = await postData(urlFigure,{"nickname":this.state.nickname},this.props.login.token);
+    if(resName["code"]===1||resName["code"]==="1"){ToastAndroid.show(resName["message"],500)}
+    else ToastAndroid.show(resName["message"],500);
+  }
   componentDidMount(){
     this.getData();
   }
@@ -117,12 +133,15 @@ class Mine extends React.Component {
     let urlRecent = "http://120.46.128.131:8000/exercise/recent";
     let urlTotal = "http://120.46.128.131:8000/exercise/total-time";
     let urlFigure = "http://120.46.128.131:8000/account/information";
+    let urlName = "http://120.46.128.131:8000/account/nickname";
     let resRecent = await getData(urlRecent,this.props.login.token);
     let resTotal = await getData(urlTotal,this.props.login.token);
     let resFigure = await getData(urlFigure,this.props.login.token);
+    let resName = await getData(urlName,this.props.login.token);
 
     this.setState({exerciseRecent:resRecent["data"]});
     this.setState({totalTime:resTotal["data"]});
+    this.setState({nickname:resName["data"]});
     const dataFigure = resFigure["data"];
     figureMsg = figureMsg.map((item,index)=>{
       return {"title":item.title,"description":dataFigure[item.title]}
@@ -131,6 +150,9 @@ class Mine extends React.Component {
     let url = "http://120.46.128.131:8000/account/avatar";   
     let resAvatar = await getData(url,this.props.login.token);
     this.setState({avatarPath:resAvatar["img"]});
+    if(dataFigure["级别"]==="入门"){
+      
+    }
   }
   _sendFigureData = async () =>{
     let urlFigure = "http://120.46.128.131:8000/account/information";
@@ -250,20 +272,37 @@ class Mine extends React.Component {
             style={styles.profileCard}
           >
             <View style={{flexDirection:"row"}}>
-              <TouchableOpacity style={styles.photo} onPress={()=>this.setVisibleAvatar(true)}>
-              <Image
-                style={{ width:"100%",height: "100%"}}
-                source={{uri:this.state.avatarPath}}
-                resizeMode='contain'
-                />
-                <View style={{position: "absolute",height: 23,width:23,
-                backgroundColor:"transparent",borderRadius: 30,left:28,top:57,borderWidth: 2,borderColor: "#bbbbbb",
-                alignItems: 'center',
-                justifyContent: 'center',
-                }}>
-                <Svg icon="相机" size="17" color="#bbbbbb"/>
+              <View style={{flexDirection:"column"}}>
+                <TouchableOpacity style={styles.photo} onPress={()=>this.setVisibleAvatar(true)}>
+                <Image
+                  style={{ width:"100%",height: "100%"}}
+                  source={{uri:this.state.avatarPath}}
+                  resizeMode='contain'
+                  />
+                  <View style={{position: "absolute",height: 23,width:23,
+                  backgroundColor:"transparent",borderRadius: 30,left:28,top:57,borderWidth: 2,borderColor: "#bbbbbb",
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  }}>
+                  <Svg icon="相机" size="17" color="#bbbbbb"/>
+                  </View>
+                </TouchableOpacity>
+                <View style={{width:100,height:20,
+                    flexDirection:"row" ,marginLeft:25,marginRight:-40,marginTop:1,alignItems: 'center',
+                    }} >
+                  <Svg icon="修改计划" size="10" color="white"/>
+                  <Text style={{height:30,color:"white",fontWeight:"bold",fontSize:20,width: 150,}}
+                    onPress={()=>this.setVisibleName(true)}
+                    >{this.state.nickname}</Text>
+                  <Card style={{width:40,height:16,marginTop: 10,
+                    borderWidth: 1,flexDirection: 'row',marginLeft:80,
+                    borderColor: theme["color-primary-500"],justifyContent: 'center',alignItems: 'center',}}>
+                      <Text 
+                      style={{fontSize:8,color:theme["color-primary-500"],fontWeight:"bold",
+                      }}
+                      onPress={()=>this.clickBtnName()}>保存昵称</Text></Card>
                 </View>
-              </TouchableOpacity>
+              </View>
               <Card
               style={styles.totalTime}>
                 <Text style={{color:theme["color-primary-500"],fontSize:10,position: "absolute",top:10,left:25}}>运动总时长</Text>
@@ -316,15 +355,15 @@ class Mine extends React.Component {
 
         <View style={{width:"100%",alignItems: 'flex-start'}}>
           <View style={styles.medal}>
-            <Svg icon="级别" size="15" color="gray"/>
+            <Svg icon="级别" size="15" color={theme["color-primary-500"]}/>
             <Text style={{color:"gray",fontSize:15}}>成就勋章</Text>
           </View>
           <View style={{marginTop:10,width:"95%",flexDirection:"row",alignItems: 'center',marginLeft:10,justifyContent: 'space-evenly',}}>
-            <Svg icon="额外任务成就1天" size="45"/>
-            <Svg icon="额外任务成就3天" size="45"/>
-            <Svg icon="额外任务成就灰色7天" size="45"/>
-            <Svg icon="额外任务成就灰色15天" size="45"/>
-            <Svg icon="额外任务成就灰色60天" size="45"/>
+            {this.ranks[0]===1?<Svg icon="额外任务成就1天" size="45"/>:<Svg icon="额外任务成就灰色1天" size="45"/>}
+            {this.ranks[0]===1?<Svg icon="额外任务成就3天" size="45"/>:<Svg icon="额外任务成就灰色3天" size="45"/>}
+            {this.ranks[0]===1?<Svg icon="额外任务成就7天" size="45"/>:<Svg icon="额外任务成就灰色7天" size="45"/>}
+            {this.ranks[0]===1?<Svg icon="额外任务成就15天" size="45"/>:<Svg icon="额外任务成就灰色15天" size="45"/>}
+            {this.ranks[0]===1?<Svg icon="额外任务成就60天" size="45"/>:<Svg icon="额外任务成就灰色60天" size="45"/>}
           </View>
         </View>
 
@@ -358,7 +397,11 @@ class Mine extends React.Component {
           token={this.props.login.token}
           setAvatarPath={this.setAvatarPath}
         />
-
+        <ModalContainerName
+          visible = {this.state.visibleName}
+          setVisible = {this.setVisibleName}
+          setVal = {this.setName}
+        />
       </ScrollView>
     );
   }
@@ -392,7 +435,7 @@ const styles = StyleSheet.create({
     width:80,
     backgroundColor: "white",
     borderRadius: 40,
-    marginTop:20,
+    marginTop:10,
     marginLeft:20,
     overflow: 'hidden',
     borderWidth: 2,
@@ -403,7 +446,7 @@ const styles = StyleSheet.create({
     width:150,
     backgroundColor: "white",
     borderRadius: 40,
-    marginTop:20,
+    marginTop:10,
     marginLeft:55,
     justifyContent:"center",
     alignItems:"center"

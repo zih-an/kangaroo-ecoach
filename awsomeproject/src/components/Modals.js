@@ -9,7 +9,10 @@ import {
 import {
   Text,
   Modal,
+  Input,
+  Icon
 } from "@ui-kitten/components";
+import { default as theme } from "../custom-theme.json";
 import { postData,getData} from "../components/FetchData";
 import { Card } from "react-native-shadow-cards";
 import Picker from 'react-native-picker';
@@ -18,7 +21,9 @@ import CookieManager from '@react-native-cookies/cookies';
 import RNFS from 'react-native-fs';
 
 const {width} = Dimensions.get('window');
-
+const AlertIcon = (props) => (
+  <Icon {...props} name='alert-circle-outline'/>
+);
 export const ModalContainerFigure = (props) => {
     const _getCurrentDate = ()=>{
       var currDate = new Date()
@@ -291,6 +296,45 @@ export const ModalContainerAvatar = (props) => {
             </Modal>)
 }
 
+export const ModalContainerName = (props) =>{
+  const [nickname,setName] = useState("");
+  const handleNickname = (text) =>{
+    setName(text);
+  }
+  const renderCaptionName = () => {
+    return (
+      <View style={styles.captionContainer}>
+        {AlertIcon(styles.captionIcon)}
+        <Text style={styles.captionText}>{(nickname.length>7||nickname.length<2)&&"请输入2到7位昵称"}</Text>
+      </View>
+    )
+  }
+  return (<Modal 
+      style={styles.modalContainer}
+      animationType="slide"
+      visible={props.visible}
+      transparent={true}
+      onRequestClose={()=>_closeModal()}
+      backdropStyle={styles.backdrop}
+  >
+      <View style={styles.modalTitle}>
+      <Text style={{height:20,color:"gray",margin: 5,}}>设置您的昵称:</Text>
+        <Input style={styles.input} placeholder="请输入昵称" onChangeText={handleNickname} caption={renderCaptionName}/>
+        <View style={styles.modalBtn}>
+          <Text onPress={() => {
+            if((nickname.length>7||nickname.length<2)) ToastAndroid.show("请输入2到7位昵称!",500);
+            else{
+              props.setVal(nickname);
+              props.setVisible(false);
+            }  
+          }}
+            style={{color:"white"}}
+          >确定</Text>
+          </View>
+      </View>
+  </Modal>)
+}
+
 const styles = StyleSheet.create({
     modalTitle:{
       backgroundColor: "white",
@@ -322,6 +366,7 @@ const styles = StyleSheet.create({
       alignItems:"center",
       backgroundColor: "salmon",
       borderRadius: 15,
+      marginTop:5
     },
     modalContainer: {
       position: "absolute",
@@ -335,6 +380,22 @@ const styles = StyleSheet.create({
     backdrop: {
       backgroundColor: "rgba(0, 0, 0, 0.5)",
     },
+    captionContainer: {
+      display: 'flex',
+      flexDirection: 'row',
+      alignItems: 'center',
+    },
+    captionIcon: {
+      width: 10,
+      height: 10,
+      marginRight: 5
+    },
+    captionText: {
+      fontSize: 12,
+      fontWeight: "400",
+      fontFamily: "opensans-regular",
+      color: theme["color-primary-500"],
+    }
   });
 
 const avatarStyles = StyleSheet.create({
@@ -380,4 +441,9 @@ const avatarStyles = StyleSheet.create({
         color:'coral',
         textAlign:'center',
     },
+    input: {
+      width: "80%",
+      borderRadius: 30,
+    },
+    
 });

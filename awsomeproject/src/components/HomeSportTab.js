@@ -1,6 +1,6 @@
 import React,{useState} from 'react';
 import {StyleSheet, View, Alert, ActivityIndicator, ScrollView,TouchableOpacity,Image,Linking,ToastAndroid} from 'react-native';
-import {Layout, Text, Button,Modal} from '@ui-kitten/components';
+import {Layout, Text, Toggle,Button } from '@ui-kitten/components';
 import {Icon} from '@ui-kitten/components';
 import {default as theme} from '../custom-theme.json';
 import TodayTrainPlanCard from './TodayTrainPlanCard';
@@ -98,6 +98,7 @@ const itemsForCnRe= [
       title: '查找附近电视',
   },
 ];
+
 function HomeSportTab(props) {
   let [loginProgress,setLoading] = useState(false);
   let [modalVisibleCnRe,setModalViseibleCnRe] = useState(false);
@@ -105,7 +106,12 @@ function HomeSportTab(props) {
   let [deviceOpen,setDeviceOpen] = useState(false);
   let [connect,setConnect] = useState(false);
   let [enableScrollViewScroll,setScoll] = useState(true);
-
+  const [activeChecked, setActiveChecked] = React.useState(false);
+  const [showMenu,setShowMenu] = React.useState(false);
+  const onActiveCheckedChange = (isChecked) => {
+    setActiveChecked(isChecked);
+  };
+  
   const toExercising = async () => {
     setLoading(true);
     let resSchedual = await getData(beginurl,props.login.token);
@@ -139,6 +145,9 @@ function HomeSportTab(props) {
   const toConnectReceive = async () => {
     setModalViseibleCnRe(true);
   };
+  const connectWatch = () =>{
+    ToastAndroid.show("选中智能手表...",500)
+  }
   return (
     <ScrollView 
       style={styles.scrollContainer} 
@@ -155,7 +164,42 @@ function HomeSportTab(props) {
           resizeMode='contain'
           />
       </View>
-
+      {(showMenu)&&(<View style={{height:100,position:"absolute",width:120,
+          justifyContent: 'center',alignItems: 'center',top: 270,right:"33%",zIndex:9999
+          }}>
+        <Card style={{width:"99%",height:100,
+        flexDirection: 'column',
+        justifyContent: 'flex-start',alignItems: 'center',
+        borderRadius:10}}>
+          {/* <Svg icon="运动手表" size="26" color={theme["color-primary-500"]}/> */}
+          <TouchableOpacity
+            style={{height:30,margin:"2%",
+            flexDirection: 'row',alignItems: 'center',borderRadius:15,width:"90%",
+            backgroundColor: theme["color-primary-500"],
+            justifyContent: 'center',
+            marginTop:5
+          }}
+            onPress={()=>connectWatch()}
+            >
+              <Text style={{fontSize:12,color:"white"}}>连接穿戴设备</Text>
+            </TouchableOpacity>
+            <View style={{margin:5}}>
+              <Toggle
+                style={{}}
+                checked={activeChecked}
+                onChange={onActiveCheckedChange}
+                size="20">
+              </Toggle>
+              <Text style={{color:"#aaaaaa",fontSize:10}}>是否配合设备运动?</Text>
+            </View>
+          </Card>
+      </View>)}
+      <TouchableOpacity style={{width:25,height:25,position: "absolute",
+          top:295,right: 16,zIndex:999,justifyContent: 'center',alignItems: 'center',flexDirection: 'row',
+          borderWidth: 1,borderColor:theme["color-primary-500"],borderRadius:20
+          }} onPress={()=>{setShowMenu(!showMenu);}}>
+            <Svg icon="运动手表" size="20" color={theme["color-primary-500"]}/>
+          </TouchableOpacity>
       <Layout style={styles.btnContainer}>
 
         <TouchableOpacity onPress={()=>toConnectSend()} style={styles.touchContainer}>
@@ -176,6 +220,7 @@ function HomeSportTab(props) {
         </TouchableOpacity >
         
       </Layout>
+
       <TodayTrainPlanCard 
           height={150} 
           onEnableScroll={setScoll} 
@@ -191,8 +236,16 @@ function HomeSportTab(props) {
         setStatus={setConnect} 
         modalTitle="查找附近设备" 
         token={props.login.token} 
-        nav={props.nav2exercising}/>
-      <ActionSheetComp visible={modalVisibleCnSe} setVisible={setModalViseibleCnSe} items={itemsForCnSe} setStatus={setDeviceOpen} modalTitle="设置设备" token={props.login.token}/>
+        nav={props.nav2exercising}
+        useWatch={activeChecked}/>
+      <ActionSheetComp 
+        visible={modalVisibleCnSe} 
+        setVisible={setModalViseibleCnSe} 
+        items={itemsForCnSe} 
+        setStatus={setDeviceOpen} 
+        modalTitle="设置设备" 
+        token={props.login.token}
+        />
 
     </ScrollView>
   );
@@ -217,7 +270,7 @@ const styles = StyleSheet.create({
   },
   btnContainer: {
     marginTop:-10,
-    marginBottom:15,
+    marginBottom:45,
     width: '100%',
     flexDirection:"row",
     alignItems: 'center',
