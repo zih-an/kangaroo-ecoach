@@ -218,14 +218,20 @@ function HLMomentTab(props) {
                   <Text style={styles.text}>部位得分</Text>
                   </View>
                 <ScatterChartScreen scatterData={scatterData[index]}></ScatterChartScreen>
+                <View style={styles.secondsForScatter}>
+                  <Text style={{fontSize:10,color:"#aaaaaa"}}>s</Text>
+                </View>
               </Card>
 
               {(hasHeartRatio)&&(<Card style={styles.card}>
                 <View style={styles.title}>
-                  <Svg icon="汗量强度" size="17"/>
+                  <Svg icon="心率" size="17"/>
                   <Text style={styles.text}>心率强度</Text></View>
                 {/* {(loaded)&&<LineChartScreen lineData={lineData[index]}></LineChartScreen>} */}
                 <LineChartScreen lineData={lineDataHeart[index]}></LineChartScreen>
+                <View style={styles.seconds}>
+                  <Text style={{fontSize:10,color:"#aaaaaa"}}>s</Text>
+                </View>
               </Card>)}
 
               <Card style={styles.card}>
@@ -234,6 +240,9 @@ function HLMomentTab(props) {
                   <Text style={styles.text}>运动强度</Text></View>
                 {/* {(loaded)&&<LineChartScreen lineData={lineData[index]}></LineChartScreen>} */}
                 <LineChartScreen lineData={lineData[index]}></LineChartScreen>
+                <View style={styles.seconds}>
+                  <Text style={{fontSize:10,color:"#aaaaaa"}}>s</Text>
+                </View>
               </Card>
 
               <Card style={styles.card}>
@@ -242,6 +251,15 @@ function HLMomentTab(props) {
                   <Text style={styles.text}>动作完成度</Text></View>
                 {/* {(loaded)&&<PieChartScreen completeness={pieData[index]}></PieChartScreen>} */}
                 <PieChartScreen completeness={pieData[index]}></PieChartScreen>
+                <Text style={{position:"relative",color:"#aaaaaa",fontSize:8,bottom:10}}>
+                  深绿色为开始时刻，完成度随时间按顺时针方向变化
+                </Text>
+                <View style={{position:"absolute",width:30,height:30,bottom:120,right:270}}>
+                  <Svg icon="顺时针转动" size="25"/>
+                </View>
+                <View style={{position:"absolute",width:30,height:30,bottom:120,right:30}}>
+                  <Svg icon="顺时针转动2" size="25"/>
+                </View>
               </Card>
 
               <Card style={styles.card}>
@@ -250,6 +268,12 @@ function HLMomentTab(props) {
                   <Text style={styles.text}>动作快慢</Text></View>
                 {/* {(loaded)&&<TimeSeriesLineChartScreen dtwData={dtwData[index]}></TimeSeriesLineChartScreen>} */}
                 <TimeSeriesLineChartScreen dtwData={dtwData[index]}></TimeSeriesLineChartScreen>
+                <View style={styles.seconds}>
+                  <Text style={{fontSize:10,color:"#aaaaaa"}}>s</Text>
+                </View>
+                <Text style={{position:"relative",color:"#aaaaaa",fontSize:8,bottom:10}}>
+                  绿线高于红线则用户节奏过快，绿线低于红线则用户节奏过慢
+                </Text>
               </Card>
 
           </ScrollView>
@@ -316,6 +340,24 @@ const styles = StyleSheet.create({
     alignItems: "center",
     backgroundColor: "#fff",
     overflow:'visible'
+  },
+  seconds:{
+    position:"relative",
+    height:15,
+    width:15,
+    justifyContent: 'center',
+    alignItems: 'center',
+    bottom:200,
+    left:150
+  },
+  secondsForScatter:{
+    position:"relative",
+    height:15,
+    width:15,
+    justifyContent: 'center',
+    alignItems: 'center',
+    bottom:220,
+    left:150
   }
 });
 

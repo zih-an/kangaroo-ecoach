@@ -408,7 +408,7 @@ const styles = StyleSheet.create({
       justifyContent: 'center',
       alignItems: 'center',
       borderRadius: 20,
-      backgroundColor: "rgba(255,255,255,0.5)",
+      backgroundColor: "rgb(255,255,255,0.5)",
     },
     backdrop: {
       backgroundColor: "rgba(0, 0, 0, 0.5)",
