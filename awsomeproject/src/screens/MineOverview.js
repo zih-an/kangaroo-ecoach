@@ -113,7 +113,6 @@ class Mine extends React.Component {
   clickBtnFigure = () =>{
     this._sendFigureData();
   }
-
   componentDidMount(){
     this.getData();
   }
