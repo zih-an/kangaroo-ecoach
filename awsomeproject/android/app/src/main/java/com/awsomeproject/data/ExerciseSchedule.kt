@@ -7,6 +7,7 @@ import org.json.JSONObject
 class ExerciseSchedule(JSONmeg:String) {
 
     companion object{
+        var isWearDeviceConnect:Boolean=false;
         var TagMap:JSONObject= JSONObject()
         fun getTendency(id: Int):MutableList<Double>
         {
@@ -137,6 +138,8 @@ class ExerciseSchedule(JSONmeg:String) {
     {
         var jsonObj=JSONObject(meg)
         var dataArray=jsonObj.getJSONArray("data")
+        isWearDeviceConnect = jsonObj.getInt("isWearDeviceConnect") != 0
+
         id=jsonObj.getInt("id")
         for(i in 0..dataArray.length()-1)
         {
@@ -174,6 +177,7 @@ class ExerciseSchedule(JSONmeg:String) {
                 "    \"29\": [1,1,1,1,2,2,9,7,4],\n" +
                 "    \"30\": [1,1,1,1,2,2,9,7,4],\n" +
                 "    \"31\": [1,1,1,1,5,4,9,9,4],\n" +
+                "    \"32\": [1,1,1,1,9,9,2,9,2],\n" +
                 "    \"34\": [1,1,1,1,3,5,7,6,2],\n" +
                 "    \"35\": [1,1,1,1,3,5,7,6,2]\n" +
                 "}"

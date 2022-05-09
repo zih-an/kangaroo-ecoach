@@ -10,6 +10,7 @@ import com.awsomeproject.R
 import com.awsomeproject.utils.BoneVectorPart
 import com.awsomeproject.utils.DTWprocess
 import com.awsomeproject.utils.DataTypeTransfor
+import com.awsomeproject.videodecoder.GlobalStaticVariable
 import java.io.*
 
 class ResJSdata(private var sampleId:Int=-1) {
@@ -38,6 +39,7 @@ class ResJSdata(private var sampleId:Int=-1) {
         scoreBypart = mutableListOf<MutableList<Double>>()
         completeness = mutableListOf<Boolean>()
         exerciseIntensity = mutableListOf<Double>()
+        beatRate=mutableListOf<Int>()
     }
     fun append(scoreByPart :MutableList<Double>,userVector:Matrix,sampleVetor:Matrix)
     {
@@ -49,6 +51,7 @@ class ResJSdata(private var sampleId:Int=-1) {
             completeness.add(false)//缺失
         else
             completeness.add(true)//非缺失
+        beatRate.add(GlobalStaticVariable.newestWearMesg_HeartBeartRatio.toInt())
         count++
     }
 
@@ -122,7 +125,7 @@ class ResJSdata(private var sampleId:Int=-1) {
 
         var SCOresList:JSONObject = JSONObject()//运动分数的返回数据
 
-
+        var HeartBeatList:JSONArray = JSONArray()//心率的返回数据
         var PartMap:Map<Int,String> = mapOf(
             0 to "头部",
             1 to  "左臂",
@@ -218,9 +221,15 @@ class ResJSdata(private var sampleId:Int=-1) {
             COOrdination=0.0
         DTWresobj.put("score",COOrdination)
 
+        for(i in 0..beatRate.count()-1)
+        {
+            HeartBeatList.put(beatRate[i])
+        }
         ALLresobj.put("scorebypart",SCOresList)
         ALLresobj.put("completeness",CPNresArray)
         ALLresobj.put("exerciseIntensity",EXTresArray)
+        if(GlobalStaticVariable.isWearDeviceConnect)
+            ALLresobj.put("heartBeatRatio",HeartBeatList)
         ALLresobj.put("DTW",DTWresobj)
         JsonData=ALLresobj;
         return ALLresobj

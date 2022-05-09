@@ -15,6 +15,7 @@ import android.os.Environment
 import android.provider.Settings
 import android.util.Log
 import android.view.*
+import android.webkit.WebView
 import android.widget.*
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
@@ -32,11 +33,15 @@ import com.awsomeproject.layoutImpliment.SquareProgress
 import com.awsomeproject.ml.ModelType
 import com.awsomeproject.ml.MoveNet
 import com.awsomeproject.socketconnect.Device
+import com.awsomeproject.socketconnect.bluetoothReceiver.BluetoothMesg
+import com.awsomeproject.socketconnect.bluetoothReceiver.BluetoothMesgReceiver
+import com.awsomeproject.socketconnect.bluetoothReceiver.BluetoothMesgSender
 import com.awsomeproject.socketconnect.communication.host.Command
 import com.awsomeproject.socketconnect.communication.host.CommandSender
 import com.awsomeproject.socketconnect.communication.host.FrameDataReceiver
 import com.awsomeproject.socketconnect.communication.slave.FrameDataSender
 import com.awsomeproject.utils.Voice
+import com.awsomeproject.videodecoder.GlobalStaticVariable
 import java.io.FileOutputStream
 import kotlin.concurrent.thread
 import kotlin.math.log
@@ -55,7 +60,9 @@ class ReceiverActivity: AppCompatActivity() {
     private var device = com.awsomeproject.data.Device.GPU
     private lateinit var msquareProgress: SquareProgress
     private lateinit var videoView: VideoView
-
+    //心率框
+    private lateinit var heartBeatRatioView: TextView
+    private lateinit var heartBeatRatioImageView: ImageView
     private lateinit var countdownView: SurfaceView
     private lateinit var countdownViewFramLayout: FrameLayout
     private lateinit var countdownViewBackground: ImageView
@@ -97,6 +104,20 @@ class ReceiverActivity: AppCompatActivity() {
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
     }
+
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~For Wear Message~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    fun sendBluetoothMesg(str:String) {
+        //发送命令
+        val bluetoothMesg = BluetoothMesg(str.toByteArray())
+        BluetoothMesg.setBluetoothDevice(BluetoothMesg.getBluetoothDevice())
+        BluetoothMesgSender.addBluetoothMesg(bluetoothMesg)
+    }
+
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~For Wear Message~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_receiver)
@@ -115,6 +136,8 @@ class ReceiverActivity: AppCompatActivity() {
         countdownViewFramLayout=findViewById(R.id.countDownViewLayout)
         scoreTextView=findViewById(R.id.score)
         countdownViewBackground=findViewById(R.id.mColor)
+        heartBeatRatioView=findViewById(R.id.heartBeatRatio)
+        heartBeatRatioImageView=findViewById(R.id.mColor2)
         //——————————————————————语音初始化—————————————————-—————————//
         Voice.reSet()
         //————————————————————————————————————————————-————————————//
@@ -214,6 +237,20 @@ class ReceiverActivity: AppCompatActivity() {
                 }
             }
         })
+
+        GlobalStaticVariable.isWearDeviceConnect =ExerciseSchedule.isWearDeviceConnect
+        if(GlobalStaticVariable.isWearDeviceConnect)
+        {
+            heartBeatRatioView.visibility = View.VISIBLE
+            heartBeatRatioImageView.visibility= View.VISIBLE
+            sendBluetoothMesg("startSendHeartBeatRatio")
+            BluetoothMesgReceiver.start()
+        }
+        else
+        {
+            heartBeatRatioView.visibility = View.INVISIBLE
+            heartBeatRatioImageView.visibility= View.INVISIBLE
+        }
     }
 
     override fun onResume() {
@@ -239,6 +276,11 @@ class ReceiverActivity: AppCompatActivity() {
         FrameReceiverConnectThread?.let{
             it.interrupt()
         }
+        if(GlobalStaticVariable.isWearDeviceConnect)
+        {
+            sendBluetoothMesg("finish")
+            BluetoothMesgReceiver.close()
+        }
         Voice.close()
     }
 
@@ -254,10 +296,11 @@ class ReceiverActivity: AppCompatActivity() {
             if (cameraReceiver == null) {
                 cameraReceiver =
                     CameraReceiver(surfaceView, object : CameraReceiver.CameraReceiverListener {
-                        override fun onImageprocessListener(score: Int) {
-                            msquareProgress.setCurProgress(score)
+                        override fun onImageprocessListener(score: Int,ratio:Int) {
+                            msquareProgress.setCurProgress(score);
                             runOnUiThread {
                                 scoreTextView.setText(score.toString())
+                                heartBeatRatioView.setText(ratio.toString())
                             }
                         }
                         override fun onDetectedInfo( personScore: Float?,poseLabels: List<Pair<String, Float>>?) {

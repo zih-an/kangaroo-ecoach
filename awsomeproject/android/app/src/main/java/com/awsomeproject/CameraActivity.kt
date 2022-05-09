@@ -31,6 +31,9 @@ import com.awsomeproject.manager.CameraModule.Companion.PROJECTION_CAMERA_REQUES
 import com.awsomeproject.ml.ModelType
 import com.awsomeproject.ml.MoveNet
 import com.awsomeproject.service.screenCaptureService
+import com.awsomeproject.socketconnect.bluetoothReceiver.BluetoothMesg
+import com.awsomeproject.socketconnect.bluetoothReceiver.BluetoothMesgReceiver
+import com.awsomeproject.socketconnect.bluetoothReceiver.BluetoothMesgSender
 import com.awsomeproject.socketconnect.communication.host.Command
 import com.awsomeproject.socketconnect.communication.host.CommandSender
 import com.awsomeproject.socketconnect.communication.slave.FrameData
@@ -63,6 +66,9 @@ class CameraActivity :AppCompatActivity() {
     private lateinit var countdownViewBackground: ImageView
     //分数框
     private lateinit var scoreTextView: TextView
+    //心率框
+    private lateinit var heartBeatRatioView: TextView
+    private lateinit var heartBeatRatioImageView: ImageView
     //摄像机
     private var cameraSource: CameraSource? = null
     //语言提示
@@ -71,6 +77,7 @@ class CameraActivity :AppCompatActivity() {
     private var videoviewrepetend:VideoViewRepetend? =null
     //总返回数据
     private var returnData:String?=null
+
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~For Screen Projection~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     //编码器
     private var encoder: EncoderH264?=null
@@ -110,6 +117,16 @@ class CameraActivity :AppCompatActivity() {
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~For Screen Projection~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~For Wear Message~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    fun sendBluetoothMesg(str:String) {
+        //发送命令
+        val bluetoothMesg = BluetoothMesg(str.toByteArray())
+        BluetoothMesgSender.addBluetoothMesg(bluetoothMesg)
+    }
+
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~For Wear Message~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
     //获取权限
     private val requestPermissionLauncher =
         registerForActivityResult(
@@ -129,6 +146,7 @@ class CameraActivity :AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN)
 
         //创建运动数据文件
         //createFile()
@@ -152,6 +170,8 @@ class CameraActivity :AppCompatActivity() {
         {
            GlobalStaticVariable.reSet()
         }
+
+
         //————————————————————————————————————————————-————————————//
 
         //———————————————————————初始化控件——————————————————————————//
@@ -163,6 +183,15 @@ class CameraActivity :AppCompatActivity() {
         countdownViewFramLayout=findViewById(R.id.countDownViewLayout)
         scoreTextView=findViewById(R.id.score)
         countdownViewBackground=findViewById(R.id.mColor)
+        heartBeatRatioView=findViewById(R.id.heartBeatRatio)
+        heartBeatRatioImageView=findViewById(R.id.mColor2)
+
+//        val mediaController = MediaController(this)
+//        mediaController.setAnchorView(videoView)
+//        mediaController.setMediaPlayer(videoView)
+//        mediaController.requestFocus()
+//        videoView.setMediaController(mediaController)
+
         //————————————————————————————————————————————-————————————//
 
         //———————————————————————权限申请————————————————————————————//
@@ -206,13 +235,8 @@ class CameraActivity :AppCompatActivity() {
                 "    \"id\": 1,\n"+
                 "    \"data\": [\n" +
                 "        {\n" +
-                "            \"id\": 5,\n" +
-                "            \"url\": \"sample5\",\n" +
-                "            \"groups\": \"2\"\n" +
-                "        },\n" +
-                "        {\n" +
-                "            \"id\": 7,\n" +
-                "            \"url\": \"sample7\",\n" +
+                "            \"id\": 3,\n" +
+                "            \"url\": \"sample3\",\n" +
                 "            \"groups\": \"2\"\n" +
                 "        }]}"
 //                ="{\n" +
@@ -301,6 +325,20 @@ class CameraActivity :AppCompatActivity() {
 
             }
         })
+
+        GlobalStaticVariable.isWearDeviceConnect =ExerciseSchedule.isWearDeviceConnect
+        if(GlobalStaticVariable.isWearDeviceConnect)
+        {
+            heartBeatRatioView.visibility = View.VISIBLE
+            heartBeatRatioImageView.visibility= View.VISIBLE
+            sendBluetoothMesg("startSendHeartBeatRatio")
+            BluetoothMesgReceiver.start()
+        }
+        else
+        {
+            heartBeatRatioView.visibility = View.INVISIBLE
+            heartBeatRatioImageView.visibility= View.INVISIBLE
+        }
     }
 
     override fun onResume() {
@@ -318,6 +356,11 @@ class CameraActivity :AppCompatActivity() {
         encoder?.close()
         cameraSource?.close()
         Voice.close()
+        if(GlobalStaticVariable.isWearDeviceConnect)
+        {
+            sendBluetoothMesg("finish")
+            BluetoothMesgReceiver.close()
+        }
 
     }
 
@@ -336,10 +379,11 @@ class CameraActivity :AppCompatActivity() {
             if (cameraSource == null) {
                 cameraSource =
                     CameraSource(surfaceView, object : CameraSource.CameraSourceListener {
-                        override fun onImageprocessListener(score: Int) {
+                        override fun onImageprocessListener(score: Int,ratio:Int) {
                             msquareProgress.setCurProgress(score);
                             runOnUiThread {
                                 scoreTextView.setText(score.toString())
+                                heartBeatRatioView.setText(ratio.toString())
                             }
                         }
                         override fun onDetectedInfo( personScore: Float?,poseLabels: List<Pair<String, Float>>?) {

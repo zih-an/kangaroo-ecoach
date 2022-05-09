@@ -12,6 +12,7 @@ import com.awsomeproject.layoutImpliment.BackArrowView
 import com.awsomeproject.layoutImpliment.connectAdapter
 import com.awsomeproject.manager.CameraModule.Companion.REMOTE_CAMERA_REQUEST
 import com.awsomeproject.socketconnect.Device
+import com.awsomeproject.socketconnect.bluetoothReceiver.BluetoothMesgReceiver
 import com.awsomeproject.socketconnect.communication.host.Command
 import com.awsomeproject.socketconnect.communication.host.CommandSender
 import com.awsomeproject.socketconnect.search.DeviceSearcher
@@ -138,7 +139,7 @@ class hostviewActivity: AppCompatActivity() {
                             //跳转并等待返回REQUEST_CODE
                             startActivityForResult(intent,REMOTE_CAMERA_REQUEST)
                         }
-                    })
+                    },"连接")
                     slaveList.adapter=adapter
                 }
             }

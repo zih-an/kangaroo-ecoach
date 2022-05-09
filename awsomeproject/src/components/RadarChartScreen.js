@@ -19,6 +19,7 @@ class RadarChartScreen extends React.Component {
     let rhythmData = this.props.rhythmData;
     let intensityData = this.props.intensityData;
     let completeData = this.props.completeData;
+    let enduranceData = (completeData+intensityData)/2;
     this.state = {
         animation:{
             durationY:700,
@@ -41,7 +42,7 @@ class RadarChartScreen extends React.Component {
             dataSets: 
             [
                 {
-                    values: [{value: stanData}, {value: rhythmData}, {value: intensityData}, {value: completeData}, {value: 80}],
+                    values: [{value: stanData}, {value: rhythmData}, {value: intensityData}, {value: completeData}, {value: enduranceData}],
                     label: 'DS 1',
                     config: {
                         color: processColor('white'),

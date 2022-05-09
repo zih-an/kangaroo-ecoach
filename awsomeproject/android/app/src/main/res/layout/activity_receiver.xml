@@ -58,6 +58,27 @@
         android:text="100"
         android:textColor="#90008B45"
         android:textSize="45dp" />
+    <ImageView
+        android:id="@+id/mColor2"
+        android:layout_width="68dp"
+        android:layout_height="68dp"
+        android:src="@drawable/hearbeat2"
+        android:alpha="0.3"
+        android:layout_marginTop="30dp"
+        android:layout_marginRight="45dp"
+        android:layout_gravity="top|right"/>
+    <TextView
+        android:id="@+id/heartBeatRatio"
+        android:layout_width="60dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="35dp"
+        android:layout_marginRight="49dp"
+        android:gravity="center"
+        android:layout_gravity="top|right"
+
+        android:text="100"
+        android:textColor="#FFFFFF"
+        android:textSize="28dp" />
 
     <FrameLayout
         android:id="@+id/countDownViewLayout"

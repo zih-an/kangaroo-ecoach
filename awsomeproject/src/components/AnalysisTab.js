@@ -1,5 +1,6 @@
-import React from "react";
-import { ScrollView, View, StyleSheet,Dimensions,Image} from "react-native";
+import React, { useRef } from "react";
+import { ScrollView, View, StyleSheet,Dimensions,Image,ToastAndroid,
+  TouchableOpacity,PermissionsAndroid, Platform,} from "react-native";
 import { Layout, Text, ViewPager, Icon,IndexPath,Select,SelectItem,TopNavigationAction,  } from "@ui-kitten/components";
 import ScatterChartScreen from "./ScatterChartScreen";
 import PieChartScreen from "./PieChartScreen";
@@ -9,12 +10,14 @@ import TimeSeriesLineChartScreen from "./TimeSeriesLineChartScreen"
 import Svg from "./Svg"
 import LinearGradinet from 'react-native-linear-gradient';
 import { Card } from "react-native-shadow-cards";
-
+import { captureRef } from "react-native-view-shot";
 import dataSets from "../assets/dataSets"
 import newest from "../assets/newest"
 import { connect } from "react-redux";
 import * as actions from "../screens/store/actions";
-
+import { default as theme } from "../custom-theme.json";
+import CameraRoll from '@react-native-community/cameraroll'
+import {ModalContainerCapture} from "./Modals";
 
 const BackIcon = props => <Icon {...props} name="arrow-back" />;
 
@@ -26,10 +29,15 @@ function HLMomentTab(props) {
   const [scatterData,setScatter] = React.useState([{}]);
   const [pieData,setPie] = React.useState([[]]);
   const [lineData,setLine] = React.useState([[]]);
+  const [lineDataHeart,setLineHeart] = React.useState([[]]);
+  const [hasHeartRatio,setHeart] = React.useState(false);
   const [dtwData,setDTW] = React.useState([{}]);
+  const [show,setShow] = React.useState(false);
+  const [uri,setUri] = React.useState("");
+
   const typesName = props.plansIndex.filter((item,index)=>typesId.includes(item.id)).map((item,index)=>item.title);
   const displayValue = typesName[selectedIndex.row];
-
+  const ref = useRef("shareImageRef");
   const navigateBack = () => {props.navigation.goBack();};
 
   const BackAction = () => (
@@ -74,7 +82,40 @@ function HLMomentTab(props) {
     }
     return (counts/len)*100;
    };
-
+   const checkAndroidPermission = async () => {
+    try {
+      const permission = PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE;
+      await PermissionsAndroid.request(permission);
+      Promise.resolve();
+    } catch (error) {
+      Promise.reject(error);
+    }
+};
+   const doDownLoadImage = () => {
+      captureRef(ref, {
+      format: "jpg",
+      quality: 0.8,
+      snapshotContentContainer: true,
+      result: "tmpfile",
+      }).then(
+      async (uri) => {
+      // console.error("链接为：", uri)
+      setUri(uri);
+      setShow(true);
+      if (Platform.OS === 'android'){
+        await checkAndroidPermission();
+      }
+      CameraRoll.save(uri, 'photo').then(onfulfilled => {
+        ToastAndroid.show("保存成功！请查看相册", ToastAndroid.SHORT);
+        }).catch(error => {
+            ToastAndroid.show(`${error.message}`, ToastAndroid.SHORT);
+        });
+    },
+      error =>  {
+      console.error("错误信息为：", error)
+      } 
+    );
+    }
    React.useEffect(() => { 
    let typesId = dataAll.map((item,index)=>{return item.id});
    let SplitData = dataAll.map((item,index)=>{return item.data});
@@ -82,7 +123,7 @@ function HLMomentTab(props) {
    let PieData = SplitData.map((item,index)=>{return item.completeness});
    let LineData = SplitData.map((item,index)=>{return item.exerciseIntensity});
    let DTWdata = SplitData.map((item,index)=>{return item["DTW"]});
-
+   let lineDataHeart =  SplitData.map((item,index)=>{if(!hasHeartRatio&&item.heartBeatRatio){setHeart(true);} return item.heartBeatRatio});
    setTypesId(typesId);
 
    setScatter(ScatterData);
@@ -90,6 +131,8 @@ function HLMomentTab(props) {
    setPie(PieData);
 
    setLine(LineData);
+
+   setLineHeart(lineDataHeart);
    
    setDTW(DTWdata);
 
@@ -107,6 +150,13 @@ function HLMomentTab(props) {
         onSelect={index => setSelectedIndex(index)}>
           {typesName.map((item,index)=><SelectItem key={index} title={item}/>)}
       </Select>
+      <View style={{width:40,alignItems:"center",justifyContent:"center"}}>
+        <TouchableOpacity style={{width:"90%",backgroundColor:theme["color-primary-500"],
+        alignItems:"center",justifyContent:"center",marginLeft:20,borderRadius: 10,}}
+          onPress={()=>doDownLoadImage()}>
+          <Text style={{color:"white",fontSize:12}}>分享</Text>
+        </TouchableOpacity>
+      </View>
     </Layout>
      
       {typesId.map((item,index)=>
@@ -120,6 +170,7 @@ function HLMomentTab(props) {
           level='2'
           key={index}>
           <ScrollView 
+              ref={ref}
               style={styles.scrollContainer} 
               contentContainerStyle={styles.scrollContent}
               onMomentumScrollEnd = {(e)=>_contentViewScroll(e)}
@@ -132,12 +183,12 @@ function HLMomentTab(props) {
                 >
               <Image
               style={{ width:"100%",height: 250,position:"absolute",top:-25,left:-40}}
-              source={require('../../android/app/src/main/res/drawable-mdpi/src_assets_planall.png')}
+              source={require('../assets/planall.png')}
               resizeMode='contain'
               />
               <Image
               style={{ width:"100%",height: 250,position:"absolute",top:20,left:40}}
-              source={require('../../android/app/src/main/res/drawable-mdpi/src_assets_3dgirl.png')}
+              source={require('../assets/3dgirl.png')}
               resizeMode='contain'
               />
               <View style={{width:60,alignItems:"center",justifyContent:"center",position:"absolute",top:20,right:30,flexDirection: 'row',}}>
@@ -167,7 +218,21 @@ function HLMomentTab(props) {
                   <Text style={styles.text}>部位得分</Text>
                   </View>
                 <ScatterChartScreen scatterData={scatterData[index]}></ScatterChartScreen>
+                <View style={styles.secondsForScatter}>
+                  <Text style={{fontSize:10,color:"#aaaaaa"}}>s</Text>
+                </View>
               </Card>
+
+              {(hasHeartRatio)&&(<Card style={styles.card}>
+                <View style={styles.title}>
+                  <Svg icon="心率" size="17"/>
+                  <Text style={styles.text}>心率强度</Text></View>
+                {/* {(loaded)&&<LineChartScreen lineData={lineData[index]}></LineChartScreen>} */}
+                <LineChartScreen lineData={lineDataHeart[index]}></LineChartScreen>
+                <View style={styles.seconds}>
+                  <Text style={{fontSize:10,color:"#aaaaaa"}}>s</Text>
+                </View>
+              </Card>)}
 
               <Card style={styles.card}>
                 <View style={styles.title}>
@@ -175,6 +240,9 @@ function HLMomentTab(props) {
                   <Text style={styles.text}>运动强度</Text></View>
                 {/* {(loaded)&&<LineChartScreen lineData={lineData[index]}></LineChartScreen>} */}
                 <LineChartScreen lineData={lineData[index]}></LineChartScreen>
+                <View style={styles.seconds}>
+                  <Text style={{fontSize:10,color:"#aaaaaa"}}>s</Text>
+                </View>
               </Card>
 
               <Card style={styles.card}>
@@ -183,6 +251,15 @@ function HLMomentTab(props) {
                   <Text style={styles.text}>动作完成度</Text></View>
                 {/* {(loaded)&&<PieChartScreen completeness={pieData[index]}></PieChartScreen>} */}
                 <PieChartScreen completeness={pieData[index]}></PieChartScreen>
+                <Text style={{position:"relative",color:"#aaaaaa",fontSize:8,bottom:10}}>
+                  深绿色为开始时刻，完成度随时间按顺时针方向变化
+                </Text>
+                <View style={{position:"absolute",width:30,height:30,bottom:120,right:270}}>
+                  <Svg icon="顺时针转动" size="25"/>
+                </View>
+                <View style={{position:"absolute",width:30,height:30,bottom:120,right:30}}>
+                  <Svg icon="顺时针转动2" size="25"/>
+                </View>
               </Card>
 
               <Card style={styles.card}>
@@ -191,9 +268,20 @@ function HLMomentTab(props) {
                   <Text style={styles.text}>动作快慢</Text></View>
                 {/* {(loaded)&&<TimeSeriesLineChartScreen dtwData={dtwData[index]}></TimeSeriesLineChartScreen>} */}
                 <TimeSeriesLineChartScreen dtwData={dtwData[index]}></TimeSeriesLineChartScreen>
+                <View style={styles.seconds}>
+                  <Text style={{fontSize:10,color:"#aaaaaa"}}>s</Text>
+                </View>
+                <Text style={{position:"relative",color:"#aaaaaa",fontSize:8,bottom:10}}>
+                  绿线高于红线则用户节奏过快，绿线低于红线则用户节奏过慢
+                </Text>
               </Card>
 
           </ScrollView>
+          <ModalContainerCapture
+          visible={show}
+          setVisible={setShow}
+          uri={uri}
+          ></ModalContainerCapture>
         </Layout>))}
       )}
   </Layout>
@@ -204,6 +292,7 @@ const styles = StyleSheet.create({
     height: "93%",
     alignItems: "center",
     justifyContent:'flex-start',
+    backgroundColor: "#fff",
   },
   iconStyle: {
     width: 50,
@@ -214,6 +303,8 @@ const styles = StyleSheet.create({
     width: "100%",
     maxHeight: "83%",
     padding: 5,
+    overflow: 'visible',
+    backgroundColor: "#fff",
   }, 
   card:{
     width:"95%",
@@ -247,6 +338,26 @@ const styles = StyleSheet.create({
     width: "100%",
     justifyContent: "flex-start",
     alignItems: "center",
+    backgroundColor: "#fff",
+    overflow:'visible'
+  },
+  seconds:{
+    position:"relative",
+    height:15,
+    width:15,
+    justifyContent: 'center',
+    alignItems: 'center',
+    bottom:200,
+    left:150
+  },
+  secondsForScatter:{
+    position:"relative",
+    height:15,
+    width:15,
+    justifyContent: 'center',
+    alignItems: 'center',
+    bottom:220,
+    left:150
   }
 });
 

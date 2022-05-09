@@ -4,11 +4,12 @@ import CookieManager from '@react-native-cookies/cookies';
 import {postData, getData} from '../components/FetchData';
 import { connect } from "react-redux";
 import * as actions from "./store/actions";
-const urlAll =  "http://81.68.226.132:80/standardV/index";
-const urlChoosen = "http://81.68.226.132:80/plan/index";
-const urlShop="http://81.68.226.132:80/shop/";
-const urlCollect = "http://81.68.226.132:80/standardV/collect";
-
+const urlAll =  "http://120.46.128.131:8000/standardV/index";
+const urlChoosen = "http://120.46.128.131:8000/plan/index";
+const urlShop="http://120.46.128.131:8000/shop/";
+const urlCollect = "http://120.46.128.131:8000/standardV/collect";
+const urlAvatar = "http://120.46.128.131:8000/account/avatar";
+ 
 class WelcomePage extends Component {
   state ={
     cookieCurrent:false
@@ -17,7 +18,7 @@ class WelcomePage extends Component {
     this.setState({cookieCurrent:value});
   }
   componentDidMount() {
-      let url = "http://81.68.226.132:80/account/login/";  
+      let url = "http://120.46.128.131:8000/account/login/";  
       CookieManager.get(url)
           .then( async (cookies) => {
             let myCookie = cookies["myCookie"];
@@ -28,7 +29,6 @@ class WelcomePage extends Component {
               let resToday = await getData(urlChoosen,this.props.login.token);
               let resShop= await getData(urlShop,this.props.login.token);
               let resCollect= await getData(urlCollect,this.props.login.token);
-
               let flagAll = true;
               let flagShop = true;
               let flagToday = true;
@@ -37,16 +37,6 @@ class WelcomePage extends Component {
               if(resAll===403||resAll==='403'||resAll['code']!=='1') {
                 flagAll = false;
               } 
-              // if(resShop["code"]!=="1") {
-              //   flagShop = false;
-              // } 
-              // if(resToday["code"]!==1) {
-              //   flagToday = false;
-              // }
-              // if(resCollect["code"]!==1||resCollect["code"]!=="1"){
-              //   flagCollect = false;
-              //   ToastAndroid.show(resCollect["message"],500);
-              // }
               if(flagAll&&flagShop&&flagToday&&flagCollect){
                 this.props.addPlan(resAll["data"]);
                 this.props.addPlanIndex(resAll["data"]);
@@ -81,7 +71,7 @@ class WelcomePage extends Component {
           <View style={styles.mainContainer}>
             <View style={styles.oval}></View>
             <Image
-              source={require('../../android/app/src/main/res/drawable-mdpi/src_assets_logofinal.png')}
+              source={require('../assets/logo-final.png')}
               style={styles.logo}
             />
           </View>

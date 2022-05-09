@@ -47,6 +47,7 @@ import com.awsomeproject.ml.PoseDetector
 import com.awsomeproject.utils.BoneVectorPart
 import com.awsomeproject.utils.DTWprocess
 import com.awsomeproject.utils.Voice
+import com.awsomeproject.videodecoder.GlobalStaticVariable
 import java.io.*
 import java.lang.IllegalStateException
 import java.util.*
@@ -172,37 +173,41 @@ class CameraSource(
             }
         }))
         Users.add(ResJSdata(firstSamplevideoId))
-
         imageReader =
             ImageReader.newInstance(PREVIEW_WIDTH, PREVIEW_HEIGHT, ImageFormat.YUV_420_888, 3)
         imageReader?.setOnImageAvailableListener({ reader ->
-            val image = reader.acquireLatestImage()
-            if (image != null) {
-                if (!::imageBitmap.isInitialized) {
-                    imageBitmap =
-                        Bitmap.createBitmap(
-                            PREVIEW_WIDTH,
-                            PREVIEW_HEIGHT,
-                            Bitmap.Config.ARGB_8888
-                        )
-                }
-                yuvConverter.yuvToRgb(image, imageBitmap)
-                val rotateMatrix = Matrix()
-                rotateMatrix.postScale(1.0f, -1.0f);
-                rotateMatrix.postRotate(180.0f)
+            try {
+                val image = reader.acquireLatestImage()
+                if (image != null) {
+                    if (!::imageBitmap.isInitialized) {
+                        imageBitmap =
+                            Bitmap.createBitmap(
+                                PREVIEW_WIDTH,
+                                PREVIEW_HEIGHT,
+                                Bitmap.Config.ARGB_8888
+                            )
+                    }
+                    yuvConverter.yuvToRgb(image, imageBitmap)
+                    val rotateMatrix = Matrix()
+                    rotateMatrix.postScale(1.0f, -1.0f);
+                    rotateMatrix.postRotate(180.0f)
 
-                val rotatedBitmap = Bitmap.createBitmap(
-                    imageBitmap, 0, 0, PREVIEW_WIDTH, PREVIEW_HEIGHT,
-                    rotateMatrix, false
-                )
+                    val rotatedBitmap = Bitmap.createBitmap(
+                        imageBitmap, 0, 0, PREVIEW_WIDTH, PREVIEW_HEIGHT,
+                        rotateMatrix, false
+                    )
 //                processImage(rotatedBitmap)
-                newestBitmap=rotatedBitmap
-                var oldPersons = mutableListOf<Person>();
-                newestPersons?.let{
-                    oldPersons=it
+                    newestBitmap = rotatedBitmap
+                    var oldPersons = mutableListOf<Person>();
+                    newestPersons?.let {
+                        oldPersons = it
+                    }
+                    visualize(oldPersons, rotatedBitmap)
+                    image.close()
                 }
-                visualize(oldPersons,rotatedBitmap)
-                image.close()
+            }catch (e:Throwable)
+            {
+                e.printStackTrace()
             }
         }, imageReaderHandler)
 
@@ -345,7 +350,7 @@ class CameraSource(
                     }
                     if(Samples[index].getClock()%2==0)
                         Users[index].append(scoreBypart, uservector,Samples[index].getSampleVectorNow())
-                    listener?.onImageprocessListener(score.toInt())
+                    listener?.onImageprocessListener(score.toInt(), GlobalStaticVariable.newestWearMesg_HeartBeartRatio.toInt())
                 }
                 frameProcessedInOneSecondInterval++
                 if (frameProcessedInOneSecondInterval == 1) {
@@ -422,7 +427,7 @@ class CameraSource(
 
     interface CameraSourceListener {
         fun onFPSListener(fps: Int)
-        fun onImageprocessListener(score: Int)
+        fun onImageprocessListener(score: Int,ratio: Int)
         fun onDetectedInfo(personScore: Float?, poseLabels: List<Pair<String, Float>>?)
         fun onPersonDetected()
     }

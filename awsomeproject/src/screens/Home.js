@@ -21,7 +21,7 @@ export default class Home extends React.Component {
             selectedIndex={this.state.selectedIndex}
             onSelect={selectedIndex => this.setState({selectedIndex})}>
             <Tab title="运动" />
-            <Tab title="资讯" />
+            <Tab title="广场" />
           </TabBar>
           {this.showTab(this.state.selectedIndex)}
         </Layout>

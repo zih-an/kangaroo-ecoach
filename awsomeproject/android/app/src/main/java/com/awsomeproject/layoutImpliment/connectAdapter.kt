@@ -14,7 +14,8 @@ import java.util.*
 
 class connectAdapter(  //数据项
     private val data: List<String>?,
-    private val listener:View.OnClickListener?
+    private val listener:View.OnClickListener?,
+    private val btnText:String
 ) : BaseAdapter(),
     View.OnClickListener {
     //上下文
@@ -47,7 +48,7 @@ class connectAdapter(  //数据项
         //设置数据
         viewHolder!!.text!!.text = data!![i]
         //设置数据
-        viewHolder.btn?.setText("连接")
+        viewHolder.btn?.setText(btnText)
         viewHolder.btn?.setTag(data!![i])
         viewHolder.btn?.setOnClickListener(listener)
         return view

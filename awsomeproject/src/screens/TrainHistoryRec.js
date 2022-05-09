@@ -16,8 +16,8 @@ import { connect } from "react-redux";
 import * as actions from "../screens/store/actions";
 import { color } from "react-native-tcharts/theme/theme";
 
-let url="http://81.68.226.132:80/exercise/date";
-let urlHis="http://81.68.226.132:80/exercise/query_by_id";
+let url="http://120.46.128.131:8000/exercise/date";
+let urlHis="http://120.46.128.131:8000/exercise/query_by_id";
 
 const BackIcon = (props) => <Icon {...props} name="arrow-back" />;
 const BackFill = (props) => <Text style={{marginTop:20,marginLeft:0,color:"grey"}}>无历史记录</Text> //组件在无历史记录时显示
@@ -82,7 +82,7 @@ function TrainHistoryRec(props) {
   },[date,theUrl]);
   const getRecord = async () => {
 
-    let urlRecord ="http://81.68.226.132/exercise/all-record";
+    let urlRecord ="http://120.46.128.131:8000/exercise/all-record";
     let res = await getData(urlRecord,props.login.token);
     let datesRecord = res["data"].map((item,index)=>item.start_time);
     datesRecord = datesRecord.map((item,index)=>{let tmp = item.split('T');return tmp[0]});

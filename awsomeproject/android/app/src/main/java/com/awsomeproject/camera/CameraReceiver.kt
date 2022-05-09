@@ -34,6 +34,7 @@ import com.awsomeproject.ml.PoseDetector
 import com.awsomeproject.socketconnect.communication.host.FrameDataReceiver
 import com.awsomeproject.utils.DTWprocess
 import com.awsomeproject.utils.Voice
+import com.awsomeproject.videodecoder.GlobalStaticVariable
 import java.lang.IllegalStateException
 import java.util.*
 
@@ -154,9 +155,8 @@ class CameraReceiver(
         timerTask=null
         NewFrameGenerator?.cancel()
         NewFrameGenerator=null
-        detector?.close()
+//        detector?.close()
         detector = null
-        isPersonDetect=true
 
     }
 
@@ -192,7 +192,7 @@ class CameraReceiver(
                                 uservector,
                                 Samples[index].getSampleVectorNow()
                             )
-                        listener?.onImageprocessListener(score.toInt())
+                        listener?.onImageprocessListener(score.toInt(), GlobalStaticVariable.newestWearMesg_HeartBeartRatio.toInt())
                     }
                     print("");
                 } else if (isPersonDetect == false) {
@@ -291,7 +291,7 @@ class CameraReceiver(
 
     interface CameraReceiverListener {
         fun onFPSListener(fps: Int)
-        fun onImageprocessListener(score: Int)
+        fun onImageprocessListener(score: Int,ratio: Int)
         fun onDetectedInfo(personScore: Float?, poseLabels: List<Pair<String, Float>>?)
         fun onPersonDetected()
     }

@@ -62,7 +62,6 @@ class screen_sender_connectView  : AppCompatActivity()  {
         bundle?.getString("ExerciseScheduleMesg")?.let{
             JsonMeg_Intent=it
         }
-
         btnReturn=findViewById(R.id.back_arrow)
         btnSearchDeviceOpen=this.findViewById(R.id.connectBtn)
         btnReturn=this.findViewById(R.id.back_arrow)
@@ -132,6 +131,7 @@ class screen_sender_connectView  : AppCompatActivity()  {
                             devices.get(uuid)?.let {
                                 choosed_device=it
                             }
+                            SystemClock.sleep(200);
                             val intent = Intent(baseContext, CameraActivity::class.java)
                             intent.putExtra("isScreenProjection", true)
                             intent.putExtra("screenReceiverIp", devices.get(uuid)!!.ip)
@@ -144,7 +144,7 @@ class screen_sender_connectView  : AppCompatActivity()  {
                             btnSearchDeviceOpen.setText("开始搜索")
                             startActivityForResult(intent,SCREEN_CAMERA_REQUEST)
                         }
-                    })
+                    },"连接")
                     receiverList.adapter=adapter
                 }
             }

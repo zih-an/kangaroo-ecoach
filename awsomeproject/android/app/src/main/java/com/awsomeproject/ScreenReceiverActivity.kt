@@ -99,8 +99,8 @@ class screenReceiverActivity  : AppCompatActivity() {
     }
     override fun onStop() {
         super.onStop()
-        FrameDataReceiver.close()
         FrameReceiverConnectThread?.interrupt()
+        FrameDataReceiver.close()
 
     }
 

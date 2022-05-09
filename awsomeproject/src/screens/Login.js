@@ -6,10 +6,10 @@ import {postData, getData} from '../components/FetchData';
 import { connect } from "react-redux";
 import * as actions from "./store/actions";
 
-const urlAll =  "http://81.68.226.132:80/standardV/index";
-const urlChoosen = "http://81.68.226.132:80/plan/index";
-const urlShop="http://81.68.226.132:80/shop/";
-const urlCollect = "http://81.68.226.132:80/standardV/collect";
+const urlAll =  "http://120.46.128.131:8000/standardV/index";
+const urlChoosen = "http://120.46.128.131:8000/plan/index";
+const urlShop="http://120.46.128.131:8000/shop/";
+const urlCollect = "http://120.46.128.131:8000/standardV/collect";
 
 let theToken;
 
@@ -34,7 +34,7 @@ class Login extends React.Component {
   pressCallback = async () => {
     this.setLoading(true);
     // 1. 发送请求验证密码正确
-    let url = "http://81.68.226.132:80/account/login/";    
+    let url = "http://120.46.128.131:8000/account/login/";    
     let res = await postData(url,{email:this.props.login.email,password:this.props.login.pwd});
     let correct = res["code"]; 
     theToken=res["token"];
@@ -58,6 +58,8 @@ class Login extends React.Component {
       let flagShop = true;
       let flagToday = true;
       let flagCollect = true;
+      // let flagAvatar = true;
+      // if(resAvatar["code"])
       if(resAll["code"]!=="1") {
         // flagAll = false;
         ToastAndroid.show(resAll["message"],500);
@@ -75,13 +77,35 @@ class Login extends React.Component {
         ToastAndroid.show(resCollect["message"],500);
       }
       if(flagAll&&flagShop&&flagToday&&flagCollect){
-        this.props.addPlan(resAll["data"]);
-        this.props.addPlanIndex(resAll["data"]);
-        this.props.addTodayDetail(resToday["data"]);
-        this.props.addToday(resToday["data"].map(item => item.id));
-        this.props.addTodayB(resToday["data"].map(item => item.id));
-        this.props.addShop(resShop["data"]);
-        this.props.changeCollect(JSON.parse(resCollect["data"]));
+
+        if(Array.isArray(resAll["data"])) 
+          {
+            this.props.addPlan(resAll["data"]);
+            this.props.addPlanIndex(resAll["data"]);
+          }
+        else ToastAndroid.show("数据库错误！运动详情获取失败",500);
+
+        if(Array.isArray(resToday["data"])) 
+          {
+            this.props.addTodayDetail(resToday["data"]);
+            this.props.addToday(resToday["data"].map(item => item.id));
+            this.props.addTodayB(resToday["data"].map(item => item.id));
+          }
+        else ToastAndroid.show("数据库错误！计划获取失败",500);
+        
+        if(Array.isArray(resShop["data"])) 
+          {
+            this.props.addShop(resShop["data"]);
+          }
+        else ToastAndroid.show("数据库错误！商城信息获取失败",500);
+        
+        if(Array.isArray(JSON.parse(resCollect["data"]))) 
+          {
+            this.props.changeCollect(JSON.parse(resCollect["data"]));
+          }
+
+        else ToastAndroid.show("数据库错误！收藏信息获取失败",500);
+      
         this.setLoading(false);
         ToastAndroid.show("登录成功！",500);
         this.props.navigation.navigate("MainPage");
@@ -116,7 +140,7 @@ class Login extends React.Component {
         <Layout style={styles.vertical}>
           <Layout style={styles.headerContainer}>
             <Image
-              source={require('../../android/app/src/main/res/drawable-mdpi/src_assets_logofinal.png')}
+              source={require('../assets/logo-final.png')}
               style={styles.logo}
             />
             <Text category="h4">袋鼠教练</Text>

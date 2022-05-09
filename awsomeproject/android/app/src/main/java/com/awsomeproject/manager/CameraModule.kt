@@ -7,6 +7,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.awsomeproject.CameraActivity
 import com.facebook.react.bridge.*
 import android.R.attr.name
+import com.awsomeproject.socketconnect.connectview.BluetoothWearviewActivity
 import com.awsomeproject.socketconnect.connectview.hostviewActivity
 import com.awsomeproject.socketconnect.connectview.slaveviewActivity
 import com.awsomeproject.socketconnect.screenprojection.screen_sender_connectView
@@ -106,6 +107,25 @@ class CameraModule(reactContext: ReactApplicationContext) :
                             }
                         }
                     }
+                }else if(requestCode== REQUEST_WATCH_CODE){
+                    when(resultCode) {
+                        AppCompatActivity.RESULT_CANCELED -> {
+                            pickerPromise?.let { promise ->
+                                promise.resolve(0)?.let {
+                                    promise.reject(E_NO_IMAGE_DATA_FOUND, "训练未完成！")
+                                }
+                                pickerPromise = null
+                            }
+                        }
+                        AppCompatActivity.RESULT_OK -> {
+                            pickerPromise?.let { promise ->
+                                promise.resolve(0)?.let {
+                                    promise.reject(E_NO_IMAGE_DATA_FOUND, "训练未完成！")
+                                }
+                                pickerPromise = null
+                            }
+                        }
+                    }
                 }
 
 //                if (requestCode == PICK_CONTACT_REQUEST) {
@@ -162,14 +182,21 @@ class CameraModule(reactContext: ReactApplicationContext) :
         val intent = Intent(currentActivity, slaveviewActivity::class.java)
         currentActivity!!.startActivityForResult(intent,REQUEST_CLINT_CODE)
     }
+    @ReactMethod
+    fun startwatchActivity(promise: Promise) {
+        pickerPromise=promise
+        val intent = Intent(currentActivity, BluetoothWearviewActivity::class.java)
+        currentActivity!!.startActivityForResult(intent,REQUEST_WATCH_CODE)
+    }
     companion object {
         const val REQUEST_CAMERA_CODE = 1
         const val REQUEST_REMOTE_CODE = 2
         const val REQUEST_SCREEN_CODE = 3
         const val REQUEST_CLINT_CODE  = 4
+        const val REQUEST_WATCH_CODE  = 10
         const val REMOTE_CAMERA_REQUEST = 5
         const val SCREEN_CAMERA_REQUEST= 6
-        const val PROJECTION_CAMERA_REQUEST= 6
+        const val PROJECTION_CAMERA_REQUEST= 7
         const val E_NO_IMAGE_DATA_FOUND = "E_NO_IMAGE_DATA_FOUND"
     }
 

@@ -17,7 +17,7 @@ import { connect } from 'react-redux';
 
 const {width} = Dimensions.get('window');
  
-const url = "http://81.68.226.132:80/exercise/begin";
+const url = "http://120.46.128.131:8000/exercise/begin";
 
 class ActionSheetComp extends Component{
     constructor(props){
@@ -105,6 +105,11 @@ class ActionSheetComp extends Component{
             this.setState({progressFir:false});
             else this.setState({progressSec:false});
             this.props.setStatus(true);
+            if(this.props.useWatch){
+                resSchedual.isWearDeviceConnect=1;
+            }else{
+                resSchedual.isWearDeviceConnect=0;
+            }
             resSchedual=JSON.stringify(resSchedual);
             let response;
             if(index===0)
@@ -118,7 +123,7 @@ class ActionSheetComp extends Component{
             {
                 this.cancelModal();   
             }else{
-                let finishurl = "http://81.68.226.132:80/exercise/finish"
+                let finishurl = "http://120.46.128.131:8000/exercise/finish"
                 let resObj = JSON.parse(response);
                 let id = resObj["id"];
                 let resPost = await postData(finishurl,{"information":response,"id":id},this.props.login.token);
@@ -129,7 +134,7 @@ class ActionSheetComp extends Component{
                     this.cancelModal();
                     this.props.nav.navigate("SportOverviewPage");
                 }else{
-                    ToastAndroid.show("上传失败!",500);
+                    ToastAndroid.show(resPost["message"],500);
                     this.cancelModal();
                 }   
             }
@@ -189,7 +194,8 @@ const styles = StyleSheet.create({
     modalStyle:{
         justifyContent:'flex-end',
         alignItems:'center',
-        flex:1
+        flex:1,
+        backgroundColor:"rgba(0,0,0,0.5)"
     },
     subView:{
         justifyContent:'flex-end',

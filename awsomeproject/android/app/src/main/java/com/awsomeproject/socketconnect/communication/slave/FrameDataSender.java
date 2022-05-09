@@ -50,7 +50,6 @@ public class FrameDataSender  {
             if(socket!=null)
             {
                 isOpen=false;
-                socket.shutdownOutput();
                 os=null;
                 socket.close();
                 socket = null;

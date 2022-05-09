@@ -15,6 +15,7 @@ import com.awsomeproject.SenderActivity
 import com.awsomeproject.layoutImpliment.BackArrowView
 import com.awsomeproject.screenReceiverActivity
 import com.awsomeproject.socketconnect.Device
+import com.awsomeproject.socketconnect.communication.host.FrameDataReceiver
 import com.awsomeproject.socketconnect.communication.slave.CommandReceiver
 import com.awsomeproject.socketconnect.search.DeviceSearchResponser
 import com.awsomeproject.videodecoder.GlobalStaticVariable
@@ -54,6 +55,8 @@ class slaveviewActivity : AppCompatActivity() {
         }
         btnReturn.setOnClickListener{
             val intent = Intent()
+            stopListen()
+            CommandReceiver.close()
             setResult(RESULT_CANCELED, intent)
             finish()
         }
@@ -79,7 +82,9 @@ class slaveviewActivity : AppCompatActivity() {
             }
             "prepareAcceptFrame" -> {
                 GlobalStaticVariable.frameRate=25
+                FrameDataReceiver.close()
                 runOnUiThread {
+
                     val intent = Intent(baseContext, screenReceiverActivity::class.java)
                     var hostIp = hostDevice!!.ip
                     intent.putExtra("mainScreenSenderIp", hostIp)
@@ -97,10 +102,7 @@ class slaveviewActivity : AppCompatActivity() {
     }
     override fun onStop() {
         super.onStop()
-        stopListen()
-        CommandReceiver.close()
-        val intent = Intent()
-        setResult(RESULT_CANCELED, intent)
+
     }
 
     override fun onResume() {

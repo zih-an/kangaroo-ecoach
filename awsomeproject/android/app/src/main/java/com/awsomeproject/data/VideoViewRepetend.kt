@@ -11,9 +11,15 @@ import android.widget.Toast
 import android.widget.VideoView
 import androidx.constraintlayout.widget.Constraints
 import androidx.coordinatorlayout.widget.CoordinatorLayout
+import com.awsomeproject.MainApplication
 import com.awsomeproject.R
 import com.awsomeproject.utils.Voice
 import java.util.*
+import com.awsomeproject.MainApplication.getProxy
+import com.danikula.videocache.HttpProxyCacheServer
+
+
+
 
 
 class VideoViewRepetend(
@@ -26,6 +32,7 @@ class VideoViewRepetend(
     private var context: Context,
     private var listener: VideoViewRepetendListener?=null)
 {
+    private val urlPrefix:String="http://120.46.128.131:80/media/"
     public lateinit var schedule: ExerciseSchedule
     var countDountMp:MediaPlayer?=null
     val surfaceHolder=object :SurfaceHolder.Callback{
@@ -49,6 +56,7 @@ class VideoViewRepetend(
         schedule=ExerciseSchedule(JSONmeg)
         //设置倒计时结束后，倒计时界面隐藏
         countDownHide()
+        setVideoView()
         setPlayVideo()
         }
     fun setPlayVideo()//0倒计时，1运动，2休息
@@ -60,7 +68,6 @@ class VideoViewRepetend(
         {
             countDownShow()
         }
-        setVideoView()
         countDountMp?.setOnCompletionListener{
             //隐藏倒计时VIEW
             countDownHide()
@@ -86,6 +93,8 @@ class VideoViewRepetend(
                     setCountView(reVideoId)
                     //设置休息倒计时界面显示
                     countDownShow()
+                    //preload viewView
+                    setVideoView()
                     countDountMp?.setOnCompletionListener {
                         //休息视频运动完毕,重新开始播放倒计时
                         countDownHide()
@@ -119,9 +128,8 @@ class VideoViewRepetend(
         }
         if(index>=1)
         {
-            countDountMp?.start()
+            start()
         }
-
     }
     public fun start()
     {
@@ -164,9 +172,10 @@ class VideoViewRepetend(
     }
     private fun setVideoView()
     {
-        val exVideoId=context.resources.getIdentifier(ExerciseSchedule.getName(index), "raw", context.getPackageName())
-        val ExerciseDounturi = "android.resource://" + context.packageName + "/" + exVideoId
-        videoView.setVideoURI(Uri.parse(ExerciseDounturi))
+        var ExerciseDounturi=urlPrefix+ExerciseSchedule.getName(index)+".mp4"
+        var proxy = getProxy(mainActivity)
+        var proxyUrl = proxy.getProxyUrl(ExerciseDounturi)
+        videoView.setVideoPath(proxyUrl)
         videoView.seekTo(1)
 
     }

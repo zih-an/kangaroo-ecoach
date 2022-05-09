@@ -13,8 +13,8 @@ import * as actions from "./store/actions";
 import { getData, postData } from "../components/FetchData";
 import { default as theme } from "../custom-theme.json";
 
-const urlChange = "http://81.68.226.132:80/plan/change";
-const urlChoosen = "http://81.68.226.132:80/plan/index";
+const urlChange = "http://120.46.128.131:8000/plan/change";
+const urlChoosen = "http://120.46.128.131:8000/plan/index";
 
 const BackIcon = props => <Icon {...props} name="arrow-back" />;
 const ClickIcon = props => <Text style={{color:theme["color-primary-500"],fontSize:18}}>确定</Text>;

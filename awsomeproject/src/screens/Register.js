@@ -4,7 +4,6 @@ import {
   Button,
   Layout,
   Text,
-  Modal,
   Card,
   Select,
   IndexPath,
@@ -24,14 +23,13 @@ const AlertIcon = (props) => (
 
 export default class Register extends React.Component {
   preferList = [0];
+  nickname = "";
   state = {
     email:'',
     password:'',
     pwdY:false,
     passwordDouble:'',
     check:'',
-    modalVisible: false,
-    modalInfo: "",
     selectedIndex:[new IndexPath(0),],
     tyepsName : [{title:"胸部"},{title:"背部"},{title:"肩部"},{title:"手臂"},{title:"腹部"},{title:"腰部"},{title:"臀部"},{title:"腿部"},{title:"全身耐力"},],
     displayValue:"请选择您的运动偏好",
@@ -70,12 +68,15 @@ export default class Register extends React.Component {
     let arr = index.map(item => item.row);
     this.preferList = arr.sort(function(a, b){return a - b});
   }
+  handleNickname = (text) =>{
+    this.nickname = text;
+  }
   handleEmail=(text)=>{
     this.setState({email:text})
   }
   handlePassword=(text)=>{
     this.setState({password:text})
-    if(this.state.password.length<7) this.setState({pwdY:false});
+    if(this.state.password.length<=7) this.setState({pwdY:false});
     else this.setState({pwdY:true});
   }
   _countDownAction(){
@@ -118,13 +119,15 @@ export default class Register extends React.Component {
   RegisterCallback = async () => {
     // 注册
     this.setLoading(true);
-    let urlReg = "http://81.68.226.132:80/account/register/";  
-    if(this.state.pwdY){
+    let urlReg = "http://120.46.128.131:8000/account/register/";
+    let nameFlag = (this.nickname.length<=7&&this.nickname.length>=2) 
+    if(this.state.pwdY&&nameFlag){
       let res = await postData(urlReg,{
         "email":this.state.email,
         "password":this.state.password,
         "check_code":this.state.check,
-        "preferList":this.preferList});
+        "preferList":this.preferList,
+        "nickname":this.nickname});
         if (res["code"]==="1") {
         this.setLoading(false);
         //注册成功跳转登录页面
@@ -137,7 +140,7 @@ export default class Register extends React.Component {
         }
     }
     else{
-      ToastAndroid.show("请检查您的密码！",500)
+      ToastAndroid.show("密码或昵称不规范！",500)
     this.setLoading(false);
 
     }
@@ -151,7 +154,7 @@ export default class Register extends React.Component {
   handleCheckClick = async () =>{
     if (!this.state.counting  && this.state.selfEnable){
       this.setState({selfEnable:false})
-      let urlCheck = "http://81.68.226.132:80/account/get-code/";
+      let urlCheck = "http://120.46.128.131:8000/account/get-code/";
       let res = await postData(urlCheck,{"email":this.state.email});
 
       if(res["code"]===1||res["code"]==="1"){
@@ -180,6 +183,14 @@ export default class Register extends React.Component {
       </View>
     )
   }
+  renderCaptionName = () => {
+    return (
+      <View style={styles.captionContainer}>
+        {AlertIcon(styles.captionIcon)}
+        <Text style={styles.captionText}>{(this.nickname.length>7||this.nickname.length<2)&&"请输入2到7位昵称"}</Text>
+      </View>
+    )
+  }
   render() {
     return (
       <View>
@@ -192,6 +203,7 @@ export default class Register extends React.Component {
             <Text category="h4">袋鼠教练</Text>
           </Layout>
           <Layout style={styles.inputsContainer}>
+            <Input style={styles.input} placeholder="请输入昵称" onChangeText={this.handleNickname} caption={this.renderCaptionName}/>
             <Input style={styles.input} placeholder="请输入邮箱" onChangeText={this.handleEmail} />
             <Input 
               style={styles.input} 
@@ -260,7 +272,7 @@ const styles = StyleSheet.create({
   },
   inputsContainer: {
     width: "100%",
-    height: "45%",
+    height: "55%",
     justifyContent: "space-evenly",
     alignItems: "center",
   },
@@ -273,7 +285,7 @@ const styles = StyleSheet.create({
     width: "80%",
     textAlign: "center",
     borderRadius: 30,
-    marginTop:25
+    marginTop:5
   },
   input: {
     width: "80%",
