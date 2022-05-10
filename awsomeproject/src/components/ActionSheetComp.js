@@ -94,49 +94,53 @@ class ActionSheetComp extends Component{
         }
     }
     toExercise = async(index)=>{
-        if(index===0)//摄像头
-        this.setState({progressFir:true});
-        else this.setState({progressSec:true});
-
-        let resSchedual = await getData(url,this.props.token);
-        if(resSchedual["code"]===0) Alert.alert("连接失败！");
-        else {
-            if(index === 0)
-            this.setState({progressFir:false});
-            else this.setState({progressSec:false});
-            this.props.setStatus(true);
-            if(this.props.useWatch){
-                resSchedual.isWearDeviceConnect=1;
-            }else{
-                resSchedual.isWearDeviceConnect=0;
-            }
-            resSchedual=JSON.stringify(resSchedual);
-            let response;
-            if(index===0)
-            {
-                response = await CameraModule.startremoteActivity(resSchedual);
-            }
-            else{
-                response = await CameraModule.startscreenprojectionActivity(resSchedual);
-            }
-            if(response===0)
-            {
-                this.cancelModal();   
-            }else{
-                let finishurl = "http://120.46.128.131:8000/exercise/finish"
-                let resObj = JSON.parse(response);
-                let id = resObj["id"];
-                let resPost = await postData(finishurl,{"information":response,"id":id},this.props.login.token);
-                if(resPost["code"]==="1"||resPost["code"]===1){
-                    ToastAndroid.show("上传成功，可点击历史记录查看",500);
-                    this.props.addReportTime(resPost["data"]);
-                    this.props.addReport(resObj);
-                    this.cancelModal();
-                    this.props.nav.navigate("SportOverviewPage");
+        if(this.props.todayPlansDetail.length===0){
+            ToastAndroid.show("目前还没有计划，请先进入计划页制定运动计划！",500);
+        }else{
+            if(index===0)//摄像头
+                this.setState({progressFir:true});
+            else this.setState({progressSec:true});
+        
+            let resSchedual = await getData(url,this.props.token);
+            if(resSchedual["code"]===0) ToastAndroid.show(resSchedual['message'],500);
+            else {
+                if(index === 0)
+                this.setState({progressFir:false});
+                else this.setState({progressSec:false});
+                this.props.setStatus(true);
+                if(this.props.useWatch){
+                    resSchedual.isWearDeviceConnect=1;
                 }else{
-                    ToastAndroid.show(resPost["message"],500);
-                    this.cancelModal();
-                }   
+                    resSchedual.isWearDeviceConnect=0;
+                }
+                resSchedual=JSON.stringify(resSchedual);
+                let response;
+                if(index===0)
+                {
+                    response = await CameraModule.startremoteActivity(resSchedual);
+                }
+                else{
+                    response = await CameraModule.startscreenprojectionActivity(resSchedual);
+                }
+                if(response===0)
+                {
+                    this.cancelModal();   
+                }else{
+                    let finishurl = "http://120.46.128.131:8000/exercise/finish"
+                    let resObj = JSON.parse(response);
+                    let id = resObj["id"];
+                    let resPost = await postData(finishurl,{"information":response,"id":id},this.props.login.token);
+                    if(resPost["code"]==="1"||resPost["code"]===1){
+                        ToastAndroid.show("上传成功，可点击历史记录查看",500);
+                        this.props.addReportTime(resPost["data"]);
+                        this.props.addReport(resObj);
+                        this.cancelModal();
+                        this.props.nav.navigate("SportOverviewPage");
+                    }else{
+                        ToastAndroid.show(resPost["message"],500);
+                        this.cancelModal();
+                    }   
+                }
             }
         }
     };
@@ -239,6 +243,7 @@ const styles = StyleSheet.create({
 const mapStateToProps = state =>{
     return {
         login:state.login,
+        todayPlansDetail:state.todayPlansDetail,
     };
   };
   

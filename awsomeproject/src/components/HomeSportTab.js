@@ -44,7 +44,7 @@ const handleClick = (index,url) =>{
     <View style={{width:"95%",justifyContent:"center",alignItems: 'center',}}>
       <Card style={styles.historyTrainCard}>
       <Text category="s1" style={{color: "white",marginLeft:20,marginTop:10}}>
-        距上次运动已经过去...
+              生命在于运动        ——伏尔泰
       </Text>
       <Layout style={styles.cardMsgContainer}>
         <BulbIcon
@@ -53,8 +53,8 @@ const handleClick = (index,url) =>{
         />
         <Text
           category="h1"
-          style={{color: '#fff', fontWeight: 'bold', fontSize: 20}}>
-          3天
+          style={{color: 'white', fontSize: 15}}>
+          坚持运动呀！
         </Text>
       </Layout>
     </Card>
@@ -113,36 +113,39 @@ function HomeSportTab(props) {
   };
   
   const toExercising = async () => {
-    setLoading(true);
-    let resSchedual = await getData(beginurl,props.login.token);
-    setLoading(false);
-    if(resSchedual["code"]===0) {
-      Alert.alert(resSchedual["message"].message);
-    }
-    else {
-      if(activeChecked){
-        resSchedual.isWearDeviceConnect=1;
-      }else{
-        resSchedual.isWearDeviceConnect=0;
+    if(props.todayPlansDetail.length===0){
+      ToastAndroid.show("目前还没有计划，请先进入计划页制定运动计划！",500);
+    }else{
+      setLoading(true);
+      let resSchedual = await getData(beginurl,props.login.token);
+      setLoading(false);
+      if(resSchedual["code"]===0) {
+        Alert.alert(resSchedual["message"].message);
       }
-      console.log(resSchedual);
-      resSchedual=JSON.stringify(resSchedual);
-      let response = await CameraModule.startcameraActivity(resSchedual);
-      if(response===0)
-      {
-        
-      }else{
-        reportData = JSON.parse(response);
-        let resfinish = await postData(finishurl,{'information':response,'id':reportData['id']},props.login.token);
-        if(resfinish["code"]==="1"||resfinish["code"]===1){
-          ToastAndroid.show("上传成功，可点击历史记录查看",500);
-          props.addReport(reportData);
-          props.addReportTime(resfinish["data"]);
-          props.nav2exercising.navigate("SportOverviewPage");
+      else {
+        if(activeChecked){
+          resSchedual.isWearDeviceConnect=1;
+        }else{
+          resSchedual.isWearDeviceConnect=0;
+        }
+          resSchedual=JSON.stringify(resSchedual);
+          let response = await CameraModule.startcameraActivity(resSchedual);
+          if(response===0)
+          {
+             
           }else{
-              ToastAndroid.show("上传失败!",500);
+            reportData = JSON.parse(response);
+            let resfinish = await postData(finishurl,{'information':response,'id':reportData['id']},props.login.token);
+            if(resfinish["code"]==="1"||resfinish["code"]===1){
+              ToastAndroid.show("上传成功，可点击历史记录查看",500);
+              props.addReport(reportData);
+              props.addReportTime(resfinish["data"]);
+              props.nav2exercising.navigate("SportOverviewPage");
+              }else{
+                  ToastAndroid.show("上传失败!",500);
+              }
           }
-      }
+    }
     }
   };
   const toConnectSend = () => {
@@ -320,6 +323,7 @@ const mapStateToProps = state =>{
   return {
       login:state.login,
       reportTime:state.reportTime,
+      todayPlansDetail:state.todayPlansDetail,
   };
 };
 

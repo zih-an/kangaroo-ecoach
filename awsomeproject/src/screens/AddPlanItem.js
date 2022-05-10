@@ -56,13 +56,14 @@ function AddItem(props) {
     return (progress? <ActivityIndicator color="orange"/>:<TopNavigationAction icon={ClickIcon} onPress={navigateBackWithSend} />);
   }
   const backAction = () => {
-    Alert.alert("稍等!", "确定不修改计划吗?", [
+    Alert.alert("稍等!", "是否修改计划?", [
       {
         text: "取消",
         onPress: () => null,
         style: "cancel"
       },
-      { text: "确定", onPress: () => navigateBack() }
+      { text: "不修改", onPress: () => navigateBack() },
+      { text: "修改", onPress: () => navigateBackWithSend() }
     ]);
     
     return true;

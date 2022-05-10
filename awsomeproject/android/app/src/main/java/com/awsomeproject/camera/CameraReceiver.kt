@@ -123,6 +123,9 @@ class CameraReceiver(
             override fun onPersonNotDect() {
                 voice.voiceTips()
             }
+            override fun onFrameScoreRaising() {
+                voice.voiceTick()
+            }
         }))
         Users.add(ResJSdata(firstSamplevideoId))
 

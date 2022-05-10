@@ -4,11 +4,9 @@ import android.app.Activity
 import android.content.Context
 import android.media.MediaPlayer
 import android.net.Uri
+import android.os.SystemClock
 import android.view.*
-import android.widget.FrameLayout
-import android.widget.ImageView
-import android.widget.Toast
-import android.widget.VideoView
+import android.widget.*
 import androidx.constraintlayout.widget.Constraints
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import com.awsomeproject.MainApplication
@@ -17,9 +15,7 @@ import com.awsomeproject.utils.Voice
 import java.util.*
 import com.awsomeproject.MainApplication.getProxy
 import com.danikula.videocache.HttpProxyCacheServer
-
-
-
+import kotlin.concurrent.thread
 
 
 class VideoViewRepetend(
@@ -27,6 +23,7 @@ class VideoViewRepetend(
     private var mainActivity: Activity,
     private var videoView: VideoView,
     private var countdownView: SurfaceView,
+    private var countdownSeekBar: SeekBar,
     private var countdownViewFramLayout:FrameLayout,
     private var countdownBackground:ImageView,
     private var context: Context,
@@ -55,7 +52,7 @@ class VideoViewRepetend(
         countdownBackground.setImageDrawable(context.resources.getDrawable(R.drawable.blackback))
         schedule=ExerciseSchedule(JSONmeg)
         //设置倒计时结束后，倒计时界面隐藏
-        countDownHide()
+        countDownHide(true)
         setVideoView()
         setPlayVideo()
         }
@@ -66,11 +63,11 @@ class VideoViewRepetend(
         setCountView(countDounturi)
         if(index>=1)
         {
-            countDownShow()
+            countDownShow(false)
         }
         countDountMp?.setOnCompletionListener{
             //隐藏倒计时VIEW
-            countDownHide()
+            countDownHide(true)
             //运动开始触发,进入运动视频
             listener?.onExerciseStart(index,ExerciseSchedule.getName(index))
             //播放运动视频
@@ -92,12 +89,12 @@ class VideoViewRepetend(
                     val reVideoId = context.resources.getIdentifier("relaxtimer","raw", context.getPackageName() )
                     setCountView(reVideoId)
                     //设置休息倒计时界面显示
-                    countDownShow()
+                    countDownShow(true)
                     //preload viewView
                     setVideoView()
                     countDountMp?.setOnCompletionListener {
                         //休息视频运动完毕,重新开始播放倒计时
-                        countDownHide()
+                        countDownHide(true)
                         setPlayVideo()
                     }
                     countDountMp?.start()
@@ -109,7 +106,7 @@ class VideoViewRepetend(
                     val analysisId = context.resources.getIdentifier("analysis","raw", context.getPackageName() )
                     setCountView(analysisId)
                     //设置分析视频界面显示
-                    countDownShow()
+                    countDownShow(false)
                     mainActivity.runOnUiThread(java.lang.Runnable {
                         Toast.makeText(context,"运动数据报告生成中",Toast.LENGTH_LONG).show()
                     })
@@ -136,7 +133,7 @@ class VideoViewRepetend(
         voice.voiceCountDown()
         countDountMp?.start()
         mainActivity.runOnUiThread(java.lang.Runnable {
-            countDownShow()
+            countDownShow(false)
         })
     }
     private fun setCountView(srcId:Int)
@@ -144,7 +141,6 @@ class VideoViewRepetend(
         countDountMp?.release()
         countDountMp=null
         countDountMp=MediaPlayer.create(context,srcId)
-
         countDountMp?.setVideoScalingMode(MediaPlayer.VIDEO_SCALING_MODE_SCALE_TO_FIT_WITH_CROPPING);
         countDountMp?.setOnPreparedListener(object:MediaPlayer.OnPreparedListener{
             override fun onPrepared(p0: MediaPlayer?) {
@@ -164,12 +160,44 @@ class VideoViewRepetend(
                     mp.gravity= Gravity.CENTER
                     countdownView.layoutParams=mp
                 }
+
             }
         })
         countDountMp?.setVolume(0.4f, 0.4f)
         countdownView.holder.addCallback(surfaceHolder)
-
+        //给进度条设置滑动监听
+        countDountMp?.let {
+            countdownSeekBar.max=it.duration
+        }
+        countdownSeekBar.setOnSeekBarChangeListener(object :SeekBar.OnSeekBarChangeListener{
+            override fun onProgressChanged(p0: SeekBar?, p1: Int, p2: Boolean) {
+            }
+            override fun onStartTrackingTouch(p0: SeekBar?) {
+            }
+            override fun onStopTrackingTouch(p0: SeekBar?) {
+                val progress: Int = p0!!.getProgress()
+                //在当前位置播放
+                countDountMp?.seekTo(progress)
+            }
+        });
+        thread {
+            while(countdownSeekBar.progress<=countdownSeekBar.max)
+            {
+                SystemClock.sleep(200)
+                try {
+                    countDountMp?.let {
+                        val postion = it.currentPosition
+                        countdownSeekBar.progress = postion
+                    }
+                }catch (e:Throwable)
+                {
+                    e.printStackTrace()
+                    break
+                }
+            }
+        }
     }
+
     private fun setVideoView()
     {
         var ExerciseDounturi=urlPrefix+ExerciseSchedule.getName(index)+".mp4"
@@ -179,17 +207,21 @@ class VideoViewRepetend(
         videoView.seekTo(1)
 
     }
-    private fun countDownShow()
+    private fun countDownShow(type:Boolean)
     {
         countdownView.visibility = View.VISIBLE
+        if(type)
+            countdownSeekBar.visibility= View.VISIBLE
         countdownViewFramLayout.visibility= View.VISIBLE
     }
-    private fun countDownHide()
+
+    private fun countDownHide(type:Boolean)
     {
         countdownView.visibility = View.INVISIBLE
+        if(type)
+            countdownSeekBar.visibility= View.INVISIBLE
         countdownViewFramLayout.visibility= View.INVISIBLE
     }
-
     interface VideoViewRepetendListener {
         fun onExerciseStart(index:Int,samplevideoName:String)
         fun onExerciseEnd(index:Int,samplevideoName:String,samplevideoTendency:MutableList<Int>,id:Int)

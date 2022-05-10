@@ -126,24 +126,23 @@ function HomeNewsTab(props){
         </View>
 
         <View style={{height:300,width:"100%",justifyContent: 'flex-start',alignItems: 'center',}}>
-           <View style={{height:250,width:"100%",justifyContent: 'flex-start',alignItems: 'center'}}>
-            {(value==="运动时长")&&timeRank.slice(0,5).map((item,index)=>{
-                return <Card style={{flexDirection:"row",width:"90%",height: 25,marginBottom:5,marginTop:5,backgroundColor: (time[0]===index+1?"#ecdde6":"white"),}}>
+           <View style={{height:260,width:"100%",justifyContent: 'flex-start',alignItems: 'center'}}>
+            {(value==="运动时长")&&timeRank.slice(0,10).map((item,index)=>{
+                return <Card style={{flexDirection:"row",width:"90%",height: 16,marginBottom:5,marginTop:5,backgroundColor: (time[0]===index+1?"#ecdde6":"white"),}}>
                 <View style={styles.rank}><Text style={{color:"gray"}}>{index+1}</Text></View>
                 <View style={styles.name}><Text style={{color:theme["color-primary-500"]}}>{item[0]}</Text></View>
                 <View style={styles.name}><Text style={{color:"gray"}}>{item[1]} 分钟</Text></View>
                 </Card>
               })}
-              {(value==="运动天数")&&dayRank.slice(0,5).map((item,index)=>{
-                return <Card style={{flexDirection:"row",width:"90%",height: 25,marginBottom:5,marginTop:5,backgroundColor: (day[0]===index+1?"#ecdde6":"white")}}>
+              {(value==="运动天数")&&dayRank.slice(0,10).map((item,index)=>{
+                return <Card style={{flexDirection:"row",width:"90%",height: 16,marginBottom:5,marginTop:5,backgroundColor: (day[0]===index+1?"#ecdde6":"white")}}>
                 <View style={styles.rank}><Text style={{color:"gray"}}>{index+1}</Text></View>
                 <View style={styles.name}><Text style={{color:theme["color-primary-500"]}}>{item[0]}</Text></View>
                 <View style={styles.name}><Text style={{color:"gray"}}>{item[1]} 天</Text></View>
                 </Card>
               })}
-              <View><Text style={{color:"#aaaaaa"}}>. . .</Text></View>
            </View>
-           <View style={{height:50,width:"100%",justifyContent: 'flex-start',alignItems: 'center'}}>
+           <View style={{height:50,width:"100%",justifyContent: 'flex-start',alignItems: 'center',bottom:0}}>
               {(value==="运动时长")&&<Card style={{flexDirection:"row",width:"90%",height: 25,marginBottom:5,marginTop:5}}>
                 <View style={styles.rankBottom}><Text style={{color:"gray"}}>当前排名</Text></View>
                 <View style={styles.nameBottom}><Text style={{color:theme["color-primary-500"]}}>{time[0]}</Text></View>

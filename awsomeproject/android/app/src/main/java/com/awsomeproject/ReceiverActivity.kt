@@ -64,6 +64,7 @@ class ReceiverActivity: AppCompatActivity() {
     private lateinit var heartBeatRatioView: TextView
     private lateinit var heartBeatRatioImageView: ImageView
     private lateinit var countdownView: SurfaceView
+    private lateinit var countdownSeekBar: SeekBar
     private lateinit var countdownViewFramLayout: FrameLayout
     private lateinit var countdownViewBackground: ImageView
 
@@ -138,6 +139,7 @@ class ReceiverActivity: AppCompatActivity() {
         countdownViewBackground=findViewById(R.id.mColor)
         heartBeatRatioView=findViewById(R.id.heartBeatRatio)
         heartBeatRatioImageView=findViewById(R.id.mColor2)
+        countdownSeekBar=findViewById(R.id.seekBar)
         //——————————————————————语音初始化—————————————————-—————————//
         Voice.reSet()
         //————————————————————————————————————————————-————————————//
@@ -169,8 +171,7 @@ class ReceiverActivity: AppCompatActivity() {
         bundle?.getString("ExerciseScheduleMesg")?.let{
             JsonMeg=it
         }
-
-        videoviewrepetend= VideoViewRepetend(JsonMeg,this,videoView,countdownView,countdownViewFramLayout,countdownViewBackground,this.baseContext,object:VideoViewRepetend.VideoViewRepetendListener{
+        videoviewrepetend= VideoViewRepetend(JsonMeg,this,videoView,countdownView,countdownSeekBar,countdownViewFramLayout,countdownViewBackground,this.baseContext,object:VideoViewRepetend.VideoViewRepetendListener{
             override fun onExerciseEnd(index:Int,samplevideoName:String,samplevideoTendency:MutableList<Int>,id:Int) {
                 //一轮运动完成，开始创建下一轮运动的数据结构
                 //休息阶段时关闭图像处理
@@ -186,6 +187,10 @@ class ReceiverActivity: AppCompatActivity() {
                     override fun onPersonNotDect() {
                         voice.voiceTips()
                     }
+                    override fun onFrameScoreRaising() {
+                        voice.voiceTick()
+                    }
+
                 }))
 
                 thread {

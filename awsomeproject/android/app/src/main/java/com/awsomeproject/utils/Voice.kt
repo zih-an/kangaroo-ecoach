@@ -12,6 +12,7 @@ class Voice(private val context: Context) {
     companion object{
         @Volatile
         public var voicePlayer:MediaPlayer= MediaPlayer()
+        public var voicePlayer2:MediaPlayer= MediaPlayer()
         public val lock = Any()
         public var isClose=false;
         @Synchronized
@@ -157,6 +158,24 @@ class Voice(private val context: Context) {
             voicePlayer.setDataSource(fd)
             voicePlayer.prepare()
             voicePlayer.start()
+        }
+    }
+    public fun voiceTick()
+    {
+        if(isClose)
+            return
+        synchronized(lock)
+        {
+            var voicePath = "voice/tick/"
+            voicePath += "tick" + ".mp3"
+            voicePlayer2.stop()
+            voicePlayer2?.release()
+            voicePlayer2 = MediaPlayer()
+            voicePlayer2.setAudioStreamType(AudioManager.STREAM_MUSIC)
+            val fd = context.assets.openFd(voicePath);
+            voicePlayer2.setDataSource(fd)
+            voicePlayer2.prepare()
+            voicePlayer2.start()
         }
     }
 }

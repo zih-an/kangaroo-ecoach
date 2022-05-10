@@ -22,7 +22,7 @@ const AlertIcon = (props) => (
 );
 
 export default class Register extends React.Component {
-  preferList = [0];
+  preferList = [];
   nickname = "";
   state = {
     email:'',
@@ -30,7 +30,7 @@ export default class Register extends React.Component {
     pwdY:false,
     passwordDouble:'',
     check:'',
-    selectedIndex:[new IndexPath(0),],
+    selectedIndex:[],
     tyepsName : [{title:"胸部"},{title:"背部"},{title:"肩部"},{title:"手臂"},{title:"腹部"},{title:"腰部"},{title:"臀部"},{title:"腿部"},{title:"全身耐力"},],
     displayValue:"请选择您的运动偏好",
     passwordCheck:"",
@@ -76,7 +76,7 @@ export default class Register extends React.Component {
   }
   handlePassword=(text)=>{
     this.setState({password:text})
-    if(this.state.password.length<=7) this.setState({pwdY:false});
+    if(text.length<8) this.setState({pwdY:false});
     else this.setState({pwdY:true});
   }
   _countDownAction(){
@@ -170,9 +170,13 @@ export default class Register extends React.Component {
 
   handlePasswordDouble = (text) =>{
     this.setState({passwordDouble:text});
-    if(text !== this.state.password) this.setState({passwordCheck:"**两次密码不一致！请检查您的密码**"});
+    if(text !== this.state.password) {
+      this.setState({passwordCheck:"**两次密码不一致！请检查您的密码**"});
+      this.setState({pwdY:false});
+    }
     else {
       this.setState({passwordCheck:""});
+      this.setState({pwdY:true});
     }
   }
   renderCaption = () => {

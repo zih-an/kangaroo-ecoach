@@ -60,6 +60,8 @@ class CameraActivity :AppCompatActivity() {
     private lateinit var videoView: VideoView
     //倒计时View
     private lateinit var countdownView: SurfaceView
+    //倒计时SeekBar
+    private lateinit var countdownSeekBar: SeekBar
     //倒计时framLayaout
     private lateinit var countdownViewFramLayout: FrameLayout
     //倒计时背景
@@ -185,7 +187,7 @@ class CameraActivity :AppCompatActivity() {
         countdownViewBackground=findViewById(R.id.mColor)
         heartBeatRatioView=findViewById(R.id.heartBeatRatio)
         heartBeatRatioImageView=findViewById(R.id.mColor2)
-
+        countdownSeekBar=findViewById(R.id.seekBar)
 //        val mediaController = MediaController(this)
 //        mediaController.setAnchorView(videoView)
 //        mediaController.setMediaPlayer(videoView)
@@ -252,7 +254,7 @@ class CameraActivity :AppCompatActivity() {
             JsonMeg=it
         }
 
-        videoviewrepetend= VideoViewRepetend(JsonMeg,this,videoView,countdownView,countdownViewFramLayout,countdownViewBackground,this.baseContext,object:VideoViewRepetend.VideoViewRepetendListener{
+        videoviewrepetend= VideoViewRepetend(JsonMeg,this,videoView,countdownView,countdownSeekBar,countdownViewFramLayout,countdownViewBackground,this.baseContext,object:VideoViewRepetend.VideoViewRepetendListener{
             override fun onExerciseEnd(index:Int,samplevideoName:String,samplevideoTendency:MutableList<Int>,id:Int) {
                 //一轮运动完成，开始创建下一轮运动的数据结构
                 //休息阶段时关闭图像处理
@@ -268,6 +270,9 @@ class CameraActivity :AppCompatActivity() {
 
                     override fun onPersonNotDect() {
                         voice.voiceTips()
+                    }
+                    override fun onFrameScoreRaising() {
+                        voice.voiceTick()
                     }
                 }))
 

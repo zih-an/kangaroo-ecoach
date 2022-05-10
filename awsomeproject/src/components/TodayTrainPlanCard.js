@@ -66,7 +66,7 @@ function TodayTrainPlanCard(props) {
           onTouchEnd={() => {props.onEnableScroll(true);}}
 
         />}
-        {(props.todayPlansDetail.length===0)&&<View style={styles.complementText}><Text style={{color:"#aaaaaa"}}>暂无计划推荐，先逛逛吧~</Text></View>}
+        {(props.todayPlansDetail.length===0)&&<View style={styles.complementText}><Text style={{color:"#aaaaaa"}}>暂无计划，先逛逛吧~</Text></View>}
         <View style={{position:"absolute",right:0,top:0,zIndex:99}}>
             <Svg icon="汗水" size="50"/>
           </View>

@@ -29,12 +29,12 @@ const PlanScore = (props) => {
           >
     <Card style={scoreStyles.container}>
       <Text style={scoreStyles.scoreHeader}>
-        推荐计划评分
+        推荐计划
       </Text>
       <Layout style={scoreStyles.scoreContainer}>
         <Svg icon="评估身体" size="20" color="gray"/>
         <Text style={scoreStyles.actualScoreStyle}>
-          90
+          100
         </Text>
         <Text style={scoreStyles.totalScoreStyle}>
           {" "}

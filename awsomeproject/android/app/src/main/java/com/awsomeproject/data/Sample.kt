@@ -25,7 +25,7 @@ class Sample(
     var totalScore=50.0
     var bodyWeight:MutableList<Double> = arrayListOf(0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0)
     var voiceMap:MutableList<Int> = arrayListOf(0,1,2,3,4,5,6,7,7,8,8)
-
+    var oldTotalScore:Double=50.0
     //arrayListOf(0.0,10.0/38,10.0/38,0.0,0.0,0.0,8.0/38,0.0,0.0,5.0/38,5.0/38)
     var isVoice:Boolean=true
     init
@@ -218,9 +218,6 @@ class Sample(
                 usrVectors= tempUsrVectors
             }
         }
-        if(isVoice&&(count%50==0)&&(Math.random()<=0.5)&&count!=0) {
-            throwForVoice(fake_markScore)
-        }
 
         if (fake_markScore > 90) {
             if (totalScore <= 99.80) {
@@ -241,6 +238,21 @@ class Sample(
         } else {
             if (totalScore >= 0.8) {
                 totalScore -= 0.8
+            }
+        }
+        if(isVoice&&(count%50==0)&&(Math.random()<=0.5)&&count!=0) {
+            throwForVoice(fake_markScore)
+        }
+        if(isVoice)
+        {
+            if(totalScore-oldTotalScore>2)
+            {
+                oldTotalScore=totalScore
+                listener?.onFrameScoreRaising()
+            }
+            if(totalScore-oldTotalScore<0)
+            {
+                oldTotalScore=totalScore
             }
         }
         return Triple(totalScore,true_scoreByPart,usrVectors)
@@ -336,6 +348,7 @@ class Sample(
     }
     interface scorelistener
     {
+        fun onFrameScoreRaising()
         fun onFrameScoreHeight(FrameScore:Int,part:Int)
         fun onFrameScoreLow(FrameScore:Int,part:Int)
         fun onPersonNotDect()
