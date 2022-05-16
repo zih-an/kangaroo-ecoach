@@ -155,8 +155,8 @@ class Sample(
         var fake_scoreByPart = mutableListOf<Double>(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
         var true_scoreByPart = mutableListOf<Double>(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
         //初始化计算的前后帧数
-        var begin: Int = count -1
-        var end: Int = count + 2
+        var begin: Int = count
+        var end: Int = count + 1
         if (begin < 0) begin = 0
         if (end >= sampleKeypointsList.count()) end = sampleKeypointsList.count()
 

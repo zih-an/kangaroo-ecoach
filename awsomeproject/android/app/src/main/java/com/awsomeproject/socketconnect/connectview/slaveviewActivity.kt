@@ -70,14 +70,16 @@ class slaveviewActivity : AppCompatActivity() {
             "sendFrame" -> {
                 SystemClock.sleep(500)
                 runOnUiThread {
-                    val intent = Intent(baseContext, SenderActivity::class.java)
-                    var hostIp = hostDevice!!.ip
-                    intent.putExtra("hostIp", hostIp)
-                    CommandReceiver.close()
-                    stopListen()
-                    isListeningOpen = false
-                    btnListeningOpen.setText("开始监听")
-                    startActivity(intent)
+                    hostDevice?.let {
+                        val intent = Intent(baseContext, SenderActivity::class.java)
+                        var hostIp = it.ip
+                        intent.putExtra("hostIp", hostIp)
+                        CommandReceiver.close()
+                        stopListen()
+                        isListeningOpen = false
+                        btnListeningOpen.setText("开始监听")
+                        startActivity(intent)
+                    }
                 }
             }
             "prepareAcceptFrame" -> {
