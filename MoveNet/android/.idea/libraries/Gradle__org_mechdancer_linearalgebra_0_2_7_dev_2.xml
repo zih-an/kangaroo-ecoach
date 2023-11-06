@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="Gradle: org.mechdancer:linearalgebra:0.2.7-dev-2">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.mechdancer/linearalgebra/0.2.7-dev-2/322a5b350b3439d57a9b0e83eb20f655d0a28c32/linearalgebra-0.2.7-dev-2.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.mechdancer/linearalgebra/0.2.7-dev-2/2a273c333500b7a4d9f231310b15d1c484604ec8/linearalgebra-0.2.7-dev-2-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.mechdancer/linearalgebra/0.2.7-dev-2/4b820d3607fb9ef2ce22fa76c37a25ed47130132/linearalgebra-0.2.7-dev-2-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>
